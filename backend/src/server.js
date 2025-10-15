@@ -1,13 +1,24 @@
 import express from "express";
-import { connectDB } from "./db.js"
+import { connectDB, InitDB } from "./config/db.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.get("/", async(req,res) => {
-    const pool = await connectDB
-    const result = await pool.request().query('SELECT GETDATE() as fechaActual');
-  res.json(result.recordset);
-})
+app.use(express.json());
 
-app.listen(PORT,() => console.log(`Servidor corriendo en puerto ${PORT}`))
+(async () => {
+  await InitDB();
+})();
+
+app.get("/", async (req, res) => {
+  try {
+    const pool = await connectDB();
+    const result = await pool.request().query('SELECT GETDATE() AS fechaActual');
+    res.json(result.recordset);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error en la base de datos" });
+  }
+});
+
+app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
