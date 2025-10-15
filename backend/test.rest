@@ -1,0 +1,39 @@
+###Crear usuario ###
+POST http://localhost:5000/Usuarios/CrearUsuario
+Content-Type: application/json
+
+{
+    "nombre":"Test",
+    "apellido1":"test",
+    "apellido2":"test",
+    "cargo":"test",
+    "municipalidad":"test",
+    "correo":"test",
+    "contrasena":"test",
+    "num_tel":"test"
+}
+
+###Obtener todos los usuarios ###
+GET http://localhost:5000/Usuarios/ObtenerUsuarios
+
+### Obtener Usuario por Id
+GET http://localhost:5000/Usuarios/1
+Content-Type: application/json
+
+### Actualizar usuario
+PUT http://localhost:5000/Usuarios/EditarUsuario/1
+Content-Type: application/json
+
+{
+    "nombre": "Juan",
+    "apellido1": "Pérez",
+    "apellido2": "Gómez",
+    "cargo": "Administrador",
+    "municipalidad": "San José",
+    "correo": "juan.nuevo@example.com",
+    "contrasena": "nuevaContrasena123",
+    "num_tel": "88887777"
+}
+
+### Eliminar usuario
+DELETE http://localhost:5000/Usuarios/EliminarUsuario/2
