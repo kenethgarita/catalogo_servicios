@@ -27,6 +27,15 @@ export async function InitDB() {
     try {
         const pool = await connectDB();
 
+        //Tabla Rol
+         await pool.request().query(`
+            IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Rol' AND xtype='U')
+            CREATE TABLE Rol (
+                id_rol INT IDENTITY(1,1) PRIMARY KEY,
+                nombre_rol VARCHAR(30),
+            );
+        `);
+
         // Tabla Usuario
         await pool.request().query(`
             IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Usuario' AND xtype='U')
@@ -39,7 +48,8 @@ export async function InitDB() {
                 municipalidad VARCHAR(100),
                 correo VARCHAR(100) UNIQUE NOT NULL,
                 contrasena NVARCHAR(MAX) NOT NULL,
-                num_tel VARCHAR(20)
+                num_tel VARCHAR(20),
+                id_rol INT FOREIGN KEY REFERENCES Rol(id_rol)
             );
         `);
 

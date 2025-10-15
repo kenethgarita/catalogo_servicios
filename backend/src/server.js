@@ -2,6 +2,7 @@ import express from "express";
 import { connectDB, InitDB } from "./config/db.js";
 
 import Usuarios from "./routes/userRoutes.js"
+import Roles from "./routes/rolRoutes.js"
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -25,5 +26,6 @@ app.get("/", async (req, res) => {
 
 // Routes
 app.use("/Usuarios",Usuarios)
+app.use("/Roles",Roles)
 
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
