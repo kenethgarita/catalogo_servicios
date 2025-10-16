@@ -4,6 +4,7 @@ import { ListaUsuarios } from "../controllers/userController.js";
 import { ListaUsuarioPorId } from "../controllers/userController.js";
 import { EditarUsuario } from "../controllers/userController.js";
 import { BorrarUsuario } from "../controllers/userController.js";
+import { LoginUsuarioController } from "../controllers/userController.js";
 
 const Router = express.Router();
 
@@ -12,5 +13,6 @@ Router.get("/ObtenerUsuarios",ListaUsuarios)
 Router.get("/ObtenerUsuario/:id_usuario",ListaUsuarioPorId)
 Router.put("/EditarUsuario/:id_usuario",EditarUsuario)
 Router.delete("/EliminarUsuario/:id_usuario",BorrarUsuario)
+Router.post("/Login",LoginUsuarioController)
 
 export default Router;
