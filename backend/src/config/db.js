@@ -76,6 +76,7 @@ export async function InitDB() {
                 id_solicitud INT IDENTITY(1,1) PRIMARY KEY,
                 id_usuario INT FOREIGN KEY REFERENCES Usuario(id_usuario),
                 detalles_solicitud NVARCHAR(MAX),
+                estado_solicitud VARCHAR(20),
                 fecha_solicitud DATETIME DEFAULT GETDATE()
             );
         `);

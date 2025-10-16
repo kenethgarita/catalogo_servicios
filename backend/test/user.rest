@@ -3,14 +3,24 @@ POST http://localhost:5000/Usuarios/CrearUsuario
 Content-Type: application/json
 
 {
-    "nombre":"Test",
-    "apellido1":"test",
-    "apellido2":"test",
-    "cargo":"test",
-    "municipalidad":"test",
-    "correo":"test",
-    "contrasena":"test",
-    "num_tel":"test"
+    "nombre":"Test3",
+    "apellido1":"test3",
+    "apellido2":"test3",
+    "cargo":"test3",
+    "municipalidad":"test3",
+    "correo":"test3",
+    "contrasena":"test3",
+    "num_tel":"test3",
+    "id_rol": 1
+}
+
+### LOGIN DE USUARIO
+POST http://localhost:5000/Usuarios/login
+Content-Type: application/json
+
+{
+  "correo": "test3",
+  "contrasena": "test3"
 }
 
 ###Obtener todos los usuarios ###
@@ -32,7 +42,8 @@ Content-Type: application/json
     "municipalidad": "San José",
     "correo": "juan.nuevo@example.com",
     "contrasena": "nuevaContrasena123",
-    "num_tel": "88887777"
+    "num_tel": "88887777",
+    "id_rol": 1
 }
 
 ### Eliminar usuario
