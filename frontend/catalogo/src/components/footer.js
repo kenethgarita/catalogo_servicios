@@ -1,10 +1,13 @@
-import react from 'react';
+// Footer.js
+import React from 'react';
+import './footer.css'; // Estilos para el footer (opcional)
 
-const footer = () => {
-    return (
-        <footer style={{background: '#282c34', padding: '10px', color: 'white', marginTop: '20px', textAlign: 'center'}}>       
-            <p>&copy; 2024 IFAM. Todos los derechos reservados.</p>
-        </footer>
-    );
+const Footer = () => {
+  return (
+    <footer className="footer">
+      <p>&copy; 2025 Mi Aplicación. Todos los derechos reservados.</p>
+    </footer>
+  );
 }
-export default footer;
+
+export default Footer;

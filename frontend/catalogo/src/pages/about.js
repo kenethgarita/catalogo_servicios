@@ -1,15 +1,16 @@
 import './about.css';
-import './../components/layout.js';
-import Layout from './../components/layout.js';
+import React from 'react';
+import Header from '../components/header';
+import Footer from '../components/footer';
 
 function About() {
   return (
-    <Layout>
+  
     <div className="about">
       <h1>Sobre nosotros</h1>
       <p>Esta es otra página del proyecto.</p>
     </div>
-    </Layout>
+  
   );
 }
 
