@@ -1,22 +1,140 @@
-
 .header {
-  background-color: #4CAF50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px;
+  background-color: #fff;
+  border-bottom: 3px solid #e6e6e6;
+  transition: all 0.3s ease;
+  color: #1d2d5a;
+  font-family: 'Arial', sans-serif;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 60px;
+  margin-right: 20px;
+}
+
+.titles h1 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.titles span {
+  font-size: 0.85rem;
+  color: #1d2d5a;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Accessibility Menu */
+.accessibility-wrapper {
+  position: relative;
+}
+
+.access-icon {
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+}
+
+.accessibility-menu {
+  position: absolute;
+  top: 35px;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  padding: 10px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+.accessibility-menu button {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 5px 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: #1d2d5a;
+}
+
+.accessibility-menu button:hover {
+  background-color: #f0f0f0;
+}
+
+/* Menu Toggle (hamburger) */
+.menu-toggle {
+  font-size: 26px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #1d2d5a;
+}
+
+/* Sidebar Menu */
+.sidebar {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 260px;
+  height: 100%;
+  background-color: #1d2d5a;
   color: white;
   padding: 20px;
-  text-align: center;
+  z-index: 9999;
+  box-shadow: -4px 0 10px rgba(0,0,0,0.2);
 }
 
-.header nav ul {
-  list-style-type: none;
+.sidebar nav ul {
+  list-style: none;
   padding: 0;
+  margin-top: 40px;
 }
 
-.header nav ul li {
-  display: inline;
-  margin: 0 10px;
+.sidebar nav ul li {
+  margin-bottom: 20px;
 }
 
-.header nav ul li a {
+.sidebar nav ul li a {
   color: white;
   text-decoration: none;
+  font-size: 1.1rem;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: white;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+}
+
+/* CONTRAST STYLES */
+.header.high,
+.sidebar.high {
+  background-color: #000;
+  color: #fff;
+}
+
+.header.inverted,
+.sidebar.inverted {
+  background-color: #1d2d5a;
+  color: #f5f5f5;
 }

@@ -8,10 +8,6 @@ import Footer from "./components/footer";
 function App() {
   return (
     <Router>
-      <nav style={{ padding: 10 }}>
-        <Link to="/" style={{ marginRight: 10 }}>Inicio</Link>
-        <Link to="/about">Sobre nosotros</Link>
-      </nav>
 
       <Routes>
         <Route path="/" element={<Home />} />
