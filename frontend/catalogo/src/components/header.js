@@ -40,15 +40,8 @@ const Header = ({ onStyleChange }) => {
             onMouseEnter={() => setAccessMenuVisible(true)}
             onMouseLeave={() => setAccessMenuVisible(false)}
           >
-            <img src="/icon-accessibility.svg" alt="Accesibilidad" className="access-icon" />
-            {accessMenuVisible && (
-              <div className="accessibility-menu">
-                <button onClick={() => handleStyleChange('fontSize')}>Aumentar fuente</button>
-                <button onClick={() => handleStyleChange('contrast')}>Mejor contraste</button>
-                <button onClick={() => handleStyleChange('invert')}>Invertir colores</button>
-                <button onClick={() => handleStyleChange('reset')}>Reiniciar</button>
-              </div>
-            )}
+            
+
           </div>
 
           <button className="menu-toggle" onClick={() => setShowMenu(true)}>

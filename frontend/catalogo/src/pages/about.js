@@ -1,12 +1,14 @@
 
 import './about.css';
 import React from 'react';
+import Accesibilidad from '../components/accesibilidad';
 import Header from '../components/header';
 import Footer from '../components/footer';
 
 function About() {
   return (
     <div className="about-page">
+    <Accesibilidad />
   <Header />
 
     <div className="about">
