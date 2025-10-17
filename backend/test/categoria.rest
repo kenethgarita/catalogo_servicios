@@ -1,0 +1,24 @@
+### Crear categoría
+POST http://localhost:5000/Categorias/CrearCategoria
+Content-Type: application/json
+
+{
+  "nombre_categoria": "Trámites"
+}
+
+### Obtener todas las categorías
+GET http://localhost:5000/Categorias/ObtenerCategorias
+
+### Obtener categoría por ID
+GET http://localhost:5000/Categorias/ObtenerCategoria/1
+
+### Editar categoría
+PUT http://localhost:5000/Categorias/EditarCategoria/1
+Content-Type: application/json
+
+{
+  "nombre_categoria": "Servicios Municipales"
+}
+
+### Eliminar categoría
+DELETE http://localhost:5000/Categorias/EliminarCategoria/1
