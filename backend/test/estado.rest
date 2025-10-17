@@ -1,0 +1,24 @@
+### Crear Estado
+POST http://localhost:5000/Estado/CrearEstado
+Content-Type: application/json
+
+{
+  "nombre_estado": "Pendiente"
+}
+
+### Obtener todos los Estados
+GET http://localhost:5000/Estado/ObtenerEstados
+
+### Obtener Estado por ID
+GET http://localhost:5000/Estado/ObtenerEstado/1
+
+### Actualizar Estado
+PUT http://localhost:5000/Estado/EditarEstado/1
+Content-Type: application/json
+
+{
+  "nombre_estado": "Aprobada"
+}
+
+### Eliminar Estado
+DELETE http://localhost:5000/Estado/EliminarEstado/1

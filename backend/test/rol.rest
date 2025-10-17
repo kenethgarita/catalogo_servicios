@@ -3,7 +3,7 @@ POST http://localhost:5000/Roles/CrearRol
 Content-Type: application/json
 
 {
-    "nombre_rol":"Test2"
+    "nombre_rol":"Admin"
 }
 
 ###Obtener todos los usuarios ###

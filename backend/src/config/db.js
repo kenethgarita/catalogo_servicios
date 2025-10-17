@@ -27,12 +27,30 @@ export async function InitDB() {
     try {
         const pool = await connectDB();
 
+        //Tabla Estado
+        await pool.request().query(`
+            IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Estado' AND xtype='U')
+            CREATE TABLE Estado (
+                id_estado INT IDENTITY(1,1) PRIMARY KEY,
+                nombre_estado VARCHAR(30)
+            );
+        `)
+
+        //Tabla Categoria
+        await pool.request().query(`
+            IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Categoria' AND xtype='U')
+            CREATE TABLE Categoria (
+                id_categoria INT IDENTITY(1,1) PRIMARY KEY,
+                nombre_categoria VARCHAR(30)
+            );
+        `)
+
         //Tabla Rol
          await pool.request().query(`
             IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Rol' AND xtype='U')
             CREATE TABLE Rol (
                 id_rol INT IDENTITY(1,1) PRIMARY KEY,
-                nombre_rol VARCHAR(30),
+                nombre_rol VARCHAR(30)
             );
         `);
 
@@ -65,7 +83,7 @@ export async function InitDB() {
                 tiempo VARCHAR(50),
                 documentacion_url NVARCHAR(255),
                 imagen_servicio NVARCHAR(255),
-                categoria VARCHAR(50)
+                id_categoria INT FOREIGN KEY REFERENCES Categoria(id_categoria)
             );
         `);
 
@@ -77,7 +95,8 @@ export async function InitDB() {
                 id_usuario INT FOREIGN KEY REFERENCES Usuario(id_usuario),
                 detalles_solicitud NVARCHAR(MAX),
                 estado_solicitud VARCHAR(20),
-                fecha_solicitud DATETIME DEFAULT GETDATE()
+                fecha_solicitud DATETIME DEFAULT GETDATE(),
+                id_estado INT FOREIGN KEY REFERENCES Estado(id_estado)
             );
         `);
 

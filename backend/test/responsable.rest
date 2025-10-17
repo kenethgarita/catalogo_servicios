@@ -1,0 +1,25 @@
+### Crear responsable
+POST http://localhost:5000/Responsables/CrearResponsable
+Content-Type: application/json
+
+{
+  "id_usuario": 1,
+  "id_servicio": 1
+}
+
+### Obtener todos los responsables
+GET http://localhost:5000/Responsables/ObtenerResponsables
+
+### Obtener responsable por ID
+GET http://localhost:5000/Responsables/ObtenerResponsable/1
+
+### Editar responsable
+PUT http://localhost:5000/Responsables/EditarResponsable/1
+Content-Type: application/json
+
+{
+  "id_servicio": 2
+}
+
+### Eliminar responsable
+DELETE http://localhost:5000/Responsables/EliminarResponsable/1

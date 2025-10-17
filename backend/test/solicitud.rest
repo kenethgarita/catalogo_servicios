@@ -1,0 +1,27 @@
+### Crear Solicitud
+POST http://localhost:5000/Solicitudes/CrearSolicitud
+Content-Type: application/json
+
+{
+  "id_usuario": 1,
+  "detalles_solicitud": "Solicitud de prueba",
+  "id_estado": 1
+}
+
+### Obtener todas las Solicitudes
+GET http://localhost:5000/Solicitudes/ObtenerSolicitudes
+
+### Obtener Solicitud por ID
+GET http://localhost:5000/Solicitudes/ObtenerSolicitud/1
+
+### Actualizar Solicitud
+PUT http://localhost:5000/Solicitudes/EditarSolicitud/1
+Content-Type: application/json
+
+{
+  "detalles_solicitud": "Solicitud actualizada",
+  "id_estado": 2
+}
+
+### Eliminar Solicitud
+DELETE http://localhost:5000/Solicitudes/EliminarSolicitud/1
