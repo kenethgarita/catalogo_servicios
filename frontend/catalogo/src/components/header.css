@@ -1,47 +1,19 @@
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 30px;
-  background-color: #fff;
-  border-bottom: 3px solid #e6e6e6;
-  transition: all 0.3s ease;
-  color: #1d2d5a;
-  font-family: 'Arial', sans-serif;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-}
-
-.logo {
-  height: 60px;
-  margin-right: 20px;
-}
-
-.titles h1 {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: bold;
-  line-height: 1.2;
-}
-
-.titles span {
-  font-size: 0.85rem;
-  color: #1d2d5a;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-/* Accessibility Menu */
+/* Fijar el ícono y menú de accesibilidad flotando sobre el header */
 .accessibility-wrapper {
-  position: relative;
+  position: absolute;
+  top: 15px;
+  right: 30px;
+
 }
+
+/* Ajustar el menú desplegable relativo al ícono */
+.accessibility-menu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+}
+
+
 
 .access-icon {
   width: 26px;
@@ -76,6 +48,49 @@
   background-color: #f0f0f0;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px;
+  background-color: #fff;
+  border-bottom: 3px solid #e6e6e6;
+  transition: all 0.3s ease;
+  color: #1d2d5a;
+  font-family: 'Arial', sans-serif;
+
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 60px;
+  margin-right: 20px;
+}
+
+.titles h1 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.titles span {
+  font-size: 0.85rem;
+  color: #1d2d5a;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+
+
 /* Menu Toggle (hamburger) */
 .menu-toggle {
   font-size: 26px;
@@ -89,7 +104,7 @@
 .sidebar {
   position: fixed;
   right: 0;
-  top: 0;
+  top: 1;
   width: 260px;
   height: 100%;
   background-color: #1d2d5a;
@@ -137,4 +152,11 @@
 .sidebar.inverted {
   background-color: #1d2d5a;
   color: #f5f5f5;
+}
+
+/* Header fijo al hacer scroll */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10000;
 }

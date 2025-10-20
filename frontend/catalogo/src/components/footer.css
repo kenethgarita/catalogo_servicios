@@ -1,10 +1,10 @@
 /* footer.css */
 
-
+/* color background footer #172951 */
 .footer {
-  background-color: #1e3a5f;
+  background-color: #172951;
   color: white;
-  padding: 40px 20px 20px;
+  padding: 40px 20px 0;
   position: relative;
 }
 
@@ -23,17 +23,17 @@
 }
 
 .footer-title {
-  font-size: 18px;
+  font-size: 21px;
   font-weight: 600;
   margin-bottom: 15px;
   color: white;
 }
 
 .footer-text {
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.6;
   color: #e0e0e0;
-  margin: 0 0 10px 0;
+  margin: 0 0 0px 0;
 }
 
 .footer-text strong {
@@ -43,33 +43,48 @@
 
 .footer-social {
   display: flex;
-  gap: 15px;
+  gap: 1px;
   margin-top: 15px;
 }
 
+/* Iconos sociales sin caja */
 .social-icon {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 4px;
+  border: none;
   color: white;
   transition: all 0.3s ease;
   text-decoration: none;
+  padding: 0;
+}
+
+.social-icon svg {
+  stroke-width: 1.5;
 }
 
 .social-icon:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: white;
+  color: #ccc;
+  transform: scale(1.1);
+}
+
+/* Sección del logo y botones */
+.footer-logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0;
+  position: relative;
 }
 
 .footer-logo {
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
+  margin-bottom: 40px; /* Espacio entre el logo y los botones */
 }
 
 .footer-logo img {
@@ -77,33 +92,19 @@
   height: auto;
 }
 
-.footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  padding-top: 20px;
-  text-align: center;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.footer-bottom p {
-  margin: 0;
-  font-size: 14px;
-  color: #e0e0e0;
-}
-
-.footer-buttons {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
+/* Botones estáticos dentro del footer */
+.footer-buttons-static {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  z-index: 100;
+  align-self: flex-end;
+  margin-right: 0; /* Alineado con el margen derecho del logo */
+  margin-top: 100px;
 }
 
 .footer-btn {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 4px;
   border: none;
   cursor: pointer;
@@ -129,33 +130,18 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .footer-container {
-    grid-template-columns: 1fr;
-    gap: 30px;
-  }
-  
-  .footer-logo {
-    justify-content: center;
-  }
-  
-  .footer-logo img {
-    max-width: 250px;
-  }
-  
-  .footer-buttons {
-    bottom: 10px;
-    right: 10px;
-  }
-  
-  .footer-btn {
-    width: 45px;
-    height: 45px;
-  }
+/* Sección inferior del footer con patrón geométrico */
+.footer-bottom {
+  background-color: #0d1f35;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  margin: 0 -20px;
+  position: relative;
+  overflow: hidden;
 }
 
-.footer::before {
+/* Patrón geométrico en gris */
+.footer-bottom::before {
   content: '';
   position: absolute;
   top: 0;
@@ -163,13 +149,85 @@
   right: 0;
   bottom: 0;
   background-image: 
-    repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 100px,
-      rgba(255, 255, 255, 0.02) 100px,
-      rgba(255, 255, 255, 0.02) 200px
-    );
+    linear-gradient(45deg, rgba(255, 255, 255, 0.02) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.02) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.02) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.02) 75%);
+  background-size: 60px 60px;
+  background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
   z-index: 0;
   pointer-events: none;
+}
+
+/* Alternativa: Patrón de líneas diagonales */
+.footer-bottom::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 20px,
+    rgba(255, 255, 255, 0.015) 20px,
+    rgba(255, 255, 255, 0.015) 40px
+  );
+  z-index: 0;
+  pointer-events: none;
+}
+
+.footer-bottom p {
+  max-width: 1400px;
+  margin: 0 auto;
+  font-size: 15px;
+  color: #b0b0b0;
+  text-align: center;
+  padding: 0 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .footer-title {
+    font-size: 24px;
+  }
+
+  .footer-text {
+    font-size: 20px;
+  }
+
+  .footer-bottom p {
+    font-size: 20px;
+    text-align: center;
+  }
+  
+  .footer-logo-section {
+    align-items: center;
+  }
+
+  .footer-logo {
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .footer-logo img {
+    max-width: 250px;
+  }
+
+  .footer-buttons-static {
+    align-self: center;
+  }
+  
+  .footer-btn {
+    width: 45px;
+    height: 45px;
+  }
 }
