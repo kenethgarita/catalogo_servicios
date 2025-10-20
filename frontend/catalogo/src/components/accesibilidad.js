@@ -73,10 +73,11 @@ function Accesibilidad() {
 const styles = {    
   container: {
     backgroundColor: "#F0F2F4",
-    padding: "12px 20px", // un poco más alto
-    textAlign: "right", // el menú a la derecha
-    position: "relative",
-    zIndex: 1000,
+    padding: "12px 20px",
+    textAlign: "right",
+    position: "sticky",
+    top: 0,
+    zIndex: 10001, // Debe estar por encima del header
   },
   menu: {
     display: "inline-block",
@@ -97,6 +98,7 @@ const styles = {
     overflow: "hidden",
     transition: "all 0.25s ease",
     width: "160px",
+    zIndex: 10002,
   },
   opcion: {
     padding: "9px 12px",

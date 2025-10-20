@@ -1,54 +1,8 @@
-/* Fijar el ícono y menú de accesibilidad flotando sobre el header */
-.accessibility-wrapper {
-  position: absolute;
-  top: 15px;
-  right: 30px;
-
-}
-
-/* Ajustar el menú desplegable relativo al ícono */
-.accessibility-menu {
-  position: absolute;
-  top: 40px;
-  right: 0;
-}
-
-
-
-.access-icon {
-  width: 26px;
-  height: 26px;
-  cursor: pointer;
-}
-
-.accessibility-menu {
-  position: absolute;
-  top: 35px;
-  right: 0;
-  background: #ffffff;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  padding: 10px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-}
-
-.accessibility-menu button {
-  background: none;
-  border: none;
-  text-align: left;
-  padding: 5px 10px;
-  font-size: 0.9rem;
-  cursor: pointer;
-  color: #1d2d5a;
-}
-
-.accessibility-menu button:hover {
-  background-color: #f0f0f0;
-}
-
+/* Header fijo al hacer scroll - debajo de accesibilidad */
 .header {
+  position: sticky;
+  top: 48px; /* Altura de la barra de accesibilidad (ajusta según el padding real) */
+  z-index: 10000;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -58,7 +12,6 @@
   transition: all 0.3s ease;
   color: #1d2d5a;
   font-family: 'Arial', sans-serif;
-
 }
 
 .header-left {
@@ -89,74 +42,125 @@
   gap: 20px;
 }
 
-
-
-/* Menu Toggle (hamburger) */
+/* Menu Toggle (hamburguesa con animación a X) */
 .menu-toggle {
-  font-size: 26px;
+  width: 30px;
+  height: 25px;
   background: none;
   border: none;
   cursor: pointer;
-  color: #1d2d5a;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  z-index: 10001;
 }
 
-/* Sidebar Menu */
+.hamburger-line {
+  width: 100%;
+  height: 3px;
+  background-color: #1d2d5a;
+  transition: all 0.3s ease;
+  transform-origin: center;
+}
+
+/* Transformación a X cuando está activo */
+.menu-toggle.active .hamburger-line:nth-child(1) {
+  transform: translateY(11px) rotate(45deg);
+}
+
+.menu-toggle.active .hamburger-line:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.active .hamburger-line:nth-child(3) {
+  transform: translateY(-11px) rotate(-45deg);
+}
+
+/* Overlay para cerrar el menú al hacer clic fuera 
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 9998;
+} */
+ 
+/* Sidebar Menu con fondo blanco */
 .sidebar {
   position: fixed;
   right: 0;
-  top: 1;
-  width: 260px;
-  height: 100%;
-  background-color: #1d2d5a;
-  color: white;
+  top: 10;
+  width: 280px;
+  height: 100vh;
+  background-color: #ffffff; /* Fondo blanco */
+  color: #1d2d5a; /* Texto oscuro */
   padding: 20px;
+  padding-top: 10px; /* Espacio para barra de accesibilidad + header */
   z-index: 9999;
-  box-shadow: -4px 0 10px rgba(0,0,0,0.2);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.15); /* Sombra hacia afuera en el borde izquierdo */
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+  overflow-y: auto;
 }
 
 .sidebar nav ul {
   list-style: none;
   padding: 0;
-  margin-top: 40px;
+  margin: 0;
 }
 
 .sidebar nav ul li {
-  margin-bottom: 20px;
+  margin-bottom: 8px;
 }
 
 .sidebar nav ul li a {
-  color: white;
+  color: #1d2d5a; /* Texto oscuro */
   text-decoration: none;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
-.close-button {
-  background: none;
-  border: none;
-  font-size: 2rem;
-  color: white;
-  cursor: pointer;
-  position: absolute;
-  top: 10px;
-  right: 20px;
+/* Flecha en cada opción */
+.sidebar nav ul li a::after {
+  content: '›';
+  font-size: 1.5rem;
+  color: #d4a574; /* Color dorado/beige de la flecha */
+  font-weight: 300;
+  transition: transform 0.2s ease;
 }
 
-/* CONTRAST STYLES */
-.header.high,
-.sidebar.high {
-  background-color: #000;
-  color: #fff;
+/* Hover con fondo beige claro */
+.sidebar nav ul li a:hover {
+  background-color: #f5ede4; /* Color beige claro como en la imagen */
 }
 
-.header.inverted,
-.sidebar.inverted {
-  background-color: #1d2d5a;
-  color: #f5f5f5;
+.sidebar nav ul li a:hover::after {
+  transform: translateX(4px);
 }
 
-/* Header fijo al hacer scroll */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 10000;
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    padding: 10px 20px;
+  }
+
+  .logo {
+    height: 50px;
+  }
+
+  .sidebar {
+    width: 85%;
+    max-width: 320px;
+  }
 }
