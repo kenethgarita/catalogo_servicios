@@ -1,12 +1,18 @@
 import express from "express";
-import { CreaServicio, ListaServicios, ListaServicioPorId, EditarServicio, BorrarServicio } from "../controllers/servicioController.js";
+import {
+  CrearServicioController,
+  ListarServicios,
+  ListarServicioPorId,
+  EditarServicio,
+  BorrarServicio
+} from "../controllers/servicioController.js";
 
-const Router = express.Router();
+const router = express.Router();
 
-Router.post("/CrearServicio", CreaServicio);
-Router.get("/ObtenerServicios", ListaServicios);
-Router.get("/ObtenerServicio/:id_servicio", ListaServicioPorId);
-Router.put("/EditarServicio/:id_servicio", EditarServicio);
-Router.delete("/EliminarServicio/:id_servicio", BorrarServicio);
+router.post("/CrearServicio", CrearServicioController);
+router.get("/ListarServicios", ListarServicios);
+router.get("/ListarServicioPorId/:id_servicio", ListarServicioPorId);
+router.put("/EditarServicio/:id_servicio", EditarServicio);
+router.delete("/BorrarServicio/:id_servicio", BorrarServicio);
 
-export default Router;
+export default router;

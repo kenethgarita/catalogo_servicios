@@ -83,6 +83,7 @@ export async function InitDB() {
                 tiempo VARCHAR(50),
                 documentacion_url NVARCHAR(255),
                 imagen_servicio NVARCHAR(255),
+                activo BIT DEFAULT 1,
                 id_categoria INT FOREIGN KEY REFERENCES Categoria(id_categoria)
             );
         `);
