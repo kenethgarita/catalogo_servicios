@@ -1,0 +1,288 @@
+.home-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+}
+
+.home {
+  flex: 1;
+  width: 100%;
+}
+
+/* Hero Section con imagen de fondo */
+.hero-section {
+  position: relative;
+  width: 100%;
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* IMAGEN DE FONDO - Aquí está la referencia a la imagen */
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  /* Placeholder: reemplaza con tu imagen real en el style inline del componente */
+  background-color: #e8c99b; /* Color de respaldo */
+}
+
+/* Overlay transparente gris claro para texto legible */
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(240, 240, 240, 0.75); /* Gris claro transparente */
+}
+
+.hero-content-wrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 60px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.hero-content {
+  flex: 1;
+  max-width: 600px;
+}
+
+.hero-content h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 25px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  color: #1d2d5a;
+  line-height: 1.2;
+}
+
+.hero-content p {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.7;
+  margin-bottom: 0;
+}
+
+/* Botones en la parte derecha */
+.hero-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 20px;
+}
+
+/* Barra de búsqueda */
+.search-section {
+  width: 100%;
+  background-color: #ffffff;
+  padding: 30px 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.search-container {
+  max-width: 960px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  padding: 16px 50px 16px 20px;
+  font-size: 1rem;
+  border: 2px solid #d0d0d0;
+  border-radius: 8px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #1d2d5a;
+}
+
+.search-button {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: color 0.3s ease;
+}
+
+.search-button:hover {
+  color: #1d2d5a;
+}
+
+/* Sección de Servicios - FONDO BLANCO */
+.servicios-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 80px 20px;
+  background-color: #ffffff; /* Fondo blanco */
+}
+
+.servicios-titulo {
+  font-size: 2.5rem;
+  color: #1d2d5a;
+  text-align: center;
+  margin-bottom: 50px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 700;
+}
+
+.servicios-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 35px;
+  align-items: stretch;
+}
+
+.loading {
+  text-align: center;
+  font-size: 1.3rem;
+  color: #666;
+  padding: 60px 20px;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.no-servicios {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+  padding: 60px 20px;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .hero-content-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-content {
+    max-width: 100%;
+  }
+
+  .hero-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-content h1 {
+    font-size: 2.3rem;
+  }
+
+  .servicios-titulo {
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 968px) {
+  .servicios-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .hero-section {
+    min-height: 450px;
+  }
+
+  .hero-content-wrapper {
+    padding: 40px 20px;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-content p {
+    font-size: 0.95rem;
+  }
+
+  .hero-buttons {
+    gap: 15px;
+  }
+
+  .servicios-section {
+    padding: 60px 20px;
+  }
+
+  .servicios-titulo {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-section {
+    min-height: 550px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-section {
+    min-height: 600px;
+  }
+
+  .hero-content-wrapper {
+    padding: 30px 15px;
+  }
+
+  .hero-content h1 {
+    font-size: 1.7rem;
+  }
+
+  .hero-content p {
+    font-size: 0.9rem;
+  }
+
+  .search-section {
+    padding: 20px 15px;
+  }
+
+  .search-input {
+    font-size: 0.95rem;
+    padding: 14px 45px 14px 16px;
+  }
+
+  .servicios-section {
+    padding: 40px 15px;
+  }
+
+  .servicios-titulo {
+    font-size: 1.7rem;
+  }
+
+  .servicios-grid {
+    gap: 20px;
+  }
+}
