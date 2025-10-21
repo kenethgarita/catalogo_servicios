@@ -34,7 +34,7 @@ app.get("/", async (req, res) => {
 app.use("/Usuarios",Usuarios)
 app.use("/Roles",Roles)
 app.use("/Categorias",Categorias)
-app.use("/Servicios",Servicios)
+app.use("/Servicio",Servicios)
 app.use("/Solicitudes",Solicitudes)
 app.use("/SolicitudServicios",solicitudServicio)
 app.use("/Responsables",Responsables)

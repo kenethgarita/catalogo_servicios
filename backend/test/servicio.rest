@@ -1,32 +1,30 @@
-### Crear servicio
-POST http://localhost:5000/Servicios/CrearServicio
+### Crear Servicio
+POST http://localhost:5000/Servicio/CrearServicio
 Content-Type: application/json
 
 {
-  "nombre_servicio": "Permiso de Construcción",
-  "descripcion_servicio": "Trámite para obtener permiso de construcción en el cantón.",
-  "proposito_servicio": "Garantizar la seguridad estructural.",
-  "area_responsable": "Ingeniería Municipal",
-  "tiempo": "5 días hábiles",
-  "documentacion_url": "http://example.com/docs/permiso.pdf",
-  "imagen_servicio": "http://example.com/img/servicio.jpg",
+  "nombre_servicio": "Recolección de residuos",
+  "descripcion_servicio": "Servicio municipal de recolección de basura",
+  "proposito_servicio": "Mantener la limpieza",
+  "area_responsable": "Gestión Ambiental",
+  "tiempo": "2 días",
+  "documentacion_url": "https://docs.muni.go.cr/residuos",
+  "imagen_servicio": "residuos.png",
+  "activo": true,
   "id_categoria": 1
 }
 
-### Obtener todos los servicios
-GET http://localhost:5000/Servicios/ObtenerServicios
+### Listar servicios activos (muestra también nombre_categoria)
+GET http://localhost:5000/Servicio/ListarServicios
 
-### Obtener servicio por ID
-GET http://localhost:5000/Servicios/ObtenerServicio/1
+### Filtrar servicios activos por categoría
+GET http://localhost:5000/Servicio/ListarServicios?categoria=1
 
-### Editar servicio
-PUT http://localhost:5000/Servicios/EditarServicio/1
-Content-Type: application/json
+### Incluir servicios inactivos también
+GET http://localhost:5000/Servicio/ListarServicios?incluirInactivos=true
 
-{
-  "nombre_servicio": "Permiso de Remodelación",
-  "tiempo": "3 días hábiles"
-}
+### Filtrar por categoría e incluir inactivos
+GET http://localhost:5000/Servicio/ListarServicios?categoria=1&incluirInactivos=true
 
-### Eliminar servicio
-DELETE http://localhost:5000/Servicios/EliminarServicio/1
+### Obtener servicio por ID (muestra nombre_categoria)
+GET http://localhost:5000/Servicio/ListarServicioPorId/1

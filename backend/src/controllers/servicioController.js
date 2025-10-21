@@ -6,51 +6,33 @@ import {
   EliminarServicio
 } from "../models/servicioModel.js";
 
-export const CreaServicio = async (req, res) => {
-  const {
-    nombre_servicio,
-    descripcion_servicio,
-    proposito_servicio,
-    area_responsable,
-    tiempo,
-    documentacion_url,
-    imagen_servicio,
-    id_categoria
-  } = req.body;
-
-  if (!nombre_servicio || !id_categoria) {
-    return res.status(400).json({ error: "Faltan campos obligatorios (nombre_servicio, id_categoria)" });
-  }
-
+export const CrearServicioController = async (req, res) => {
   try {
-    const servicio = await CrearServicio({
-      nombre_servicio,
-      descripcion_servicio,
-      proposito_servicio,
-      area_responsable,
-      tiempo,
-      documentacion_url,
-      imagen_servicio,
-      id_categoria
-    });
+    const servicio = await CrearServicio(req.body);
     res.status(201).json(servicio);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error creando el servicio" });
+    res.status(500).json({ error: "Error al crear el servicio" });
   }
 };
 
-export const ListaServicios = async (req, res) => {
+export const ListarServicios = async (req, res) => {
   try {
-    const servicios = await ObtenerServicios();
-    res.status(200).json({ servicios });
+    const { categoria, incluirInactivos } = req.query;
+
+    const servicios = await ObtenerServicios({
+      id_categoria: categoria ? parseInt(categoria) : null,
+      incluirInactivos: incluirInactivos === "true"
+    });
+
+    res.status(200).json(servicios);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error obteniendo los servicios" });
+    res.status(500).json({ error: "Error al listar los servicios" });
   }
 };
 
-export const ListaServicioPorId = async (req, res) => {
+export const ListarServicioPorId = async (req, res) => {
   const { id_servicio } = req.params;
   try {
     const servicio = await ObtenerServicioPorId(id_servicio);
@@ -58,7 +40,7 @@ export const ListaServicioPorId = async (req, res) => {
     res.status(200).json(servicio);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error obteniendo el servicio" });
+    res.status(500).json({ error: "Error al obtener el servicio" });
   }
 };
 
@@ -70,7 +52,7 @@ export const EditarServicio = async (req, res) => {
     res.status(200).json({ mensaje: "Servicio actualizado correctamente" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error actualizando el servicio" });
+    res.status(500).json({ error: "Error al actualizar el servicio" });
   }
 };
 
@@ -82,6 +64,6 @@ export const BorrarServicio = async (req, res) => {
     res.status(200).json({ mensaje: "Servicio eliminado correctamente" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error eliminando el servicio" });
+    res.status(500).json({ error: "Error al eliminar el servicio" });
   }
 };
