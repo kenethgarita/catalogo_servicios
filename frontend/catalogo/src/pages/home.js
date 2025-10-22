@@ -97,7 +97,7 @@ function Home() {
           {/* IMAGEN DE FONDO - Reemplaza '/hero-background.jpg' con tu imagen real */}
           <div 
             className="hero-background" 
-            style={{ backgroundImage: `url('/hero-background.jpg')` }}
+            style={{ backgroundImage: `url('https://cdn.vectorstock.com/i/500p/73/65/gradient-orange-abstract-geometric-background-vector-51857365.jpg')` }}
           >
             {/* Overlay transparente gris claro para el texto */}
             <div className="hero-overlay"></div>
