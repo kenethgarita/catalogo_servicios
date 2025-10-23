@@ -9,6 +9,7 @@ import Solicitudes from "./routes/solicitudRoutes.js"
 import solicitudServicio from "./routes/solicitudServicioRoutes.js"
 import Responsables from "./routes/responsableRoutes.js"
 import Estado from "./routes/estadoRoutes.js"
+import Email from "./routes/emailRoutes.js"
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -39,5 +40,6 @@ app.use("/Solicitudes",Solicitudes)
 app.use("/SolicitudServicios",solicitudServicio)
 app.use("/Responsables",Responsables)
 app.use("/Estado",Estado)
+app.use("/Email",Email)
 
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
