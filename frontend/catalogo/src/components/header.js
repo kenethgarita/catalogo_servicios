@@ -1,12 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './header.css';
 
 const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   const toggleMenu = () => {
-    setShowMenu(!showMenu);
+    if (showMenu) {
+      // Iniciar animación de cierre
+      setIsClosing(true);
+      setTimeout(() => {
+        setShowMenu(false);
+        setIsClosing(false);
+      }, 300); // Duración de la animación de cierre
+    } else {
+      setShowMenu(true);
+      setIsClosing(false);
+    }
   };
+
+  // Cerrar con tecla Escape
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && showMenu) {
+        toggleMenu();
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [showMenu]);
 
   return (
     <>
@@ -31,17 +53,20 @@ const Header = () => {
         </div>
       </header>
 
-      {/* Sidebar menu */}
-      {showMenu && (
+      {/* Sidebar menu - mantener montado durante el cierre */}
+      {(showMenu || isClosing) && (
         <>
-          <div className="sidebar-overlay" onClick={toggleMenu}></div>
-          <aside className="sidebar">
+          <div 
+            className={`sidebar-overlay ${isClosing ? 'closing' : ''}`} 
+            onClick={toggleMenu}
+          ></div>
+          <aside className={`sidebar ${isClosing ? 'closing' : ''}`}>
             <nav>
               <ul>
-                <li><a href="/">Sobre IFAM</a></li>
-                <li><a href="/nosotros">Nosotros</a></li>
-                <li><a href="/servicios">Servicios</a></li>
-                <li><a href="/contacto">Contacto</a></li>
+                <li><a href="/" onClick={toggleMenu}>Inicio</a></li>
+                <li><a href="/about" onClick={toggleMenu}>a</a></li>
+                <li><a href="/servicios" onClick={toggleMenu}>Servicios</a></li>
+                <li><a href="/contacto" onClick={toggleMenu}>Contacto</a></li>
               </ul>
             </nav>
           </aside>
