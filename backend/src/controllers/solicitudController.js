@@ -1,18 +1,40 @@
 import { CrearSolicitud, ObtenerSolicitudes, ObtenerSolicitudPorId, ActualizarSolicitud, EliminarSolicitud } from "../models/solicitudModel.js";
+import { sendSystemEmail } from "../utils/sendEmail.js";
+
 
 export const CreaSolicitud = async (req, res) => {
-    const { id_usuario, detalles_solicitud, id_estado } = req.body; // id_estado en lugar de estado_solicitud
-    if (!id_usuario || !detalles_solicitud) {
+    const { detalles_solicitud, id_estado } = req.body; // no tomamos id_usuario del body
+    const id_usuario = req.user.id_usuario; // ✅ usamos el id del usuario logeado
+    const userEmail = req.user.correo;
+
+    if (!detalles_solicitud) {
         return res.status(400).json({ error: "Faltan campos obligatorios" });
     }
+
     try {
-        const solicitud = await CrearSolicitud({ id_usuario, detalles_solicitud, id_estado }); // modelo asigna 1 si es undefined
+        // Crear la solicitud en DB
+        const solicitud = await CrearSolicitud({ id_usuario, detalles_solicitud, id_estado });
+        console.log("Usuario logeado:", req.user);
+
+        // Enviar correo automático solo si existe el correo
+        if (userEmail) {
+            const html = `
+                <h2>Confirmación de solicitud</h2>
+                <p>Hola, hemos recibido tu solicitud correctamente.</p>
+                <p>Detalles: ${detalles_solicitud}</p>
+            `;
+            await sendSystemEmail(userEmail, "Confirmación de solicitud", html);
+        } else {
+            console.warn("El usuario no tiene correo definido, no se envió confirmación.");
+        }
+
         res.status(201).json(solicitud);
     } catch (error) {
-        console.error(error);
+        console.error("Error creando solicitud:", error);
         res.status(500).json({ error: "Error creando la solicitud" });
     }
 };
+
 
 export const ListaSolicitudes = async (req, res) => {
     try {

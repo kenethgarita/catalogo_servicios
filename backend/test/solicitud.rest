@@ -1,9 +1,10 @@
 ### Crear Solicitud
-POST http://localhost:5000/Solicitudes/CrearSolicitud
+POST http://localhost:5000/Solicitudes/CrearSolicitud 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjo0LCJyb2wiOiJBZG1pbiIsImVzX3Jlc3BvbnNhYmxlIjpmYWxzZSwiY29ycmVvIjoia2VuZXRoZ2FyaXRhQGdtYWlsLmNvbSIsImlhdCI6MTc2MTI0Njc3MywiZXhwIjoxNzYxMzMzMTczfQ.6SHXks-BwLwpEEkNv8iAYTi7Y_qfLLo78VQXIbmFs7E
 Content-Type: application/json
 
 {
-  "id_usuario": 1,
+  "id_usuario": 4,
   "detalles_solicitud": "Solicitud de prueba",
   "id_estado": 1
 }

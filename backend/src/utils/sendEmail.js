@@ -8,11 +8,17 @@ dotenv.config();
  */
 function createTransporter() {
   return nodemailer.createTransport({
+    // host: "smtp.office365.com",  Datos oficiales
+    // port: 587,                   
+    // secure: false, 
     service: 'gmail',
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
+    // tls:{
+    //   ciphers: "SSLv3",
+    // },
   });
 }
 
@@ -25,7 +31,7 @@ export async function sendSystemEmail(to, subject, html) {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      from: "IFAM Informa",
       to,
       subject,
       html,
@@ -44,7 +50,7 @@ export async function sendSystemEmail(to, subject, html) {
  * Envía un correo "manual" (por ejemplo, una respuesta de un responsable)
  * Pero usa las mismas credenciales del sistema (sin pedir user/pass)
  */
-export async function sendUserEmail(to, subject, html, senderName = 'IFAM - Catálogo de Servicios') {
+export async function sendUserEmail(to, subject, html, senderName = 'IFAM Informa') {
   try {
     const transporter = createTransporter();
 

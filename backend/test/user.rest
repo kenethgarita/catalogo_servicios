@@ -3,12 +3,12 @@ POST http://localhost:5000/Usuarios/CrearUsuario
 Content-Type: application/json
 
 {
-    "nombre":"Admin",
-    "apellido1":"test",
+    "nombre":"Keneth",
+    "apellido1":"Garita Madrigal",
     "apellido2":"test",
     "cargo":"Administrador",
     "municipalidad":"test",
-    "correo":"test",
+    "correo":"kenethgarita@gmail.com",
     "contrasena":"Admin123",
     "num_tel":"test",
     "id_rol": 1
@@ -19,8 +19,8 @@ POST http://localhost:5000/Usuarios/login
 Content-Type: application/json
 
 {
-  "correo": "test3",
-  "contrasena": "test3"
+  "correo": "kenethgarita@gmail.com",
+  "contrasena": "Admin123"
 }
 
 ###Obtener todos los usuarios ###

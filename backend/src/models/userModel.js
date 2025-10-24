@@ -43,6 +43,7 @@ export async function LoginUsuario({ correo, contrasena }) {
                 u.nombre,
                 u.apellido1,
                 u.contrasena,
+                u.correo,
                 r.nombre_rol,
                 CASE 
                     WHEN EXISTS (
@@ -68,7 +69,8 @@ export async function LoginUsuario({ correo, contrasena }) {
     const payload = {
         id_usuario: user.id_usuario,
         rol: user.nombre_rol,
-        es_responsable: user.es_responsable === 1
+        es_responsable: user.es_responsable === 1,
+        correo: user.correo
     };
 
     // Crear token
@@ -81,7 +83,8 @@ export async function LoginUsuario({ correo, contrasena }) {
             nombre: user.nombre,
             apellido1: user.apellido1,
             rol: user.nombre_rol,
-            es_responsable: user.es_responsable === 1
+            es_responsable: user.es_responsable === 1,
+            correo: user.correo
         }
     };
 }
