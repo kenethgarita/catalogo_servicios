@@ -65,7 +65,7 @@ const Header = () => {
               <ul>
                 <li><a href="/" onClick={toggleMenu}>Inicio</a></li>
                 <li><a href="/about" onClick={toggleMenu}>a</a></li>
-                <li><a href="/servicios" onClick={toggleMenu}>Servicios</a></li>
+                <li><a href="/admin/servicios" onClick={toggleMenu}>Servicios</a></li>
                 <li><a href="/contacto" onClick={toggleMenu}>Contacto</a></li>
               </ul>
             </nav>

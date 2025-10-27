@@ -1,0 +1,371 @@
+.adminServicios-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f7fa;
+}
+
+.adminServicios {
+  flex: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  width: 100%;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.admin-header h1 {
+  color: #1d2d5a;
+  font-size: 2.2rem;
+  font-weight: 700;
+  font-family: 'IBM Plex Sans', sans-serif;
+  margin: 0;
+}
+
+.btn-nuevo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background-color: #1d2d5a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.btn-nuevo:hover {
+  background-color: #152240;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(29, 45, 90, 0.3);
+}
+
+/* Tabla */
+.servicios-table-container {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.servicios-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.servicios-table thead {
+  background-color: #f8f9fa;
+}
+
+.servicios-table th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #1d2d5a;
+  font-size: 0.95rem;
+  border-bottom: 2px solid #e0e0e0;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.servicios-table td {
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.servicios-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.td-titulo {
+  font-weight: 600;
+  color: #1d2d5a;
+}
+
+.td-descripcion {
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.td-acciones {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.badge-activo {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.badge-inactivo {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Botones de acción */
+.btn-accion {
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+}
+
+.btn-editar {
+  color: #0066cc;
+}
+
+.btn-editar:hover {
+  background-color: #e3f2fd;
+}
+
+.btn-toggle {
+  color: #f5a623;
+}
+
+.btn-toggle:hover {
+  background-color: #fff4e5;
+}
+
+.btn-eliminar {
+  color: #dc3545;
+}
+
+.btn-eliminar:hover {
+  background-color: #f8d7da;
+}
+
+.no-data {
+  padding: 60px 20px;
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  padding: 20px;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: #1d2d5a;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.modal-close:hover {
+  color: #1d2d5a;
+}
+
+.modal-form {
+  padding: 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'IBM Plex Sans', sans-serif;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #1d2d5a;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-group-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.form-group-checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.form-group-checkbox label {
+  cursor: pointer;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-cancelar,
+.btn-guardar {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.btn-cancelar {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.btn-cancelar:hover {
+  background-color: #d0d0d0;
+}
+
+.btn-guardar {
+  background-color: #1d2d5a;
+  color: white;
+}
+
+.btn-guardar:hover {
+  background-color: #152240;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(29, 45, 90, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .adminServicios {
+    padding: 20px 15px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .btn-nuevo {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .servicios-table-container {
+    overflow-x: auto;
+  }
+
+  .servicios-table {
+    min-width: 700px;
+  }
+
+  .modal-content {
+    margin: 20px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .btn-cancelar,
+  .btn-guardar {
+    width: 100%;
+  }
+}
