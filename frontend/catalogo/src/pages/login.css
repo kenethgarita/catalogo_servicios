@@ -1,77 +1,44 @@
+/* Prevenir scroll horizontal */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 .login-page {
   width: 100%;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #FF8C42 0%, #FFA552 40%, #2C3E50 70%);
+  background: 
+    linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(255,255,255,0.03) 10px,
+      rgba(255,255,255,0.03) 20px
+    );
   padding: 20px;
   font-family: 'IBM Plex Sans', sans-serif;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .login-container {
   width: 100%;
-  max-width: 1100px;
+  max-width: 550px;
   background-color: white;
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   overflow: hidden;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 600px;
-}
-
-/* Sección de imagen */
-.login-image {
-  position: relative;
-  overflow: hidden;
-}
-
-.login-bg {
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  position: relative;
-}
-
-.login-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, rgba(44, 62, 80, 0.9), rgba(52, 73, 94, 0.95));
-}
-
-.login-brand {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
-  color: white;
-  z-index: 2;
-  width: 80%;
-}
-
-.brand-logo {
-  max-width: 200px;
-  height: auto;
-  margin-bottom: 20px;
-  filter: brightness(0) invert(1);
-}
-
-.login-brand h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 10px;
-  line-height: 1.2;
-}
-
-.login-brand p {
-  font-size: 1rem;
-  opacity: 0.9;
+  box-sizing: border-box;
 }
 
 /* Contenedor de formularios */
@@ -93,10 +60,12 @@
 
 .form-panel {
   width: 50%;
-  padding: 60px 50px;
+  padding: 40px 40px;
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
+  max-height: 650px;
+  overflow-y: auto;
 }
 
 .form-panel.active {
@@ -104,17 +73,30 @@
   pointer-events: all;
 }
 
+/* Logo en el formulario */
+.form-logo {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.form-logo img {
+  max-width: 180px;
+  height: auto;
+}
+
 .form-panel h2 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 700;
   color: #1d2d5a;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  text-align: center;
 }
 
 .form-subtitle {
   color: #666;
-  font-size: 1rem;
-  margin-bottom: 30px;
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+  text-align: center;
 }
 
 /* Formulario */
@@ -122,16 +104,23 @@
   width: 100%;
 }
 
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 0;
+}
+
 .form-group {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-weight: 600;
   color: #333;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .input-icon {
@@ -142,17 +131,17 @@
 
 .input-icon svg {
   position: absolute;
-  left: 14px;
+  left: 12px;
   color: #999;
   pointer-events: none;
 }
 
 .input-icon input {
   width: 100%;
-  padding: 14px 14px 14px 45px;
+  padding: 12px 12px 12px 42px;
   border: 2px solid #e0e0e0;
   border-radius: 10px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-family: 'IBM Plex Sans', sans-serif;
   transition: all 0.3s ease;
   box-sizing: border-box;
@@ -168,7 +157,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   font-size: 0.9rem;
 }
 
@@ -199,17 +188,17 @@
 
 .btn-submit {
   width: 100%;
-  padding: 16px;
+  padding: 14px;
   background: linear-gradient(135deg, #1d2d5a 0%, #2a4175 100%);
   color: white;
   border: none;
   border-radius: 10px;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: 'IBM Plex Sans', sans-serif;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .btn-submit:hover {
@@ -219,7 +208,7 @@
 
 .form-footer {
   text-align: center;
-  margin-top: 30px;
+  margin-top: 24px;
   color: #666;
   font-size: 0.95rem;
 }
@@ -243,47 +232,59 @@
 }
 
 /* Responsive */
-@media (max-width: 968px) {
-  .login-container {
-    grid-template-columns: 1fr;
-    max-width: 500px;
-  }
-
-  .login-image {
-    display: none;
-  }
-
-  .form-panel {
-    padding: 40px 30px;
-  }
-
-  .form-panel h2 {
-    font-size: 1.8rem;
-  }
-}
-
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .login-page {
     padding: 10px;
   }
 
   .login-container {
+    max-width: 100%;
     border-radius: 15px;
   }
 
   .form-panel {
     padding: 30px 20px;
+    max-height: none;
+  }
+
+  .form-logo img {
+    max-width: 140px;
   }
 
   .form-panel h2 {
     font-size: 1.6rem;
   }
 
-  .brand-logo {
-    max-width: 150px;
+  .form-row {
+    grid-template-columns: 1fr;
   }
 
-  .login-brand h1 {
-    font-size: 1.5rem;
+  .input-icon input {
+    font-size: 0.9rem;
+    padding: 10px 10px 10px 38px;
+  }
+
+  .form-group label {
+    font-size: 0.85rem;
+  }
+
+  .form-options {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 400px) {
+  .form-panel {
+    padding: 20px 15px;
+  }
+
+  .form-logo img {
+    max-width: 120px;
+  }
+
+  .form-panel h2 {
+    font-size: 1.4rem;
   }
 }
