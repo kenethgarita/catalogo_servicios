@@ -1,3 +1,9 @@
+/* Solo aplicar a la página de admin */
+.adminServicios-page,
+.adminServicios-page * {
+  box-sizing: border-box;
+}
+
 .adminServicios-page {
   width: 100%;
   min-height: 100vh;

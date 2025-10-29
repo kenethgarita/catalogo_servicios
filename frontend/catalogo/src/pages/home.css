@@ -1,20 +1,21 @@
+/* Solo aplicar estilos dentro de .home */
 .home-page {
   width: 100%;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   background-color: #ffffff;
-  overflow-x: hidden; /* Prevenir scroll horizontal */
+  overflow-x: hidden;
 }
 
 .home {
   flex: 1;
   width: 100%;
-  overflow-x: hidden; /* Prevenir scroll horizontal */
+  overflow-x: hidden;
 }
 
-/* Hero Section con imagen de fondo */
-.hero-section {
+/* Hero Section - SOLO para home */
+.home .hero-section {
   position: relative;
   width: 100%;
   min-height: 520px;
@@ -23,8 +24,7 @@
   overflow: hidden;
 }
 
-/* IMAGEN DE FONDO - Aquí está la referencia a la imagen */
-.hero-background {
+.home .hero-background {
   position: absolute;
   top: 0;
   left: 0;
@@ -33,21 +33,19 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  /* Placeholder: reemplaza con tu imagen real en el style inline del componente */
-  background-color: #e8c99b; /* Color de respaldo */
+  background-color: #e8c99b;
 }
 
-/* Overlay transparente gris claro para texto legible */
-.hero-overlay {
+.home .hero-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(240, 240, 240, 0.5); /* Gris claro transparente */
+  background-color: rgba(240, 240, 240, 0.5);
 }
 
-.hero-content-wrapper {
+.home .hero-content-wrapper {
   position: relative;
   z-index: 2;
   width: 100%;
@@ -58,41 +56,40 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 40px;
-  box-sizing: border-box; /* Asegurar que el padding no cause overflow */
+  box-sizing: border-box;
 }
 
-.hero-content {
+.home .hero-content {
   flex: 1;
   max-width: 600px;
 }
 
-.hero-content h1 {
+.home .hero-content h1 {
   font-size: 2.8rem;
   font-weight: 700;
   margin-bottom: 25px;
   font-family: 'IBM Plex Sans', sans-serif;
-  color: #1d2d5a;
+  color: #1d2d5a; /* Color oscuro para el home */
   line-height: 1.2;
 }
 
-.hero-content p {
+.home .hero-content p {
   font-size: 1rem;
   color: #333;
   line-height: 1.7;
   margin-bottom: 0;
 }
 
-/* Botones en la parte derecha */
-.hero-buttons {
+.home .hero-buttons {
   display: flex;
   flex-direction: column;
   gap: 20px;
   padding-top: 20px;
-  flex-shrink: 0; /* Prevenir que se compriman */
+  flex-shrink: 0;
 }
 
-/* Barra de búsqueda */
-.search-section {
+/* Barra de búsqueda - SOLO home */
+.home .search-section {
   width: 100%;
   background-color: #ffffff;
   padding: 30px 20px;
@@ -100,7 +97,7 @@
   box-sizing: border-box;
 }
 
-.search-container {
+.home .search-container {
   max-width: 960px;
   margin: 0 auto;
   position: relative;
@@ -108,7 +105,7 @@
   align-items: center;
 }
 
-.search-input {
+.home .search-input {
   width: 100%;
   padding: 16px 50px 16px 20px;
   font-size: 1rem;
@@ -119,12 +116,12 @@
   box-sizing: border-box;
 }
 
-.search-input:focus {
+.home .search-input:focus {
   outline: none;
   border-color: #1d2d5a;
 }
 
-.search-button {
+.home .search-button {
   position: absolute;
   right: 10px;
   background: none;
@@ -138,36 +135,39 @@
   transition: color 0.3s ease;
 }
 
-.search-button:hover {
+.home .search-button:hover {
   color: #1d2d5a;
 }
 
-/* Sección de Servicios - FONDO BLANCO */
-.servicios-section {
-  max-width: 1400px;
+/* Sección de Servicios - SOLO home */
+.home .servicios-section {
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   padding: 80px 20px;
-  background-color: #ffffff; /* Fondo blanco */
+  background-color: #ffffff;
   box-sizing: border-box;
 }
 
-.servicios-titulo {
+.home .servicios-titulo {
   font-size: 2.5rem;
-  color: #1d2d5a;
+  color: #172951;
   text-align: center;
   margin-bottom: 50px;
   font-family: 'IBM Plex Sans', sans-serif;
   font-weight: 700;
 }
 
-.servicios-grid {
+.home .servicios-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 35px;
   align-items: stretch;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.loading {
+.home .loading {
   text-align: center;
   font-size: 1.3rem;
   color: #666;
@@ -175,7 +175,7 @@
   font-family: 'IBM Plex Sans', sans-serif;
 }
 
-.no-servicios {
+.home .no-servicios {
   text-align: center;
   font-size: 1.2rem;
   color: #666;
@@ -185,111 +185,111 @@
 
 /* Responsive */
 @media (max-width: 1024px) {
-  .hero-content-wrapper {
+  .home .hero-content-wrapper {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .hero-content {
+  .home .hero-content {
     max-width: 100%;
   }
 
-  .hero-buttons {
+  .home .hero-buttons {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
   }
 
-  .hero-content h1 {
+  .home .hero-content h1 {
     font-size: 2.3rem;
   }
 
-  .servicios-titulo {
+  .home .servicios-titulo {
     font-size: 2.2rem;
   }
 }
 
 @media (max-width: 968px) {
-  .servicios-grid {
+  .home .servicios-grid {
     grid-template-columns: 1fr;
     gap: 25px;
   }
 
-  .hero-section {
+  .home .hero-section {
     min-height: 450px;
   }
 
-  .hero-content-wrapper {
+  .home .hero-content-wrapper {
     padding: 40px 20px;
   }
 
-  .hero-content h1 {
+  .home .hero-content h1 {
     font-size: 2rem;
   }
 
-  .hero-content p {
+  .home .hero-content p {
     font-size: 0.95rem;
   }
 
-  .hero-buttons {
+  .home .hero-buttons {
     gap: 15px;
   }
 
-  .servicios-section {
+  .home .servicios-section {
     padding: 60px 20px;
   }
 
-  .servicios-titulo {
+  .home .servicios-titulo {
     font-size: 2rem;
   }
 }
 
 @media (max-width: 640px) {
-  .hero-buttons {
+  .home .hero-buttons {
     flex-direction: column;
     width: 100%;
   }
 
-  .hero-section {
+  .home .hero-section {
     min-height: 550px;
   }
 }
 
 @media (max-width: 480px) {
-  .hero-section {
+  .home .hero-section {
     min-height: 600px;
   }
 
-  .hero-content-wrapper {
+  .home .hero-content-wrapper {
     padding: 30px 15px;
   }
 
-  .hero-content h1 {
+  .home .hero-content h1 {
     font-size: 1.7rem;
   }
 
-  .hero-content p {
+  .home .hero-content p {
     font-size: 0.9rem;
   }
 
-  .search-section {
+  .home .search-section {
     padding: 20px 15px;
   }
 
-  .search-input {
+  .home .search-input {
     font-size: 0.95rem;
     padding: 14px 45px 14px 16px;
   }
 
-  .servicios-section {
+  .home .servicios-section {
     padding: 40px 15px;
   }
 
-  .servicios-titulo {
+  .home .servicios-titulo {
     font-size: 1.7rem;
   }
 
-  .servicios-grid {
+  .home .servicios-grid {
     gap: 20px;
   }
 }

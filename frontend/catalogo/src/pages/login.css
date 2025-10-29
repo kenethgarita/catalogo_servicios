@@ -1,13 +1,12 @@
 /* Prevenir scroll horizontal */
-* {
+/* Prevenir scroll horizontal - SOLO para la página de login */
+.login-page,
+.login-page * {
   box-sizing: border-box;
 }
 
-html, body {
+.login-page {
   overflow-x: hidden;
-  width: 100%;
-  margin: 0;
-  padding: 0;
 }
 
 .login-page {

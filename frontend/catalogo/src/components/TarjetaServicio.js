@@ -1,14 +1,22 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './TarjetaServicio.css';
 
 const TarjetaServicio = ({ 
+  id,
   titulo, 
   imagen, 
   icono,
   descripcion 
 }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/servicio/${id}`);
+  };
+
   return (
-    <div className="tarjeta-servicio">
+    <div className="tarjeta-servicio" onClick={handleClick}>
       <div className="tarjeta-imagen">
         <img src={imagen || '/placeholder-servicio.jpg'} alt={titulo} />
       </div>
