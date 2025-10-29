@@ -64,7 +64,7 @@ const Header = () => {
             <nav>
               <ul>
                 <li><a href="/" onClick={toggleMenu}>Inicio</a></li>
-                <li><a href="/about" onClick={toggleMenu}>a</a></li>
+                <li><a href="/detalle/servicio" onClick={toggleMenu}>Ver servicio</a></li>
                 <li><a href="/admin/servicios" onClick={toggleMenu}>Servicios</a></li>
                 <li><a href="/login" onClick={toggleMenu}>Acceder a la cuenta</a></li>
               </ul>

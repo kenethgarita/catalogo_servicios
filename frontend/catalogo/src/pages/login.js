@@ -153,7 +153,7 @@ function Login() {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      placeholder="correo@ejemplo.com"
+                      placeholder="correo@ejemplo.go.cr"
                     />
                   </div>
                 </div>
@@ -343,7 +343,7 @@ function Login() {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      placeholder="correo@ejemplo.com"
+                      placeholder="correo@ejemplo.go.cr"
                     />
                   </div>
                 </div>
