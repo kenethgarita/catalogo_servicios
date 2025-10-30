@@ -17,68 +17,29 @@ function DetalleServicio() {
 
   const fetchServicio = async () => {
     try {
-      // CONEXIÓN A BASE DE DATOS - Reemplaza con tu endpoint real
-      /*
-      const response = await fetch(`/api/servicios/${id}`);
-      const data = await response.json();
-      setServicio(data);
-      setLoading(false);
-      */
+      const response = await fetch(`http://localhost:5000/Servicio/ListarServicioPorId/${id}`);
 
-      // DATOS DE EJEMPLO (PLACEHOLDER)
-      const serviciosPlaceholder = {
-        1: {
-          id: 1,
-          nombre: 'Soporte Técnico',
-          categoria: 'Tecnología',
-          imagen: 'https://via.placeholder.com/1200x500/4a90e2/ffffff?text=Soporte+Tecnico',
-          descripcion: 'Servicio de soporte técnico para resolver problemas relacionados con hardware, software y conectividad. Incluye diagnóstico, reparación y mantenimiento preventivo de equipos. También ofrece asesoría en la implementación de nuevas tecnologías y capacitación al personal en el uso de herramientas digitales. Nuestro equipo de expertos está disponible para brindar soluciones rápidas y efectivas a cualquier incidencia técnica que pueda surgir en su municipalidad.',
-          proposito: 'Garantizar el correcto funcionamiento de los equipos tecnológicos y maximizar la productividad del personal mediante soluciones técnicas eficientes y oportunas.',
-          area_responsable: 'Departamento de Tecnologías de Información',
-          tiempo_atencion: '24-48 horas',
-          documentacion: 'https://ejemplo.com/docs/soporte-tecnico.pdf'
-        },
-        2: {
-          id: 2,
-          nombre: 'Gestión de Recursos Humanos',
-          categoria: 'Administrativo',
-          imagen: 'https://via.placeholder.com/1200x500/2ecc71/ffffff?text=RRHH',
-          descripcion: 'Administración integral de recursos humanos incluyendo contratación, capacitación, evaluación de desempeño y gestión de nómina. El servicio abarca desde el reclutamiento y selección de personal hasta el desarrollo profesional continuo de los colaboradores. Implementamos las mejores prácticas en gestión del talento para asegurar un equipo motivado y competente.',
-          proposito: 'Optimizar la gestión del talento humano en la organización y fomentar un ambiente laboral positivo que promueva el desarrollo profesional.',
-          area_responsable: 'Departamento de Recursos Humanos',
-          tiempo_atencion: '5-7 días hábiles',
-          documentacion: 'https://ejemplo.com/docs/rrhh.pdf'
-        },
-        3: {
-          id: 3,
-          nombre: 'Asesoría Legal',
-          categoria: 'Legal',
-          imagen: 'https://via.placeholder.com/1200x500/e74c3c/ffffff?text=Asesoria+Legal',
-          descripcion: 'Servicio de consultoría y asesoramiento legal en temas corporativos, contratos, cumplimiento normativo y resolución de conflictos. Incluye revisión de documentos legales, representación en procedimientos administrativos y orientación en temas de compliance. Nuestro equipo legal proporciona asesoría especializada para proteger los intereses de su municipalidad.',
-          proposito: 'Proveer orientación legal especializada para garantizar el cumplimiento normativo y minimizar riesgos legales en todas las operaciones municipales.',
-          area_responsable: 'Departamento Legal y Normativo',
-          tiempo_atencion: '3-5 días hábiles',
-          documentacion: 'https://ejemplo.com/docs/legal.pdf'
-        },
-        4: {
-          id: 4,
-          nombre: 'Capacitación Municipal',
-          categoria: 'Educación',
-          imagen: 'https://via.placeholder.com/1200x500/9b59b6/ffffff?text=Capacitacion',
-          descripcion: 'Programas de capacitación y formación continua para el personal municipal en diversas áreas de especialización. Ofrecemos cursos presenciales y virtuales diseñados para fortalecer las competencias del personal y mejorar la eficiencia en la prestación de servicios municipales.',
-          proposito: 'Fortalecer las capacidades del personal municipal mediante programas de formación continua y actualización profesional.',
-          area_responsable: 'Centro de Capacitación IFAM',
-          tiempo_atencion: '10-15 días hábiles',
-          documentacion: 'https://ejemplo.com/docs/capacitacion.pdf'
-        }
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Normalizar los nombres de campos de la API
+      const servicioNormalizado = {
+        id: data.id_servicio,
+        nombre: data.nombre_servicio,
+        categoria: data.nombre_categoria,
+        descripcion: data.descripcion_servicio,
+        proposito: data.proposito_servicio,
+        area_responsable: data.area_responsable,
+        tiempo_atencion: data.tiempo,
+        documentacion: data.documentacion_url,
+        imagen: data.imagen_servicio
       };
 
-      setTimeout(() => {
-        const servicioEncontrado = serviciosPlaceholder[id];
-        setServicio(servicioEncontrado);
-        setLoading(false);
-      }, 500);
-
+      setServicio(servicioNormalizado);
+      setLoading(false);
     } catch (error) {
       console.error('Error al cargar servicio:', error);
       setLoading(false);
@@ -124,13 +85,9 @@ function DetalleServicio() {
       <main className="detalle-servicio">
         {/* Breadcrumb */}
         <div className="breadcrumb">
-          <button onClick={() => navigate('/')} className="breadcrumb-link">
-            Inicio
-          </button>
+          <button onClick={() => navigate('/')} className="breadcrumb-link">Inicio</button>
           <span className="breadcrumb-separator">›</span>
-          <button onClick={() => navigate('/')} className="breadcrumb-link">
-            Servicios
-          </button>
+          <button onClick={() => navigate('/')} className="breadcrumb-link">Servicios</button>
           <span className="breadcrumb-separator">›</span>
           <span className="breadcrumb-current">{servicio.nombre}</span>
         </div>
@@ -241,15 +198,14 @@ function DetalleServicio() {
               Volver a Servicios
             </button>
 
-
             <button 
                 className="btn-primario"
                 onClick={() => navigate(`/solicitar/${servicio.id}`)}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                 <polyline points="22,6 12,13 2,6"/>
-            </svg>
-                Solicitar Servicio
+              </svg>
+              Solicitar Servicio
             </button>
           </section>
         </div>

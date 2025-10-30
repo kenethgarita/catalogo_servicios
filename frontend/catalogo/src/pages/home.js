@@ -13,57 +13,20 @@ function Home() {
   useEffect(() => {
     const fetchServiciosHabilitados = async () => {
       try {
-        // CONEXIÓN A BASE DE DATOS - Reemplaza con tu endpoint real
-        /*
-        const response = await fetch('/api/servicios/habilitados');
+        const response = await fetch('http://localhost:5000/Servicio/ListarServicios');
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
-        setServiciosHabilitados(data);
-        setLoading(false);
-        */
+        console.log('Respuesta JSON:', data);
 
-        // DATOS DE EJEMPLO (PLACEHOLDER)
-        const serviciosPlaceholder = [
-  {
-    id: 1,
-    nombre: 'Servicio 1',  // Cambiar 'titulo' por 'nombre'
-    imagen: 'https://via.placeholder.com/450x220/d3d3d3/666666?text=Servicio+1',
-    icono: null,
-    descripcion: 'Descripción del servicio 1. Esta es una descripción de ejemplo que se cortará con puntos suspensivos si es muy larga.',
-    habilitado: true
-  },
-  {
-    id: 2,
-    nombre: 'Servicio 2',
-    imagen: 'https://via.placeholder.com/450x220/d3d3d3/666666?text=Servicio+2',
-    icono: null,
-    descripcion: 'Descripción breve del servicio 2.',
-    habilitado: true
-  },
-  {
-    id: 3,
-    nombre: 'Servicio 3',
-    imagen: 'https://via.placeholder.com/450x220/d3d3d3/666666?text=Servicio+3',
-    icono: null,
-    descripcion: 'Otra descripción de servicio que también se ajustará automáticamente al espacio disponible.',
-    habilitado: true
-  },
-  {
-    id: 4,
-    nombre: 'Servicio 4',
-    imagen: 'https://via.placeholder.com/450x220/d3d3d3/666666?text=Servicio+4',
-    icono: null,
-    descripcion: 'Descripción del cuarto servicio disponible.',
-    habilitado: true
-  }
-];
-
-        setTimeout(() => {
-          setServiciosHabilitados(serviciosPlaceholder);
-          setLoading(false);
-        }, 500);
-
+        if (Array.isArray(data) && data.length > 0) {
+          setServiciosHabilitados(data);
+        } else {
+          setServiciosHabilitados([]); // fallback si no hay servicios
+        }
       } catch (error) {
         console.error('Error al cargar servicios habilitados:', error);
+        setServiciosHabilitados([]); // fallback en caso de error
+      } finally {
         setLoading(false);
       }
     };
@@ -71,20 +34,9 @@ function Home() {
     fetchServiciosHabilitados();
   }, []);
 
-  const handleVerServicios = () => {
-    console.log('Ver Servicios');
-    // Navegación o acción
-  };
-
-  const handleManejarPeticiones = () => {
-    console.log('Manejar Peticiones');
-    // Navegación o acción
-  };
-
-  const handleSolicitarServicio = () => {
-    console.log('Solicitar Servicio');
-    // Navegación o acción
-  };
+  const handleVerServicios = () => console.log('Ver Servicios');
+  const handleManejarPeticiones = () => console.log('Manejar Peticiones');
+  const handleSolicitarServicio = () => console.log('Solicitar Servicio');
 
   return (
     <div className="home-page">
@@ -92,14 +44,12 @@ function Home() {
       <Header />
 
       <main className="home">
-        {/* Hero Section con imagen de fondo */}
+        {/* Hero Section */}
         <section className="hero-section">
-          {/* IMAGEN DE FONDO - Reemplaza '/hero-background.jpg' con tu imagen real */}
           <div 
             className="hero-background" 
             style={{ backgroundImage: `url('https://cdn.vectorstock.com/i/500p/73/65/gradient-orange-abstract-geometric-background-vector-51857365.jpg')` }}
           >
-            {/* Overlay transparente gris claro para el texto */}
             <div className="hero-overlay"></div>
           </div>
 
@@ -110,28 +60,13 @@ function Home() {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
                 Suspendisse non nunc ut nibh mattis venenatis sed vel tellus. 
                 Phasellus feugiat posuere ipsum, id blandit elit elementum vitae. 
-                Sed consectetur, felis sit amet ullamcorper tempus, ligula metus 
-                mollis mi, et sagittis risus eros id ex. Donec sit amet ex quam. 
-                Phasellus rutrum enim eu dolor vulputate, in dapibus enim malesuada. 
-                Morbi viverra mi vel sollicitudin porttitor. Orci varius natoque 
-                penatibus et magnis dis parturient montes, nascetur ridiculus mus.
               </p>
             </div>
 
-            {/* Botones en la parte derecha */}
             <div className="hero-buttons">
-              <BotonHome 
-                texto="Ver Servicios" 
-                onClick={handleVerServicios}
-              />
-              <BotonHome 
-                texto="Manejar Peticiones" 
-                onClick={handleManejarPeticiones}
-              />
-              <BotonHome 
-                texto="Solicitar Servicio" 
-                onClick={handleSolicitarServicio}
-              />
+              <BotonHome texto="Ver Servicios" onClick={handleVerServicios} />
+              <BotonHome texto="Manejar Peticiones" onClick={handleManejarPeticiones} />
+              <BotonHome texto="Solicitar Servicio" onClick={handleSolicitarServicio} />
             </div>
           </div>
         </section>
@@ -139,11 +74,7 @@ function Home() {
         {/* Barra de búsqueda */}
         <section className="search-section">
           <div className="search-container">
-            <input 
-              type="text" 
-              placeholder="Buscar servicios..." 
-              className="search-input"
-            />
+            <input type="text" placeholder="Buscar servicios..." className="search-input" />
             <button className="search-button">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="11" cy="11" r="8"/>
@@ -164,19 +95,20 @@ function Home() {
               {serviciosHabilitados.length > 0 ? (
                 <div className="servicios-grid">
                   {serviciosHabilitados.map(servicio => (
-                <TarjetaServicio
-                 key={servicio.id}
-                 id={servicio.id}  // IMPORTANTE: Pasar el ID
-                 titulo={servicio.nombre}  // Cambiar de 'titulo' a 'nombre'
-                 imagen={servicio.imagen}
-                 icono={servicio.icono}
-                 descripcion={servicio.descripcion}
-                />
-           ))}
-  </div>
-) : (
-  <p className="no-servicios">No hay servicios habilitados en este momento.</p>
-)}
+                  <TarjetaServicio
+                    key={servicio.id_servicio}
+                    id={servicio.id_servicio}       // <-- aquí
+                    titulo={servicio.nombre_servicio}
+                    imagen={servicio.imagen_servicio}
+                    icono={servicio.icono}
+                    descripcion={servicio.descripcion_servicio}
+                  />
+                ))}
+
+                </div>
+              ) : (
+                <p className="no-servicios">No hay servicios habilitados en este momento.</p>
+              )}
             </>
           )}
         </section>
