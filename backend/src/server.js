@@ -1,5 +1,6 @@
 import express from "express";
 import { connectDB, InitDB } from "./config/db.js";
+import cors from "cors"
 
 import Usuarios from "./routes/userRoutes.js"
 import Roles from "./routes/rolRoutes.js"
@@ -13,6 +14,12 @@ import Email from "./routes/emailRoutes.js"
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+app.use(cors({
+  origin: "http://localhost:3000", // dominio del frontend
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 
 app.use(express.json());
 
