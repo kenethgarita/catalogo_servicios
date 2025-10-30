@@ -86,8 +86,9 @@
 }
 
 /* Hero Section */
+/* Hero Section */
 .servicio-hero {
-  background: linear-gradient(135deg, #1d2d5a 0%, #2a4175 100%);
+  background: linear-gradient(135deg, #0d1825 0%, #1d2d5a 100%);
   padding: 60px 20px;
   color: white;
   text-align: center;
@@ -101,12 +102,12 @@
 .servicio-categoria {
   display: inline-block;
   padding: 8px 20px;
-  background-color: rgba(206, 172, 101, 0.2);
+  background-color: #CEAC65;
   border: 2px solid #CEAC65;
   border-radius: 30px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #CEAC65;
+  color: #1d2d5a;
   margin-bottom: 20px;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -118,6 +119,8 @@
   margin: 0;
   font-family: 'IBM Plex Sans', sans-serif;
   line-height: 1.2;
+  color: #ffffff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 /* Imagen del Servicio */

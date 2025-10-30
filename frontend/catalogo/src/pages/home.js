@@ -23,39 +23,39 @@ function Home() {
 
         // DATOS DE EJEMPLO (PLACEHOLDER)
         const serviciosPlaceholder = [
-          {
-            id: 1,
-            titulo: 'Servicio 1',
-            imagen: 'https://via.placeholder.com/450x220/d3d3d3/666666?text=Servicio+1',
-            icono: null,
-            descripcion: 'Descripción del servicio 1. Esta es una descripción de ejemplo que se cortará con puntos suspensivos si es muy larga.',
-            habilitado: true
-          },
-          {
-            id: 2,
-            titulo: 'Servicio 2',
-            imagen: 'https://via.placeholder.com/450x220/d3d3d3/666666?text=Servicio+2',
-            icono: null,
-            descripcion: 'Descripción breve del servicio 2.',
-            habilitado: true
-          },
-          {
-            id: 3,
-            titulo: 'Servicio 3',
-            imagen: 'https://via.placeholder.com/450x220/d3d3d3/666666?text=Servicio+3',
-            icono: null,
-            descripcion: 'Otra descripción de servicio que también se ajustará automáticamente al espacio disponible.',
-            habilitado: true
-          },
-          {
-            id: 4,
-            titulo: 'Servicio 4',
-            imagen: 'https://via.placeholder.com/450x220/d3d3d3/666666?text=Servicio+4',
-            icono: null,
-            descripcion: 'Descripción del cuarto servicio disponible.',
-            habilitado: true
-          }
-        ];
+  {
+    id: 1,
+    nombre: 'Servicio 1',  // Cambiar 'titulo' por 'nombre'
+    imagen: 'https://via.placeholder.com/450x220/d3d3d3/666666?text=Servicio+1',
+    icono: null,
+    descripcion: 'Descripción del servicio 1. Esta es una descripción de ejemplo que se cortará con puntos suspensivos si es muy larga.',
+    habilitado: true
+  },
+  {
+    id: 2,
+    nombre: 'Servicio 2',
+    imagen: 'https://via.placeholder.com/450x220/d3d3d3/666666?text=Servicio+2',
+    icono: null,
+    descripcion: 'Descripción breve del servicio 2.',
+    habilitado: true
+  },
+  {
+    id: 3,
+    nombre: 'Servicio 3',
+    imagen: 'https://via.placeholder.com/450x220/d3d3d3/666666?text=Servicio+3',
+    icono: null,
+    descripcion: 'Otra descripción de servicio que también se ajustará automáticamente al espacio disponible.',
+    habilitado: true
+  },
+  {
+    id: 4,
+    nombre: 'Servicio 4',
+    imagen: 'https://via.placeholder.com/450x220/d3d3d3/666666?text=Servicio+4',
+    icono: null,
+    descripcion: 'Descripción del cuarto servicio disponible.',
+    habilitado: true
+  }
+];
 
         setTimeout(() => {
           setServiciosHabilitados(serviciosPlaceholder);
@@ -164,18 +164,19 @@ function Home() {
               {serviciosHabilitados.length > 0 ? (
                 <div className="servicios-grid">
                   {serviciosHabilitados.map(servicio => (
-                    <TarjetaServicio
-                      key={servicio.id}
-                      titulo={servicio.titulo}
-                      imagen={servicio.imagen}
-                      icono={servicio.icono}
-                      descripcion={servicio.descripcion}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <p className="no-servicios">No hay servicios habilitados en este momento.</p>
-              )}
+                <TarjetaServicio
+                 key={servicio.id}
+                 id={servicio.id}  // IMPORTANTE: Pasar el ID
+                 titulo={servicio.nombre}  // Cambiar de 'titulo' a 'nombre'
+                 imagen={servicio.imagen}
+                 icono={servicio.icono}
+                 descripcion={servicio.descripcion}
+                />
+           ))}
+  </div>
+) : (
+  <p className="no-servicios">No hay servicios habilitados en este momento.</p>
+)}
             </>
           )}
         </section>

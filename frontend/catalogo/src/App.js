@@ -4,6 +4,7 @@ import About from "./pages/about";
 import AdminServicios from "./pages/adminServicios";
 import Login from "./pages/login";
 import DetalleServicio from "./pages/detalleServicio";
+import SolicitarServicio from './pages/SolicitarServicio';
 import "./App.css";
 import Accesibilidad from "./components/accesibilidad";
 import Header from "./components/header";
@@ -19,7 +20,9 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/admin/servicios" element={<AdminServicios />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/detalle/servicio" element={<DetalleServicio />} />
+        <Route path="/servicio/:id" element={<DetalleServicio />} />
+        <Route path="/solicitar" element={<SolicitarServicio />} />
+        <Route path="/solicitar/:id" element={<SolicitarServicio />} />
 
       </Routes>
     </Router>

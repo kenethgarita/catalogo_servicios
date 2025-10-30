@@ -20,7 +20,8 @@ const Footer = () => {
         <div className="footer-section">
           <h3 className="footer-title">Horario de atención</h3>
           <p className="footer-text">
-            <strong>Lunes a viernes:</strong><br />
+            
+            <strong>Lunes a viernes:</strong>
             8:00am - 4:00pm
           </p>
         </div>
@@ -28,11 +29,12 @@ const Footer = () => {
         <div className="footer-section">
           <h3 className="footer-title">Contacto</h3>
           <p className="footer-text">
-            <strong>Central telefónica</strong><br />
+            <strong>Central telefónica</strong>
             2507-1000
           </p>
           <p className="footer-text">
-            <strong>Correo electrónico</strong><br />
+            <br />
+            <strong>Correo electrónico</strong>
             comunicacion@ifam.go.cr
           </p>
           <div className="footer-social">
