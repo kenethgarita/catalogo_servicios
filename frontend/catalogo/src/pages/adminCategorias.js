@@ -14,7 +14,7 @@ function AdminCategorias() {
   const [editingCategoria, setEditingCategoria] = useState(null);
   const [editingEstado, setEditingEstado] = useState(null);
   const [editingRol, setEditingRol] = useState(null);
-  const [activeTab, setActiveTab] = useState('categorias'); // 'categorias', 'estados' o 'roles'
+  const [activeTab, setActiveTab] = useState('categorias');
 
   const [formCategoria, setFormCategoria] = useState({
     nombre: '',
@@ -42,14 +42,6 @@ function AdminCategorias() {
 
   const fetchCategorias = async () => {
     try {
-      // CONEXIÓN A BASE DE DATOS
-      /*
-      const response = await fetch('/api/categorias');
-      const data = await response.json();
-      setCategorias(data);
-      */
-
-      // PLACEHOLDER
       const categoriasPlaceholder = [
         {
           id_categoria: 1,
@@ -84,14 +76,6 @@ function AdminCategorias() {
 
   const fetchEstados = async () => {
     try {
-      // CONEXIÓN A BASE DE DATOS
-      /*
-      const response = await fetch('/api/estados-solicitud');
-      const data = await response.json();
-      setEstados(data);
-      */
-
-      // PLACEHOLDER
       const estadosPlaceholder = [
         {
           id_estado: 1,
@@ -132,14 +116,6 @@ function AdminCategorias() {
 
   const fetchRoles = async () => {
     try {
-      // CONEXIÓN A BASE DE DATOS
-      /*
-      const response = await fetch('/api/roles');
-      const data = await response.json();
-      setRoles(data);
-      */
-
-      // PLACEHOLDER
       const rolesPlaceholder = [
         {
           id_rol: 1,
@@ -182,26 +158,7 @@ function AdminCategorias() {
     e.preventDefault();
 
     try {
-      if (editingCategoria) {
-        /*
-        await fetch(`/api/categorias/${editingCategoria.id_categoria}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formCategoria)
-        });
-        */
-        console.log('Actualizando categoría:', formCategoria);
-      } else {
-        /*
-        await fetch('/api/categorias', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formCategoria)
-        });
-        */
-        console.log('Creando categoría:', formCategoria);
-      }
-
+      console.log(editingCategoria ? 'Actualizando categoría:' : 'Creando categoría:', formCategoria);
       alert(editingCategoria ? 'Categoría actualizada' : 'Categoría creada');
       setShowModalCategoria(false);
       setEditingCategoria(null);
@@ -225,9 +182,6 @@ function AdminCategorias() {
   const handleDeleteCategoria = async (id) => {
     if (window.confirm('¿Eliminar esta categoría? Los servicios asociados quedarán sin categoría.')) {
       try {
-        /*
-        await fetch(`/api/categorias/${id}`, { method: 'DELETE' });
-        */
         console.log('Eliminando categoría:', id);
         alert('Categoría eliminada');
         fetchCategorias();
@@ -257,26 +211,7 @@ function AdminCategorias() {
     e.preventDefault();
 
     try {
-      if (editingEstado) {
-        /*
-        await fetch(`/api/estados-solicitud/${editingEstado.id_estado}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formEstado)
-        });
-        */
-        console.log('Actualizando estado:', formEstado);
-      } else {
-        /*
-        await fetch('/api/estados-solicitud', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formEstado)
-        });
-        */
-        console.log('Creando estado:', formEstado);
-      }
-
+      console.log(editingEstado ? 'Actualizando estado:' : 'Creando estado:', formEstado);
       alert(editingEstado ? 'Estado actualizado' : 'Estado creado');
       setShowModalEstado(false);
       setEditingEstado(null);
@@ -300,9 +235,6 @@ function AdminCategorias() {
   const handleDeleteEstado = async (id) => {
     if (window.confirm('¿Eliminar este estado? Las solicitudes con este estado quedarán sin estado.')) {
       try {
-        /*
-        await fetch(`/api/estados-solicitud/${id}`, { method: 'DELETE' });
-        */
         console.log('Eliminando estado:', id);
         alert('Estado eliminado');
         fetchEstados();
@@ -332,26 +264,7 @@ function AdminCategorias() {
     e.preventDefault();
 
     try {
-      if (editingRol) {
-        /*
-        await fetch(`/api/roles/${editingRol.id_rol}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formRol)
-        });
-        */
-        console.log('Actualizando rol:', formRol);
-      } else {
-        /*
-        await fetch('/api/roles', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formRol)
-        });
-        */
-        console.log('Creando rol:', formRol);
-      }
-
+      console.log(editingRol ? 'Actualizando rol:' : 'Creando rol:', formRol);
       alert(editingRol ? 'Rol actualizado' : 'Rol creado');
       setShowModalRol(false);
       setEditingRol(null);
@@ -375,9 +288,6 @@ function AdminCategorias() {
   const handleDeleteRol = async (id) => {
     if (window.confirm('¿Eliminar este rol? Los usuarios con este rol quedarán sin rol asignado.')) {
       try {
-        /*
-        await fetch(`/api/roles/${id}`, { method: 'DELETE' });
-        */
         console.log('Eliminando rol:', id);
         alert('Rol eliminado');
         fetchRoles();
@@ -640,6 +550,136 @@ function AdminCategorias() {
                     onChange={handleCategoriaChange}
                   />
                   <span className="color-value">{formCategoria.color}</span>
+                </div>
+              </div>
+
+              <div className="modal-actions">
+                <button type="button" className="btn-cancelar" onClick={() => setShowModalCategoria(false)}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn-guardar">
+                  {editingCategoria ? 'Actualizar' : 'Crear'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Estado */}
+      {showModalEstado && (
+        <div className="modal-overlay" onClick={() => setShowModalEstado(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>{editingEstado ? 'Editar Estado' : 'Nuevo Estado'}</h2>
+              <button className="modal-close" onClick={() => setShowModalEstado(false)}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitEstado} className="modal-form">
+              <div className="form-group">
+                <label>Nombre *</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  value={formEstado.nombre}
+                  onChange={handleEstadoChange}
+                  required
+                  placeholder="Ej: Pendiente"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Descripción *</label>
+                <textarea
+                  name="descripcion"
+                  value={formEstado.descripcion}
+                  onChange={handleEstadoChange}
+                  required
+                  rows="3"
+                  placeholder="Describe este estado..."
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Color</label>
+                <div className="color-picker-group">
+                  <input
+                    type="color"
+                    name="color"
+                    value={formEstado.color}
+                    onChange={handleEstadoChange}
+                  />
+                  <span className="color-value">{formEstado.color}</span>
+                </div>
+              </div>
+
+              <div className="modal-actions">
+                <button type="button" className="btn-cancelar" onClick={() => setShowModalEstado(false)}>
+                  Cancelar
+                </button>
+                <button type="submit" className="btn-guardar">
+                  {editingEstado ? 'Actualizar' : 'Crear'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Rol */}
+      {showModalRol && (
+        <div className="modal-overlay" onClick={() => setShowModalRol(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>{editingRol ? 'Editar Rol' : 'Nuevo Rol'}</h2>
+              <button className="modal-close" onClick={() => setShowModalRol(false)}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmitRol} className="modal-form">
+              <div className="form-group">
+                <label>Nombre *</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  value={formRol.nombre}
+                  onChange={handleRolChange}
+                  required
+                  placeholder="Ej: Administrador"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Descripción *</label>
+                <textarea
+                  name="descripcion"
+                  value={formRol.descripcion}
+                  onChange={handleRolChange}
+                  required
+                  rows="3"
+                  placeholder="Describe este rol..."
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Color</label>
+                <div className="color-picker-group">
+                  <input
+                    type="color"
+                    name="color"
+                    value={formRol.color}
+                    onChange={handleRolChange}
+                  />
+                  <span className="color-value">{formRol.color}</span>
                 </div>
               </div>
 

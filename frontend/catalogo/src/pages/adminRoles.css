@@ -395,12 +395,12 @@
 }
 
 .btn-guardar {
-  background-color: #1d2d5a;
+  background-color: #CEAC65;
   color: white;
 }
 
 .btn-guardar:hover {
-  background-color: #152240;
+  background-color: #CEAC65;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(29, 45, 90, 0.3);
 }
