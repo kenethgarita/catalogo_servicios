@@ -1,11 +1,9 @@
-/* ============================================
-   ADMIN CATEGORÍAS, ESTADOS Y ROLES - CSS COMPLETO
-   ============================================ */
-
 /* Variables CSS */
 :root {
-  --primary: #4a90e2;
-  --primary-dark: #357abd;
+  --primary: #1d2d5a;
+  --primary-light: #2a4175;
+  --accent: #CEAC65;
+  --accent-dark: #b8964d;
   --secondary: #2ecc71;
   --danger: #e74c3c;
   --warning: #ffc107;
@@ -19,10 +17,7 @@
   --transition: all 0.3s ease;
 }
 
-/* ============================================
-   ESTRUCTURA BASE
-   ============================================ */
-
+/* ESTRUCTURA BASE */
 .adminCategorias-page {
   display: flex;
   flex-direction: column;
@@ -38,10 +33,7 @@
   width: 100%;
 }
 
-/* ============================================
-   HEADER
-   ============================================ */
-
+/* HEADER */
 .admin-header {
   background: white;
   padding: 2rem;
@@ -53,14 +45,11 @@
 .admin-header h1 {
   margin: 0;
   font-size: 2rem;
-  color: #2c3e50;
+  color: var(--primary);
   font-weight: 600;
 }
 
-/* ============================================
-   TABS
-   ============================================ */
-
+/* TABS */
 .tabs-container {
   display: flex;
   gap: 1rem;
@@ -89,25 +78,21 @@
 }
 
 .tab:hover {
-  background: #CEAC65;
+  background: var(--accent);
   color: white;
 }
 
 .tab.active {
-  background: #CEAC65;
-  background-color: #CEAC65;
+  background: var(--accent);
   color: white;
-  border-color: #CEAC65;
+  border-color: var(--accent);
 }
 
 .tab svg {
   flex-shrink: 0;
 }
 
-/* ============================================
-   CONTENIDO DE TABS
-   ============================================ */
-
+/* CONTENIDO DE TABS */
 .tab-content {
   background: white;
   padding: 2rem;
@@ -127,14 +112,11 @@
 .content-header h2 {
   margin: 0;
   font-size: 1.5rem;
-  color: #2c3e50;
+  color: var(--primary);
   font-weight: 600;
 }
 
-/* ============================================
-   BOTONES
-   ============================================ */
-
+/* BOTONES */
 .btn-nuevo {
   display: flex;
   align-items: center;
@@ -151,7 +133,6 @@
 }
 
 .btn-nuevo:hover {
-  background: #CEAC65;
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
@@ -160,10 +141,7 @@
   transform: translateY(0);
 }
 
-/* ============================================
-   GRID DE ITEMS
-   ============================================ */
-
+/* GRID DE ITEMS */
 .items-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -198,7 +176,7 @@
 .item-content h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.25rem;
-  color: #2c3e50;
+  color: var(--primary);
   font-weight: 600;
 }
 
@@ -235,11 +213,11 @@
 }
 
 .btn-edit {
-  color: var(--primary);
+  color: var(--accent);
 }
 
 .btn-edit:hover {
-  background: #e3f2fd;
+  background: #fffbf5;
 }
 
 .btn-delete {
@@ -250,10 +228,7 @@
   background: #ffebee;
 }
 
-/* ============================================
-   MODAL
-   ============================================ */
-
+/* MODAL */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -264,7 +239,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 10001;
   padding: 1rem;
   backdrop-filter: blur(4px);
 }
@@ -302,7 +277,7 @@
 .modal-header h2 {
   margin: 0;
   font-size: 1.5rem;
-  color: #2c3e50;
+  color: var(--primary);
   font-weight: 600;
 }
 
@@ -321,10 +296,7 @@
   color: var(--danger);
 }
 
-/* ============================================
-   FORMULARIO
-   ============================================ */
-
+/* FORMULARIO */
 .modal-form {
   padding: 1.5rem;
 }
@@ -337,7 +309,7 @@
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
-  color: #2c3e50;
+  color: var(--primary);
   font-size: 0.95rem;
 }
 
@@ -355,8 +327,8 @@
 .form-group input[type="text"]:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(206, 172, 101, 0.1);
 }
 
 .form-group textarea {
@@ -407,7 +379,7 @@
 
 .btn-cancelar {
   background: var(--medium-gray);
-  color: #2c3e50;
+  color: var(--primary);
 }
 
 .btn-cancelar:hover {
@@ -416,21 +388,16 @@
 }
 
 .btn-guardar {
-  background: var(--primary);
+  background: #CEAC65;
   color: white;
 }
 
 .btn-guardar:hover {
-  background: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
-/* ============================================
-   RESPONSIVE DESIGN
-   ============================================ */
-
-/* Tablets y pantallas medianas (768px - 1024px) */
+/* RESPONSIVE DESIGN */
 @media (max-width: 1024px) {
   .adminCategorias {
     padding: 0 1.5rem;
@@ -450,7 +417,6 @@
   }
 }
 
-/* Tablets pequeñas (max-width: 768px) */
 @media (max-width: 768px) {
   .adminCategorias {
     margin: 1rem auto;
@@ -516,7 +482,6 @@
   }
 }
 
-/* Móviles (max-width: 480px) */
 @media (max-width: 480px) {
   .adminCategorias {
     margin: 0.5rem auto;
@@ -620,43 +585,7 @@
   }
 }
 
-/* Móviles muy pequeños (max-width: 360px) */
-@media (max-width: 360px) {
-  .admin-header h1 {
-    font-size: 1.1rem;
-  }
-
-  .content-header h2 {
-    font-size: 1rem;
-  }
-
-  .btn-nuevo {
-    font-size: 0.9rem;
-    padding: 0.6rem 1rem;
-  }
-
-  .btn-nuevo svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  .item-content h3 {
-    font-size: 1rem;
-  }
-
-  .item-content p {
-    font-size: 0.85rem;
-  }
-
-  .modal-header h2 {
-    font-size: 1.1rem;
-  }
-}
-
-/* ============================================
-   ESTADOS VACÍOS
-   ============================================ */
-
+/* ESTADOS VACÍOS */
 .empty-state {
   text-align: center;
   padding: 3rem 1rem;
@@ -673,17 +602,14 @@
 .empty-state h3 {
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
-  color: #2c3e50;
+  color: var(--primary);
 }
 
 .empty-state p {
   font-size: 0.95rem;
 }
 
-/* ============================================
-   SCROLL PERSONALIZADO
-   ============================================ */
-
+/* SCROLL PERSONALIZADO */
 .modal-content::-webkit-scrollbar,
 .tabs-container::-webkit-scrollbar {
   height: 6px;
@@ -706,10 +632,7 @@
   background: var(--dark-gray);
 }
 
-/* ============================================
-   ANIMACIONES ADICIONALES
-   ============================================ */
-
+/* ANIMACIONES */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -725,39 +648,4 @@
 
 .item-card {
   animation: fadeIn 0.4s ease;
-}
-
-
-
-
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
-}
-
-
-@media print {
-  .admin-header,
-  .tabs-container,
-  .content-header,
-  .item-actions,
-  .modal-overlay {
-    display: none !important;
-  }
-
-  .adminCategorias {
-    padding: 0;
-  }
-
-  .items-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .item-card {
-    page-break-inside: avoid;
-    box-shadow: none;
-    border: 1px solid #ddd;
-  }
 }

@@ -67,7 +67,7 @@ const Header = () => {
                 <li><a href="/admin/roles" onClick={toggleMenu}>Ver roles</a></li>
                 <li><a href="/admin/servicios" onClick={toggleMenu}>Servicios</a></li>
                 <li><a href="/login" onClick={toggleMenu}>Acceder a la cuenta</a></li>
-                <li><a href="/admin/categorias" onClick={toggleMenu}>Adminisitrar secciones</a></li>
+                <li><a href="/admin/categorias" onClick={toggleMenu}>Administrar secciones</a></li>
 
               </ul>
             </nav>
