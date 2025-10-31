@@ -5,6 +5,8 @@ import Accesibilidad from '../components/accesibilidad';
 import Header from '../components/header';
 import Footer from '../components/footer';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 function DetalleServicio() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -17,7 +19,7 @@ function DetalleServicio() {
 
   const fetchServicio = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/Servicio/ListarServicioPorId/${id}`);
+      const response = await fetch(`${API_URL}/Servicio/ListarServicioPorId/${id}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

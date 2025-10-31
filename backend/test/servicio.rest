@@ -3,13 +3,13 @@ POST http://localhost:5000/Servicio/CrearServicio
 Content-Type: application/json
 
 {
-  "nombre_servicio": "Recolección de residuos",
-  "descripcion_servicio": "Servicio municipal de recolección de basura",
-  "proposito_servicio": "Mantener la limpieza",
-  "area_responsable": "Gestión Ambiental",
-  "tiempo": "2 días",
-  "documentacion_url": "https://docs.muni.go.cr/residuos",
-  "imagen_servicio": "residuos.png",
+  "nombre_servicio": "Mantenimiento de Parques y Áreas Verdes",
+  "descripcion_servicio": "Servicio encargado de la limpieza, poda y cuidado de parques, jardines y áreas verdes de la municipalidad, asegurando espacios seguros y agradables para la comunidad.",
+  "proposito_servicio": "Garantizar que los espacios públicos se mantengan en condiciones óptimas para el disfrute de los ciudadanos",
+  "area_responsable": "Departamento de Gestión Ambiental y Servicios Urbanos",
+  "tiempo": "3 días hábiles",
+  "documentacion_url": "https://docs.muni.go.cr/areas-verdes",
+  "imagen_servicio": "parques_verdes.png",
   "activo": true,
   "id_categoria": 1
 }
