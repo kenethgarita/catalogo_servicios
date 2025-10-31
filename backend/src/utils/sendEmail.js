@@ -31,7 +31,7 @@ export async function sendSystemEmail(to, subject, html) {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: "IFAM Informa",
+      from: `"IFAM Informa" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,

@@ -2,6 +2,8 @@ import './solicitarServicio.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 function SolicitarServicio() {
   const navigate = useNavigate();
   const { id } = useParams(); // Si viene desde un servicio específico
@@ -16,59 +18,13 @@ function SolicitarServicio() {
 
   const fetchServicios = async () => {
     try {
-      // CONEXIÓN A BASE DE DATOS - Reemplaza con tu endpoint real
-      /*
-      const response = await fetch('/api/servicios/habilitados');
+      const response = await fetch(`${API_URL}/Servicio/ListarServicios`);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setServicios(data);
-      */
 
-      // DATOS DE EJEMPLO (PLACEHOLDER)
-      const serviciosPlaceholder = [
-        {
-          id: 1,
-          nombre: 'Soporte Técnico',
-          categoria: 'Tecnología',
-          habilitado: true
-        },
-        {
-          id: 2,
-          nombre: 'Gestión de Recursos Humanos',
-          categoria: 'Administrativo',
-          habilitado: true
-        },
-        {
-          id: 3,
-          nombre: 'Asesoría Legal',
-          categoria: 'Legal',
-          habilitado: true
-        },
-        {
-          id: 4,
-          nombre: 'Capacitación Municipal',
-          categoria: 'Educación',
-          habilitado: true
-        },
-        {
-          id: 5,
-          nombre: 'Gestión Financiera',
-          categoria: 'Administrativo',
-          habilitado: true
-        },
-        {
-          id: 6,
-          nombre: 'Planificación Estratégica',
-          categoria: 'Consultoría',
-          habilitado: true
-        }
-      ];
-
-      setServicios(serviciosPlaceholder);
-
-      // Si viene desde un servicio específico, pre-seleccionarlo
-      if (id) {
-        setServiciosSeleccionados([parseInt(id)]);
-      }
+      // Pre-selecciona si viene desde un servicio específico
+      if (id) setServiciosSeleccionados([parseInt(id)]);
     } catch (error) {
       console.error('Error al cargar servicios:', error);
     }
@@ -84,9 +40,7 @@ function SolicitarServicio() {
 
   const handleDetallesChange = (e) => {
     const text = e.target.value;
-    if (text.length <= maxCaracteres) {
-      setDetalles(text);
-    }
+    if (text.length <= maxCaracteres) setDetalles(text);
   };
 
   const handleSubmit = async (e) => {
@@ -103,35 +57,29 @@ function SolicitarServicio() {
     }
 
     try {
-      /*
-      const response = await fetch('/api/solicitudes', {
+      const token = localStorage.getItem('token'); // Ajusta según donde guardes el JWT
+
+      const response = await fetch(`${API_URL}/Solicitudes/CrearSolicitud`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
-          servicios_ids: serviciosSeleccionados,
-          detalles: detalles,
-          fecha_solicitud: new Date().toISOString()
+          detalles_solicitud: detalles,
+          id_estado: 1,              // Estado inicial
+          servicios: serviciosSeleccionados
         })
       });
 
       const data = await response.json();
-      
+
       if (response.ok) {
-        alert('Solicitud enviada exitosamente!');
+        alert('¡Solicitud enviada exitosamente!');
         navigate('/');
       } else {
         alert(data.message || 'Error al enviar la solicitud');
       }
-      */
-
-      console.log('Solicitud enviada:', {
-        servicios: serviciosSeleccionados,
-        detalles: detalles,
-        fecha: new Date().toISOString()
-      });
-
-      alert('¡Solicitud enviada exitosamente!');
-      navigate('/');
 
     } catch (error) {
       console.error('Error al enviar solicitud:', error);
@@ -143,7 +91,6 @@ function SolicitarServicio() {
     <div className="solicitar-page">
       <div className="solicitar-container">
         <div className="solicitar-form-container">
-          {/* Logo */}
           <div className="form-logo">
             <img 
               src="https://reclutamiento.ifam.go.cr/UTH/Resources/Logo_4.png" 
@@ -151,11 +98,9 @@ function SolicitarServicio() {
             />
           </div>
 
-          {/* Título */}
           <h2>Solicitar Servicios</h2>
           <p className="form-subtitle">Selecciona uno o más servicios y describe tu necesidad</p>
 
-          {/* Formulario */}
           <form onSubmit={handleSubmit} className="solicitud-form">
             {/* Selección de Servicios */}
             <div className="form-section">
@@ -166,35 +111,32 @@ function SolicitarServicio() {
                 </span>
               </label>
               
-<div className="servicios-grid">
-  {servicios.map(servicio => (
-    <div
-      key={servicio.id}
-      className={`servicio-checkbox ${serviciosSeleccionados.includes(servicio.id) ? 'selected' : ''}`}
-    >
-      <input
-        type="checkbox"
-        id={`servicio-${servicio.id}`}
-        checked={serviciosSeleccionados.includes(servicio.id)}
-        onChange={() => handleServicioToggle(servicio.id)}
-      />
-      <label 
-        htmlFor={`servicio-${servicio.id}`}
-        className="servicio-label"
-      >
-        <div className="servicio-info">
-          <span className="servicio-nombre">{servicio.nombre}</span>
-          <span className="servicio-categoria">{servicio.categoria}</span>
-        </div>
-        <div className="check-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
-        </div>
-      </label>
-    </div>
-  ))}
-</div>
+              <div className="servicios-grid">
+                {servicios.map(servicio => (
+                  <div
+                    key={servicio.id_servicio}
+                    className={`servicio-checkbox ${serviciosSeleccionados.includes(servicio.id_servicio) ? 'selected' : ''}`}
+                  >
+                    <input
+                      type="checkbox"
+                      id={`servicio-${servicio.id_servicio}`}
+                      checked={serviciosSeleccionados.includes(servicio.id_servicio)}
+                      onChange={() => handleServicioToggle(servicio.id_servicio)}
+                    />
+                    <label htmlFor={`servicio-${servicio.id_servicio}`} className="servicio-label">
+                      <div className="servicio-info">
+                        <span className="servicio-nombre">{servicio.nombre_servicio}</span>
+                        <span className="servicio-categoria">{servicio.nombre_categoria}</span>
+                      </div>
+                      <div className="check-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      </div>
+                    </label>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Detalles de la Solicitud */}
