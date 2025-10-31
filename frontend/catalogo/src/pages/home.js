@@ -6,6 +6,8 @@ import Accesibilidad from '../components/accesibilidad';
 import Header from '../components/header';
 import Footer from '../components/footer';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 function Home() {
   const [serviciosHabilitados, setServiciosHabilitados] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +15,7 @@ function Home() {
   useEffect(() => {
     const fetchServiciosHabilitados = async () => {
       try {
-        const response = await fetch('http://localhost:5000/Servicio/ListarServicios');
+        const response = await fetch(`${API_URL}/Servicio/ListarServicios`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         console.log('Respuesta JSON:', data);

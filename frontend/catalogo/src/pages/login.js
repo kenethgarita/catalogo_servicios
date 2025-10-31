@@ -1,6 +1,8 @@
 import './login.css';
 import React, { useState } from 'react';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 function Login() {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
@@ -29,8 +31,8 @@ function Login() {
     e.preventDefault();
     
     try {
-      /*
-      const response = await fetch('/api/login', {
+      
+      const response = await fetch(`${API_URL}/Usuarios/Login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -40,8 +42,8 @@ function Login() {
       });
       const data = await response.json();
       localStorage.setItem('token', data.token);
-      window.location.href = '/dashboard';
-      */
+      window.location.href = '/';
+
       console.log('Login:', { correo: formData.email, contrasena: formData.password });
       alert('Login exitoso!');
     } catch (error) {
@@ -64,8 +66,8 @@ function Login() {
     }
 
     try {
-      /*
-      const response = await fetch('/api/register', {
+
+      const response = await fetch(`${API_URL}/Usuarios/CrearUsuario`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -87,7 +89,7 @@ function Login() {
       } else {
         alert(data.message || 'Error en el registro');
       }
-      */
+   
       console.log('Registro:', { 
         nombre: formData.nombre,
         apellido1: formData.apellido1,
