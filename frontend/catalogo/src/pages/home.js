@@ -103,11 +103,15 @@ useEffect(() => {
             <div className="hero-content">
               <h1>Catálogo de servicios TI</h1>
               <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                Suspendisse non nunc ut nibh mattis venenatis sed vel tellus. 
-                Phasellus feugiat posuere ipsum, id blandit elit elementum vitae. 
+                Te damos la bienvenida a el catálogo de servicios del departamento de TI,
+                Ofrecemos distintos servicios que puedes pedir en este sitio web.
               </p>
             </div>
+              <p>
+                Explora nuestros servicios y solicita el que necesites de manera fácil y rápida
+                dentro de un formulario.
+              </p>
+
 
             <div className="hero-buttons">
               {!isAuthenticated && (
