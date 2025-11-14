@@ -1,0 +1,25 @@
+### Crear solicitud_servicio
+POST http://localhost:5000/SolicitudServicios/CrearSolicitudServicio
+Content-Type: application/json
+
+{
+  "id_solicitud": 1,
+  "id_servicio": 1
+}
+
+### Obtener todos los registros
+GET http://localhost:5000/SolicitudServicios/ObtenerSolicitudServicios
+
+### Obtener por ID
+GET http://localhost:5000/SolicitudServicios/ObtenerSolicitudServicio/1
+
+### Editar registro
+PUT http://localhost:5000/SolicitudServicios/EditarSolicitudServicio/1
+Content-Type: application/json
+
+{
+  "id_servicio": 2
+}
+
+### Eliminar registro
+DELETE http://localhost:5000/SolicitudServicios/EliminarSolicitudServicio/34

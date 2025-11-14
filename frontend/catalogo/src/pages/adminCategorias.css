@@ -1,0 +1,666 @@
+/* adminCategorias.css - Estilos exclusivos */
+
+/* Variables CSS solo para este componente */
+.adminCategorias-page {
+  --primary: #1d2d5a;
+  --primary-light: #2a4175;
+  --accent: #CEAC65;
+  --accent-dark: #b8964d;
+  --secondary: #2ecc71;
+  --danger: #e74c3c;
+  --warning: #ffc107;
+  --light-gray: #f8f9fa;
+  --medium-gray: #e9ecef;
+  --dark-gray: #6c757d;
+  --border-radius: 12px;
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
+  --transition: all 0.3s ease;
+}
+
+/* ESTRUCTURA BASE */
+.adminCategorias-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--light-gray);
+  box-sizing: border-box;
+}
+
+.adminCategorias-page *,
+.adminCategorias-page *::before,
+.adminCategorias-page *::after {
+  box-sizing: border-box;
+}
+
+.adminCategorias-page .adminCategorias {
+  flex: 1;
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+  width: 100%;
+}
+
+/* HEADER */
+.adminCategorias-page .admin-header {
+  background: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 2rem;
+}
+
+.adminCategorias-page .admin-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* TABS */
+.adminCategorias-page .tabs-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+}
+
+.adminCategorias-page .tab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid transparent;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--dark-gray);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.adminCategorias-page .tab:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.adminCategorias-page .tab.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.adminCategorias-page .tab svg {
+  flex-shrink: 0;
+}
+
+/* CONTENIDO DE TABS */
+.adminCategorias-page .tab-content {
+  background: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+}
+
+.adminCategorias-page .content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.adminCategorias-page .content-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* BOTONES */
+.adminCategorias-page .btn-nuevo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.adminCategorias-page .btn-nuevo:hover {
+  background-color: var(--accent-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.adminCategorias-page .btn-nuevo:active {
+  transform: translateY(0);
+}
+
+/* GRID DE ITEMS */
+.adminCategorias-page .items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.adminCategorias-page .item-card {
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: 1px solid var(--medium-gray);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.adminCategorias-page .item-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.adminCategorias-page .item-color {
+  height: 8px;
+  width: 100%;
+}
+
+.adminCategorias-page .item-content {
+  padding: 1.5rem;
+}
+
+.adminCategorias-page .item-content h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.adminCategorias-page .item-content p {
+  margin: 0;
+  color: var(--dark-gray);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.adminCategorias-page .item-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  background: var(--light-gray);
+  border-top: 1px solid var(--medium-gray);
+  margin-top: auto;
+}
+
+.adminCategorias-page .btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+  background: white;
+}
+
+.adminCategorias-page .btn-icon:hover {
+  transform: scale(1.1);
+}
+
+.adminCategorias-page .btn-edit {
+  color: var(--accent);
+}
+
+.adminCategorias-page .btn-edit:hover {
+  background: #fffbf5;
+}
+
+.adminCategorias-page .btn-delete {
+  color: var(--danger);
+}
+
+.adminCategorias-page .btn-delete:hover {
+  background: #ffebee;
+}
+
+/* MODAL */
+.adminCategorias-page .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+}
+
+.adminCategorias-page .modal-content {
+  background: white;
+  border-radius: var(--border-radius);
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: adminCategorias-modalSlideIn 0.3s ease;
+}
+
+@keyframes adminCategorias-modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.adminCategorias-page .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--medium-gray);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+}
+
+.adminCategorias-page .modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: white;
+  font-weight: 600;
+}
+
+.adminCategorias-page .modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: white;
+  transition: var(--transition);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adminCategorias-page .modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* FORMULARIO */
+.adminCategorias-page .modal-form {
+  padding: 1.5rem;
+}
+
+.adminCategorias-page .form-group {
+  margin-bottom: 1.5rem;
+}
+
+.adminCategorias-page .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--primary);
+  font-size: 0.95rem;
+}
+
+.adminCategorias-page .form-group input[type="text"],
+.adminCategorias-page .form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--medium-gray);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.adminCategorias-page .form-group input[type="text"]:focus,
+.adminCategorias-page .form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(206, 172, 101, 0.1);
+}
+
+.adminCategorias-page .form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.adminCategorias-page .color-picker-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.adminCategorias-page .color-picker-group input[type="color"] {
+  width: 60px;
+  height: 40px;
+  border: 1px solid var(--medium-gray);
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 2px;
+}
+
+.adminCategorias-page .color-value {
+  font-family: 'Courier New', monospace;
+  font-weight: 500;
+  color: var(--dark-gray);
+  font-size: 0.95rem;
+}
+
+.adminCategorias-page .modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+  border-top: 1px solid var(--medium-gray);
+}
+
+.adminCategorias-page .btn-cancelar,
+.adminCategorias-page .btn-guardar {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.adminCategorias-page .btn-cancelar {
+  background: var(--medium-gray);
+  color: var(--primary);
+}
+
+.adminCategorias-page .btn-cancelar:hover {
+  background: var(--dark-gray);
+  color: white;
+}
+
+.adminCategorias-page .btn-guardar {
+  background: var(--accent);
+  color: white;
+}
+
+.adminCategorias-page .btn-guardar:hover {
+  background: var(--accent-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 1024px) {
+  .adminCategorias-page .adminCategorias {
+    padding: 0 1.5rem;
+  }
+
+  .adminCategorias-page .items-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .adminCategorias-page .admin-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .adminCategorias-page .content-header h2 {
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .adminCategorias-page .adminCategorias {
+    margin: 1rem auto;
+    padding: 0 1rem;
+  }
+
+  .adminCategorias-page .admin-header {
+    padding: 1.5rem;
+  }
+
+  .adminCategorias-page .admin-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .adminCategorias-page .tabs-container {
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .adminCategorias-page .tab {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+
+  .adminCategorias-page .tab svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .adminCategorias-page .tab-content {
+    padding: 1.5rem;
+  }
+
+  .adminCategorias-page .content-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .adminCategorias-page .content-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .adminCategorias-page .btn-nuevo {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .adminCategorias-page .items-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .adminCategorias-page .modal-content {
+    max-width: 95%;
+  }
+
+  .adminCategorias-page .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .adminCategorias-page .btn-cancelar,
+  .adminCategorias-page .btn-guardar {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .adminCategorias-page .adminCategorias {
+    margin: 0.5rem auto;
+    padding: 0 0.75rem;
+  }
+
+  .adminCategorias-page .admin-header {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .adminCategorias-page .admin-header h1 {
+    font-size: 1.25rem;
+  }
+
+  .adminCategorias-page .tabs-container {
+    flex-direction: column;
+    padding: 0.5rem;
+  }
+
+  .adminCategorias-page .tab {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem;
+  }
+
+  .adminCategorias-page .tab-content {
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .adminCategorias-page .content-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .adminCategorias-page .btn-nuevo {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.95rem;
+  }
+
+  .adminCategorias-page .item-content {
+    padding: 1rem;
+  }
+
+  .adminCategorias-page .item-content h3 {
+    font-size: 1.1rem;
+  }
+
+  .adminCategorias-page .item-content p {
+    font-size: 0.9rem;
+  }
+
+  .adminCategorias-page .item-actions {
+    padding: 0.75rem 1rem;
+  }
+
+  .adminCategorias-page .modal-overlay {
+    padding: 0.5rem;
+  }
+
+  .adminCategorias-page .modal-header {
+    padding: 1rem;
+  }
+
+  .adminCategorias-page .modal-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .adminCategorias-page .modal-form {
+    padding: 1rem;
+  }
+
+  .adminCategorias-page .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .adminCategorias-page .form-group label {
+    font-size: 0.9rem;
+  }
+
+  .adminCategorias-page .form-group input[type="text"],
+  .adminCategorias-page .form-group textarea {
+    padding: 0.65rem;
+    font-size: 0.95rem;
+  }
+
+  .adminCategorias-page .color-picker-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .adminCategorias-page .color-picker-group input[type="color"] {
+    width: 100%;
+    height: 50px;
+  }
+
+  .adminCategorias-page .btn-cancelar,
+  .adminCategorias-page .btn-guardar {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* ESTADOS VACÍOS */
+.adminCategorias-page .empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--dark-gray);
+}
+
+.adminCategorias-page .empty-state svg {
+  width: 80px;
+  height: 80px;
+  opacity: 0.3;
+  margin-bottom: 1rem;
+}
+
+.adminCategorias-page .empty-state h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+}
+
+.adminCategorias-page .empty-state p {
+  font-size: 0.95rem;
+}
+
+/* SCROLL PERSONALIZADO */
+.adminCategorias-page .modal-content::-webkit-scrollbar,
+.adminCategorias-page .tabs-container::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.adminCategorias-page .modal-content::-webkit-scrollbar-track,
+.adminCategorias-page .tabs-container::-webkit-scrollbar-track {
+  background: var(--light-gray);
+}
+
+.adminCategorias-page .modal-content::-webkit-scrollbar-thumb,
+.adminCategorias-page .tabs-container::-webkit-scrollbar-thumb {
+  background: var(--medium-gray);
+  border-radius: 3px;
+}
+
+.adminCategorias-page .modal-content::-webkit-scrollbar-thumb:hover,
+.adminCategorias-page .tabs-container::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-gray);
+}
+
+/* ANIMACIONES */
+@keyframes adminCategorias-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.adminCategorias-page .tab-content {
+  animation: adminCategorias-fadeIn 0.3s ease;
+}
+
+.adminCategorias-page .item-card {
+  animation: adminCategorias-fadeIn 0.4s ease;
+}

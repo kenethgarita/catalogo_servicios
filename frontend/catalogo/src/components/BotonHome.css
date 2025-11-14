@@ -1,0 +1,75 @@
+.boton-home {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 18px 24px;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'IBM Plex Sans', sans-serif;
+  min-width: 200px;
+}
+
+.boton-home {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+.boton-home:hover,
+.boton-home:focus,
+.boton-home:visited {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+
+.boton-home:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.18);
+}
+
+.boton-home-texto {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1d2d5a;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.boton-home-icono {
+  width: 32px;
+  height: 32px;
+  background-color: #f5a623;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #ffffff;
+  transition: transform 0.3s ease;
+}
+
+.boton-home:hover .boton-home-icono {
+  transform: translateX(3px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .boton-home {
+    min-width: 180px;
+    padding: 15px 20px;
+  }
+
+  .boton-home-texto {
+    font-size: 0.95rem;
+  }
+
+  .boton-home-icono {
+    width: 28px;
+    height: 28px;
+  }
+}

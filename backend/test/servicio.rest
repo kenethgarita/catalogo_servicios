@@ -1,0 +1,30 @@
+### Crear Servicio
+POST http://localhost:5000/Servicio/CrearServicio
+Content-Type: application/json
+
+{
+  "nombre_servicio": "Mantenimiento de Parques y Áreas Verdes",
+  "descripcion_servicio": "Servicio encargado de la limpieza, poda y cuidado de parques, jardines y áreas verdes de la municipalidad, asegurando espacios seguros y agradables para la comunidad.",
+  "proposito_servicio": "Garantizar que los espacios públicos se mantengan en condiciones óptimas para el disfrute de los ciudadanos",
+  "area_responsable": "Departamento de Gestión Ambiental y Servicios Urbanos",
+  "tiempo": "3 días hábiles",
+  "documentacion_url": "https://docs.muni.go.cr/areas-verdes",
+  "imagen_servicio": "parques_verdes.png",
+  "activo": true,
+  "id_categoria": 1
+}
+
+### Listar servicios activos (muestra también nombre_categoria)
+GET http://localhost:5000/Servicio/ListarServicios
+
+### Filtrar servicios activos por categoría
+GET http://localhost:5000/Servicio/ListarServicios?categoria=1
+
+### Incluir servicios inactivos también
+GET http://localhost:5000/Servicio/ListarServicios?incluirInactivos=true
+
+### Filtrar por categoría e incluir inactivos
+GET http://localhost:5000/Servicio/ListarServicios?categoria=1&incluirInactivos=true
+
+### Obtener servicio por ID (muestra nombre_categoria)
+GET http://localhost:5000/Servicio/ListarServicioPorId/1

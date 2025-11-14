@@ -1,0 +1,19 @@
+POST http://localhost:5000/Email/auto
+Content-Type: application/json
+
+{
+  "to": "Aletoonx@gmail.com",
+  "subject": "Confirmación de solicitud",
+  "message": "Su solicitud se envió correctamente."
+}
+
+###
+POST http://localhost:5000/Email/manual
+Content-Type: application/json
+
+{
+  "to": "Aletoonx@gmail.com",
+  "subject": "Respuesta a tu solicitud",
+  "message": "Gracias por contactarnos. Su caso fue resuelto.",
+  "senderName": "keneth Garita Madrigal"
+}

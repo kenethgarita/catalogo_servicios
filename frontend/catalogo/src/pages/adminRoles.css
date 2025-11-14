@@ -1,0 +1,702 @@
+/* adminRoles.css - Estilos exclusivos */
+
+.adminRoles-page,
+.adminRoles-page * {
+  box-sizing: border-box;
+}
+
+.adminRoles-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f7fa;
+}
+
+.adminRoles-page .adminRoles {
+  flex: 1;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  width: 100%;
+}
+
+.adminRoles-page .admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.adminRoles-page .admin-header h1 {
+  color: #1d2d5a;
+  font-size: 2.2rem;
+  font-weight: 700;
+  font-family: 'IBM Plex Sans', sans-serif;
+  margin: 0;
+}
+
+.adminRoles-page .roles-info {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.adminRoles-page .info-item {
+  padding: 10px 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  font-size: 0.95rem;
+}
+
+.adminRoles-page .info-item strong {
+  color: #1d2d5a;
+  margin-right: 8px;
+}
+
+/* Barra de búsqueda */
+.adminRoles-page .search-section {
+  background-color: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+}
+
+.adminRoles-page .search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+}
+
+.adminRoles-page .search-container svg {
+  position: absolute;
+  left: 16px;
+  color: #999;
+  pointer-events: none;
+}
+
+.adminRoles-page .search-input {
+  width: 100%;
+  padding: 14px 50px 14px 50px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: 'IBM Plex Sans', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.adminRoles-page .search-input:focus {
+  outline: none;
+  border-color: #CEAC65;
+  box-shadow: 0 0 0 3px rgba(206, 172, 101, 0.1);
+}
+
+.adminRoles-page .clear-search {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  transition: color 0.2s ease;
+}
+
+.adminRoles-page .clear-search:hover {
+  color: #666;
+}
+
+/* Leyenda de Roles */
+.adminRoles-page .roles-legend {
+  display: flex;
+  gap: 24px;
+  background-color: white;
+  padding: 20px 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.adminRoles-page .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.adminRoles-page .legend-text {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Tabla */
+.adminRoles-page .usuarios-table-container {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.adminRoles-page .table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.adminRoles-page .usuarios-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1400px;
+}
+
+.adminRoles-page .usuarios-table thead {
+  background-color: #f8f9fa;
+}
+
+.adminRoles-page .usuarios-table th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #1d2d5a;
+  font-size: 0.95rem;
+  border-bottom: 2px solid #e0e0e0;
+  font-family: 'IBM Plex Sans', sans-serif;
+  white-space: nowrap;
+}
+
+.adminRoles-page .usuarios-table td {
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+  font-size: 0.95rem;
+  vertical-align: middle;
+}
+
+.adminRoles-page .usuarios-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.adminRoles-page .td-nombre {
+  font-weight: 600;
+  color: #1d2d5a;
+  min-width: 200px;
+}
+
+.adminRoles-page .td-acciones {
+  white-space: nowrap;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Columna de Servicios */
+.adminRoles-page .servicios-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.adminRoles-page .servicios-list {
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+.adminRoles-page .text-muted {
+  color: #999;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* Badges de Roles */
+.adminRoles-page .badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.adminRoles-page .badge-usuario {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.adminRoles-page .badge-responsable {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.adminRoles-page .badge-admin {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+/* Botones de acción */
+.adminRoles-page .btn-accion {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.adminRoles-page .btn-cambiar-rol {
+  background-color: #1d2d5a;
+  color: white;
+}
+
+.adminRoles-page .btn-cambiar-rol:hover {
+  background-color: #152240;
+  transform: translateY(-1px);
+}
+
+.adminRoles-page .btn-asignar-servicios {
+  background-color: #CEAC65;
+  color: white;
+}
+
+.adminRoles-page .btn-asignar-servicios:hover {
+  background-color: #b8964d;
+  transform: translateY(-1px);
+}
+
+.adminRoles-page .no-data {
+  padding: 60px 20px;
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Modal */
+.adminRoles-page .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  padding: 20px;
+}
+
+.adminRoles-page .modal-content {
+  background-color: white;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.adminRoles-page .modal-content.modal-servicios {
+  max-width: 700px;
+}
+
+.adminRoles-page .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #e0e0e0;
+  background: linear-gradient(135deg, #1d2d5a 0%, #2a4175 100%);
+}
+
+.adminRoles-page .modal-header h2 {
+  margin: 0;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.adminRoles-page .modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.adminRoles-page .modal-close:hover {
+  opacity: 0.7;
+}
+
+.adminRoles-page .modal-body {
+  padding: 24px;
+}
+
+.adminRoles-page .usuario-info {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.adminRoles-page .usuario-info h3 {
+  margin: 0 0 16px 0;
+  color: #1d2d5a;
+  font-size: 1.3rem;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.adminRoles-page .info-detail {
+  margin: 8px 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.adminRoles-page .info-detail strong {
+  color: #1d2d5a;
+  margin-right: 8px;
+}
+
+.adminRoles-page .info-detail .badge {
+  margin-left: 8px;
+}
+
+.adminRoles-page .modal-form {
+  width: 100%;
+}
+
+.adminRoles-page .form-group {
+  margin-bottom: 20px;
+}
+
+.adminRoles-page .form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.adminRoles-page .form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'IBM Plex Sans', sans-serif;
+  transition: border-color 0.3s ease;
+  cursor: pointer;
+  background-color: white;
+}
+
+.adminRoles-page .form-group select:focus {
+  outline: none;
+  border-color: #CEAC65;
+}
+
+/* Estilos para la sección de servicios en el modal */
+.adminRoles-page .section-label {
+  display: block;
+  font-weight: 600;
+  color: #1d2d5a;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.adminRoles-page .selection-count {
+  color: #CEAC65;
+  font-weight: 500;
+  font-size: 0.95rem;
+  margin-left: 8px;
+}
+
+.adminRoles-page .helper-text {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+.adminRoles-page .servicios-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.adminRoles-page .servicio-checkbox {
+  display: flex;
+  align-items: center;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  background-color: white;
+  position: relative;
+}
+
+.adminRoles-page .servicio-checkbox:hover {
+  border-color: #CEAC65;
+  background-color: #fafaf8;
+}
+
+.adminRoles-page .servicio-checkbox.selected {
+  border-color: #CEAC65;
+  background-color: #fffbf5;
+  box-shadow: 0 2px 8px rgba(206, 172, 101, 0.15);
+}
+
+.adminRoles-page .servicio-checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #CEAC65;
+  flex-shrink: 0;
+  margin: 14px 0 14px 16px;
+}
+
+.adminRoles-page .servicio-label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 14px 12px;
+  cursor: pointer;
+}
+
+.adminRoles-page .servicio-nombre {
+  font-weight: 500;
+  color: #1d2d5a;
+  font-size: 0.95rem;
+}
+
+.adminRoles-page .check-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #CEAC65;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.adminRoles-page .servicio-checkbox.selected .check-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.adminRoles-page .modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 20px;
+}
+
+.adminRoles-page .btn-cancelar,
+.adminRoles-page .btn-guardar {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.adminRoles-page .btn-cancelar {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.adminRoles-page .btn-cancelar:hover {
+  background-color: #d0d0d0;
+}
+
+.adminRoles-page .btn-guardar {
+  background-color: #CEAC65;
+  color: white;
+}
+
+.adminRoles-page .btn-guardar:hover {
+  background-color: #b8964d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(206, 172, 101, 0.3);
+}
+
+/* Loading y Error states */
+.adminRoles-page .loading-container,
+.adminRoles-page .error-container {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.adminRoles-page .spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f0f0f0;
+  border-top: 4px solid #1d2d5a;
+  border-radius: 50%;
+  animation: adminRoles-spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes adminRoles-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.adminRoles-page .error-message {
+  color: #dc3545;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.adminRoles-page .btn-retry {
+  padding: 12px 24px;
+  background-color: #CEAC65;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.adminRoles-page .btn-retry:hover {
+  background-color: #b8964d;
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .adminRoles-page .adminRoles {
+    padding: 20px 15px;
+  }
+
+  .adminRoles-page .admin-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .adminRoles-page .admin-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .adminRoles-page .roles-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .adminRoles-page .roles-legend {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .adminRoles-page .usuarios-table {
+    min-width: auto;
+  }
+
+  .adminRoles-page .usuarios-table thead {
+    display: none;
+  }
+
+  .adminRoles-page .usuarios-table tbody tr {
+    display: block;
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .adminRoles-page .usuarios-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    flex-wrap: wrap;
+  }
+
+  .adminRoles-page .usuarios-table td:last-child {
+    border-bottom: none;
+  }
+
+  .adminRoles-page .usuarios-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #1d2d5a;
+    margin-right: 10px;
+    min-width: 120px;
+  }
+
+  .adminRoles-page .td-acciones {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .adminRoles-page .td-acciones::before {
+    content: '';
+  }
+
+  .adminRoles-page .servicios-badges {
+    flex: 1;
+    text-align: right;
+  }
+
+  .adminRoles-page .modal-actions {
+    flex-direction: column;
+  }
+
+  .adminRoles-page .btn-cancelar,
+  .adminRoles-page .btn-guardar {
+    width: 100%;
+  }
+
+  .adminRoles-page .modal-content.modal-servicios {
+    max-width: 95%;
+  }
+
+  .adminRoles-page .servicios-grid {
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .adminRoles-page .admin-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .adminRoles-page .btn-accion {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+  }
+}

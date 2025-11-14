@@ -1,0 +1,606 @@
+/* adminServicios.css - Estilos exclusivos para administración de servicios */
+
+/* Solo aplicar a la página de admin */
+.adminServicios-page,
+.adminServicios-page * {
+  box-sizing: border-box;
+}
+
+.adminServicios-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f5f7fa;
+}
+
+.adminServicios-page .adminServicios {
+  flex: 1;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  width: 100%;
+}
+
+.adminServicios-page .admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.adminServicios-page .admin-header h1 {
+  color: #1d2d5a;
+  font-size: 2.2rem;
+  font-weight: 700;
+  font-family: 'IBM Plex Sans', sans-serif;
+  margin: 0;
+}
+
+.adminServicios-page .btn-nuevo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background-color: #CEAC65;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.adminServicios-page .btn-nuevo:hover {
+  background-color: #b8964d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(206, 172, 101, 0.3);
+}
+
+/* Tabla Responsive */
+.adminServicios-page .servicios-table-container {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.adminServicios-page .table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.adminServicios-page .servicios-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 1400px;
+}
+
+.adminServicios-page .servicios-table thead {
+  background-color: #f8f9fa;
+}
+
+.adminServicios-page .servicios-table th {
+  padding: 16px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: #1d2d5a;
+  font-size: 0.9rem;
+  border-bottom: 2px solid #e0e0e0;
+  font-family: 'IBM Plex Sans', sans-serif;
+  white-space: nowrap;
+}
+
+.adminServicios-page .servicios-table td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.adminServicios-page .servicios-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.adminServicios-page .td-nombre {
+  font-weight: 600;
+  color: #1d2d5a;
+  min-width: 150px;
+}
+
+.adminServicios-page .td-descripcion,
+.adminServicios-page .td-proposito {
+  max-width: 300px;
+}
+
+/* Cambiar color de la descripción truncada */
+.adminServicios-page .descripcion-truncada {
+  cursor: pointer;
+  color: #CEAC65;
+  text-decoration: underline;
+  display: block;
+}
+
+.adminServicios-page .descripcion-truncada:hover {
+  color: #b8964d;
+}
+
+/* Cambiar color de los íconos de imagen y documento */
+.adminServicios-page .link-icon {
+  color: #121F3C;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  transition: all 0.2s ease;
+}
+
+.adminServicios-page .link-icon:hover {
+  color: #b8964d;
+  transform: scale(1.1);
+}
+
+.adminServicios-page .td-acciones {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  white-space: nowrap;
+  flex-wrap: wrap;
+}
+
+/* Badges */
+.adminServicios-page .badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.adminServicios-page .badge-activo {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.adminServicios-page .badge-inactivo {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Botones de acción */
+.adminServicios-page .btn-accion {
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  flex-shrink: 0;
+}
+
+.adminServicios-page .btn-ver {
+  color: #6c757d;
+}
+
+.adminServicios-page .btn-ver:hover {
+  background-color: #e9ecef;
+}
+
+.adminServicios-page .btn-editar {
+  color: #0066cc;
+}
+
+.adminServicios-page .btn-editar:hover {
+  background-color: #e3f2fd;
+}
+
+.adminServicios-page .btn-toggle {
+  color: #f5a623;
+}
+
+.adminServicios-page .btn-toggle:hover {
+  background-color: #fff4e5;
+}
+
+.adminServicios-page .btn-eliminar {
+  color: #dc3545;
+}
+
+.adminServicios-page .btn-eliminar:hover {
+  background-color: #f8d7da;
+}
+
+.adminServicios-page .no-data {
+  padding: 60px 20px;
+  text-align: center;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Modal */
+.adminServicios-page .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  padding: 20px;
+}
+
+.adminServicios-page .modal-content {
+  background-color: white;
+  border-radius: 12px;
+  max-width: 800px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.adminServicios-page .modal-detail {
+  max-width: 900px;
+}
+
+.adminServicios-page .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #e0e0e0;
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+
+.adminServicios-page .modal-header h2 {
+  margin: 0;
+  color: #CEAC65;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.adminServicios-page .modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.adminServicios-page .modal-close:hover {
+  color: #1d2d5a;
+}
+
+/* Modal de Detalle */
+.adminServicios-page .detail-content {
+  padding: 24px;
+}
+
+.adminServicios-page .detail-imagen {
+  width: 100%;
+  margin-bottom: 24px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.adminServicios-page .detail-imagen img {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+}
+
+.adminServicios-page .detail-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.adminServicios-page .detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adminServicios-page .detail-field.full-width {
+  grid-column: 1 / -1;
+}
+
+.adminServicios-page .detail-field label {
+  font-weight: 600;
+  color: #1d2d5a;
+  font-size: 0.95rem;
+}
+
+.adminServicios-page .detail-field span,
+.adminServicios-page .detail-field p {
+  color: #333;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.adminServicios-page .detail-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #121F3C;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.adminServicios-page .detail-link:hover {
+  color: #b8964d;
+}
+
+/* Modal Form */
+.adminServicios-page .modal-form {
+  padding: 24px;
+}
+
+.adminServicios-page .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.adminServicios-page .form-group {
+  margin-bottom: 20px;
+}
+
+.adminServicios-page .form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+.adminServicios-page .form-group input,
+.adminServicios-page .form-group textarea,
+.adminServicios-page .form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'IBM Plex Sans', sans-serif;
+  transition: border-color 0.3s ease;
+  box-sizing: border-box;
+}
+
+.adminServicios-page .form-group input:focus,
+.adminServicios-page .form-group textarea:focus,
+.adminServicios-page .form-group select:focus {
+  outline: none;
+  border-color: #CEAC65;
+}
+
+.adminServicios-page .form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.adminServicios-page .form-group select {
+  cursor: pointer;
+  background-color: white;
+}
+
+.adminServicios-page .form-group-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.adminServicios-page .form-group-checkbox input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.adminServicios-page .form-group-checkbox label {
+  cursor: pointer;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+.adminServicios-page .modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.adminServicios-page .btn-cancelar,
+.adminServicios-page .btn-guardar {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.adminServicios-page .btn-cancelar {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.adminServicios-page .btn-cancelar:hover {
+  background-color: #d0d0d0;
+}
+
+.adminServicios-page .btn-guardar {
+  background-color: #CEAC65;
+  color: white;
+}
+
+.adminServicios-page .btn-guardar:hover {
+  background-color: #b8964d;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(206, 172, 101, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .adminServicios-page .adminServicios {
+    padding: 20px 15px;
+  }
+
+  .adminServicios-page .admin-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .adminServicios-page .admin-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .adminServicios-page .btn-nuevo {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Tabla responsive con data-labels */
+  .adminServicios-page .servicios-table {
+    min-width: auto;
+  }
+
+  .adminServicios-page .servicios-table thead {
+    display: none;
+  }
+
+  .adminServicios-page .servicios-table tbody tr {
+    display: block;
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .adminServicios-page .servicios-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .adminServicios-page .servicios-table td:last-child {
+    border-bottom: none;
+  }
+
+  .adminServicios-page .servicios-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #1d2d5a;
+    margin-right: 10px;
+    min-width: 120px;
+    flex-shrink: 0;
+  }
+
+  .adminServicios-page .servicios-table td > * {
+    flex: 1;
+    text-align: right;
+  }
+
+  .adminServicios-page .td-acciones {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .adminServicios-page .td-acciones::before {
+    content: attr(data-label);
+    margin-right: auto;
+  }
+
+  .adminServicios-page .descripcion-truncada {
+    text-align: right;
+  }
+
+  /* Modal responsive */
+  .adminServicios-page .modal-content {
+    margin: 10px;
+    max-height: 95vh;
+  }
+
+  .adminServicios-page .detail-info {
+    grid-template-columns: 1fr;
+  }
+
+  .adminServicios-page .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .adminServicios-page .modal-actions {
+    flex-direction: column;
+  }
+
+  .adminServicios-page .btn-cancelar,
+  .adminServicios-page .btn-guardar {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .adminServicios-page .admin-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .adminServicios-page .modal-header {
+    padding: 16px;
+  }
+
+  .adminServicios-page .modal-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .adminServicios-page .modal-form {
+    padding: 16px;
+  }
+
+  .adminServicios-page .detail-content {
+    padding: 16px;
+  }
+
+  .adminServicios-page .servicios-table td::before {
+    min-width: 100px;
+    font-size: 0.85rem;
+  }
+
+  .adminServicios-page .td-acciones {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}

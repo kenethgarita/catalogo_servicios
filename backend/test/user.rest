@@ -1,0 +1,50 @@
+###Crear usuario ###
+POST http://localhost:5000/Usuarios/CrearUsuario
+Content-Type: application/json
+
+{
+    "nombre":"Keneth",
+    "apellido1":"Garita Madrigal",
+    "apellido2":"test",
+    "cargo":"Administrador",
+    "municipalidad":"test",
+    "correo":"kenethgarita@gmail.com",
+    "contrasena":"Admin123",
+    "num_tel":"test",
+    "id_rol": 1
+}
+
+### LOGIN DE USUARIO
+POST http://localhost:5000/Usuarios/login
+Content-Type: application/json
+
+{
+  "correo": "kenethgarita@gmail.com",
+  "contrasena": "Admin123"
+}
+
+###Obtener todos los usuarios ###
+GET http://localhost:5000/Usuarios/ObtenerUsuarios
+
+### Obtener Usuario por Id
+GET http://localhost:5000/Usuarios/1
+Content-Type: application/json
+
+### Actualizar usuario
+PUT http://localhost:5000/Usuarios/EditarUsuario/1
+Content-Type: application/json
+
+{
+        "nombre":"Keneth",
+    "apellido1":"Garita Madrigal",
+    "apellido2":"test",
+    "cargo":"Administrador",
+    "municipalidad":"test",
+    "correo":"kenethgarita@gmail.com",
+    "contrasena":"Admin123",
+    "num_tel":"test",
+    "id_rol": 2
+}
+
+### Eliminar usuario
+DELETE http://localhost:5000/Usuarios/EliminarUsuario/7

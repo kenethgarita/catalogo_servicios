@@ -1,0 +1,25 @@
+###Crear Rol ###
+POST http://localhost:5000/Roles/CrearRol
+Content-Type: application/json
+
+{
+    "nombre_rol":"Admin"
+}
+
+###Obtener todos los usuarios ###
+GET http://localhost:5000/Roles/ObtenerRoles
+
+### Obtener Usuario por Id
+GET http://localhost:5000/Roles/ObtenerRoles/2
+Content-Type: application/json
+
+### Actualizar usuario
+PUT http://localhost:5000/Roles/EditarRoles/2
+Content-Type: application/json
+
+{
+    "nombre_rol": "updatetest"
+}
+
+### Eliminar usuario
+DELETE http://localhost:5000/roles/EliminarRol/2

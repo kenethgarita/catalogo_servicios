@@ -1,0 +1,40 @@
+### Crear Solicitud
+POST http://localhost:5000/Solicitudes/CrearSolicitud 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjo0LCJyb2wiOiJBZG1pbiIsImVzX3Jlc3BvbnNhYmxlIjpmYWxzZSwiY29ycmVvIjoia2VuZXRoZ2FyaXRhQGdtYWlsLmNvbSIsImlhdCI6MTc2MTI0Njc3MywiZXhwIjoxNzYxMzMzMTczfQ.6SHXks-BwLwpEEkNv8iAYTi7Y_qfLLo78VQXIbmFs7E
+Content-Type: application/json
+
+{
+  "id_usuario": 4,
+  "detalles_solicitud": "Solicitud de prueba",
+  "id_estado": 1
+}
+
+### Obtener todas las Solicitudes
+GET http://localhost:5000/Solicitudes/ObtenerSolicitudes
+
+### Obtener Solicitud por ID
+GET http://localhost:5000/Solicitudes/ObtenerSolicitud/1
+
+### Actualizar Solicitud
+PUT http://localhost:5000/Solicitudes/EditarSolicitud/1
+Content-Type: application/json
+
+{
+  "detalles_solicitud": "Solicitud actualizada",
+  "id_estado": 2
+}
+
+### Crear solicitud con múltiples servicios
+POST http://localhost:5000/Solicitudes/CrearSolicitud
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF91c3VhcmlvIjo0LCJyb2wiOiJBZG1pbiIsImVzX3Jlc3BvbnNhYmxlIjpmYWxzZSwiY29ycmVvIjoia2VuZXRoZ2FyaXRhQGdtYWlsLmNvbSIsImlhdCI6MTc2MTc2ODAxNSwiZXhwIjoxNzYxODU0NDE1fQ.vyxZeu0ncFrH6GIfaZHODbg3HW0mQyVcpl4Y8VoubOo
+Content-Type: application/json
+
+{
+  "detalles_solicitud": "Solicito mantenimiento y capacitación técnica",
+  "id_estado": 1,
+  "servicios": [2, 5, 6]
+}
+
+
+### Eliminar Solicitud
+DELETE http://localhost:5000/Solicitudes/EliminarSolicitud/26
