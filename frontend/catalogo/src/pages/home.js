@@ -6,7 +6,6 @@ import Accesibilidad from '../components/accesibilidad';
 import Header from '../components/header';
 import Footer from '../components/footer';
 
-
 const API_URL = process.env.REACT_APP_API_URL;
 
 function Home() {
@@ -60,6 +59,7 @@ useEffect(() => {
     fetchServiciosHabilitados();
   }, []);
 
+  // ✅ NUEVO: Filtrar servicios cuando cambia el término de búsqueda
   useEffect(() => {
     if (!searchTerm.trim()) {
       setServiciosFiltrados(serviciosHabilitados);
@@ -83,7 +83,7 @@ useEffect(() => {
   const handleVerServicios = () => console.log('Ver Servicios');
   const handleManejarPeticiones = () => console.log('Manejar Peticiones');
   const handleSolicitarServicio = () => console.log('Solicitar Servicio');
-
+  
   return (
     <div className="home-page">
       <Accesibilidad />
@@ -109,46 +109,44 @@ useEffect(() => {
               </p>
             </div>
 
-<div className="hero-buttons">
-  {!isAuthenticated && (
-    <>
-      <BotonHome texto="Iniciar Sesión" ruta="/login" />
-      <BotonHome texto="Ver Servicios" onClick={() => {
-        document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
-      }} />
-    </>
-  )}
+            <div className="hero-buttons">
+              {!isAuthenticated && (
+                <>
+                  <BotonHome texto="Iniciar Sesión" ruta="/login" />
+                  <BotonHome texto="Ver Servicios" onClick={() => {
+                    document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }} />
+                </>
+              )}
 
-  {isAuthenticated && !isResponsable && userRole !== 'administrador' && userRole !== 'admin' && (
-  <>
-    <BotonHome texto="Mis Solicitudes" ruta="/mis-solicitudes" />
-    <BotonHome texto="Solicitar Servicio" ruta="/solicitar" />
-    <BotonHome texto="Ver Servicios" onClick={() => {
-        document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
-      }} />
-  </>
+              {isAuthenticated && !isResponsable && userRole !== 'administrador' && userRole !== 'admin' && (
+                <>
+                  <BotonHome texto="Mis Solicitudes" ruta="/mis-solicitudes" />
+                  <BotonHome texto="Solicitar Servicio" ruta="/solicitar" />
+                  <BotonHome texto="Ver Servicios" onClick={() => {
+                    document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }} />
+                </>
+              )}
 
-  )}
+              {isAuthenticated && (isResponsable || userRole === 'administrador' || userRole === 'admin') && (
+                <>
+                  <BotonHome texto="Mis Solicitudes" ruta="/mis-solicitudes" />
+                  <BotonHome texto="Ver Solicitudes Asignadas" ruta="/responsable/solicitudes" />
+                  <BotonHome texto="Ver Servicios" onClick={() => {
+                    document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }} />
+                </>
+              )}
 
-  {isAuthenticated && (isResponsable || userRole === 'administrador' || userRole === 'admin') && (
-    <>
-      <BotonHome texto="Mis Solicitudes" ruta="/mis-solicitudes" />
-      <BotonHome texto="Ver Solicitudes Asignadas" ruta="/responsable/solicitudes" />
-      <BotonHome texto="Ver Servicios" onClick={() => {
-        document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
-      }} />
-    </>
-  )}
-
-  {isAuthenticated && (userRole === 'administrador' || userRole === 'admin') && (
-    <>
-      <BotonHome texto="Gestionar Servicios" ruta="/admin/servicios" />
-      <BotonHome texto="Gestionar Roles" ruta="/admin/roles" />
-      <BotonHome texto="Gestionar Secciones" ruta="/admin/categorias" />
-    </>
-  )}
-</div>
-
+              {isAuthenticated && (userRole === 'administrador' || userRole === 'admin') && (
+                <>
+                  <BotonHome texto="Gestionar Servicios" ruta="/admin/servicios" />
+                  <BotonHome texto="Gestionar Roles" ruta="/admin/roles" />
+                  <BotonHome texto="Gestionar Secciones" ruta="/admin/categorias" />
+                </>
+              )}
+            </div>
           </div>
         </section>
 
@@ -176,16 +174,15 @@ useEffect(() => {
               {serviciosHabilitados.length > 0 ? (
                 <div className="servicios-grid">
                   {serviciosHabilitados.map(servicio => (
-                  <TarjetaServicio
-                    key={servicio.id_servicio}
-                    id={servicio.id_servicio}       // <-- aquí
-                    titulo={servicio.nombre_servicio}
-                    imagen={servicio.imagen_servicio}
-                    icono={servicio.icono}
-                    descripcion={servicio.descripcion_servicio}
-                  />
-                ))}
-
+                    <TarjetaServicio
+                      key={servicio.id_servicio}
+                      id={servicio.id_servicio}
+                      titulo={servicio.nombre_servicio}
+                      icono={servicio.icono}
+                      descripcion={servicio.descripcion_servicio}
+                      tiene_imagen={servicio.tiene_imagen}
+                    />
+                  ))}
                 </div>
               ) : (
                 <p className="no-servicios">No hay servicios habilitados en este momento.</p>
