@@ -83,7 +83,7 @@ useEffect(() => {
   const handleVerServicios = () => console.log('Ver Servicios');
   const handleManejarPeticiones = () => console.log('Manejar Peticiones');
   const handleSolicitarServicio = () => console.log('Solicitar Servicio');
-  
+
   return (
     <div className="home-page">
       <Accesibilidad />
@@ -150,7 +150,13 @@ useEffect(() => {
           </div>
         </section>
 
-        {/* Barra de búsqueda */}
+
+
+        {/* Sección de Servicios */}
+        <section className="servicios-section">
+          <h2 className="servicios-titulo">Nuestros Servicios</h2>
+
+                  {/* Barra de búsqueda */}
         <section className="search-section">
           <div className="search-container">
             <input type="text" placeholder="Buscar servicios..." className="search-input" />
@@ -162,10 +168,6 @@ useEffect(() => {
             </button>
           </div>
         </section>
-
-        {/* Sección de Servicios */}
-        <section className="servicios-section">
-          <h2 className="servicios-titulo">Nuestros Servicios</h2>
           
           {loading ? (
             <div className="loading">Cargando servicios...</div>
