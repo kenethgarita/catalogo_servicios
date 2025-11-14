@@ -1,15 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './TarjetaServicio.css';
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 const TarjetaServicio = ({ 
   id,
   titulo, 
-  imagen, 
   icono,
-  descripcion 
+  descripcion,
+  tiene_imagen
 }) => {
   const navigate = useNavigate();
+  const [imagenUrl, setImagenUrl] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (tiene_imagen) {
+      cargarImagen();
+    } else {
+      setLoading(false);
+    }
+  }, [id, tiene_imagen]);
+
+  const cargarImagen = async () => {
+    try {
+      const response = await fetch(`${API_URL}/Servicio/Imagen/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setImagenUrl(data.data);
+      }
+    } catch (error) {
+      console.error('Error al cargar imagen:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleClick = () => {
     navigate(`/servicio/${id}`);
@@ -18,7 +44,32 @@ const TarjetaServicio = ({
   return (
     <div className="tarjeta-servicio" onClick={handleClick}>
       <div className="tarjeta-imagen">
-        <img src={imagen || '/placeholder-servicio.jpg'} alt={titulo} />
+        {loading ? (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            backgroundColor: '#f0f0f0'
+          }}>
+            <div style={{
+              width: '40px',
+              height: '40px',
+              border: '4px solid #e0e0e0',
+              borderTop: '4px solid #1d2d5a',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }}></div>
+          </div>
+        ) : (
+          <img 
+            src={imagenUrl || '/placeholder-servicio.jpg'} 
+            alt={titulo}
+            onError={(e) => {
+              e.target.src = '/placeholder-servicio.jpg';
+            }}
+          />
+        )}
       </div>
       
       <div className="tarjeta-info">
@@ -39,6 +90,13 @@ const TarjetaServicio = ({
         
         <p className="tarjeta-descripcion">{descripcion}</p>
       </div>
+      
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 };

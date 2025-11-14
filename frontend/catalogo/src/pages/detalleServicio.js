@@ -11,7 +11,9 @@ function DetalleServicio() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [servicio, setServicio] = useState(null);
+  const [imagenUrl, setImagenUrl] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingImagen, setLoadingImagen] = useState(true);
 
   useEffect(() => {
     fetchServicio();
@@ -36,16 +38,43 @@ function DetalleServicio() {
         proposito: data.proposito_servicio,
         area_responsable: data.area_responsable,
         tiempo_atencion: data.tiempo,
-        documentacion: data.documentacion_url,
-        imagen: data.imagen_servicio
+        tiene_imagen: data.tiene_imagen,
+        tiene_documentacion: data.tiene_documentacion,
+        documentacion_nombre: data.documentacion_nombre
       };
 
       setServicio(servicioNormalizado);
       setLoading(false);
+
+      // Cargar imagen si existe
+      if (data.tiene_imagen) {
+        cargarImagen();
+      } else {
+        setLoadingImagen(false);
+      }
     } catch (error) {
       console.error('Error al cargar servicio:', error);
       setLoading(false);
+      setLoadingImagen(false);
     }
+  };
+
+  const cargarImagen = async () => {
+    try {
+      const response = await fetch(`${API_URL}/Servicio/Imagen/${id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setImagenUrl(data.data);
+      }
+    } catch (error) {
+      console.error('Error al cargar imagen:', error);
+    } finally {
+      setLoadingImagen(false);
+    }
+  };
+
+  const handleDownloadDoc = () => {
+    window.open(`${API_URL}/Servicio/Documentacion/${id}`, '_blank');
   };
 
   if (loading) {
@@ -105,7 +134,32 @@ function DetalleServicio() {
         {/* Imagen del Servicio */}
         <section className="servicio-imagen-section">
           <div className="imagen-container">
-            <img src={servicio.imagen} alt={servicio.nombre} />
+            {loadingImagen ? (
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minHeight: '400px',
+                backgroundColor: '#f0f0f0'
+              }}>
+                <div style={{
+                  width: '50px',
+                  height: '50px',
+                  border: '4px solid #e0e0e0',
+                  borderTop: '4px solid #1d2d5a',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite'
+                }}></div>
+              </div>
+            ) : (
+              <img 
+                src={imagenUrl || '/placeholder-servicio.jpg'} 
+                alt={servicio.nombre}
+                onError={(e) => {
+                  e.target.src = '/placeholder-servicio.jpg';
+                }}
+              />
+            )}
           </div>
         </section>
 
@@ -156,7 +210,7 @@ function DetalleServicio() {
           </section>
 
           {/* Documentación */}
-          {servicio.documentacion && (
+          {servicio.tiene_documentacion && (
             <section className="servicio-seccion documentacion-section">
               <h2 className="seccion-titulo">Documentación</h2>
               <div className="documentacion-card">
@@ -170,13 +224,11 @@ function DetalleServicio() {
                   </svg>
                 </div>
                 <div className="doc-info">
-                  <h3>Manual del Servicio</h3>
+                  <h3>{servicio.documentacion_nombre || 'Manual del Servicio'}</h3>
                   <p>Descarga la documentación completa del servicio</p>
                 </div>
-                <a 
-                  href={servicio.documentacion} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
+                <button 
+                  onClick={handleDownloadDoc}
                   className="btn-descargar"
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -185,7 +237,7 @@ function DetalleServicio() {
                     <line x1="12" y1="15" x2="12" y2="3"/>
                   </svg>
                   Descargar
-                </a>
+                </button>
               </div>
             </section>
           )}
@@ -201,8 +253,9 @@ function DetalleServicio() {
             </button>
 
             <button 
-                className="btn-primario"
-                onClick={() => navigate(`/solicitar/${servicio.id}`)}>
+              className="btn-primario"
+              onClick={() => navigate(`/solicitar/${servicio.id}`)}
+            >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                 <polyline points="22,6 12,13 2,6"/>
@@ -211,10 +264,16 @@ function DetalleServicio() {
             </button>
           </section>
         </div>
-        
       </main>
 
       <Footer />
+      
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }

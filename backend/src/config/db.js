@@ -75,17 +75,28 @@ export async function InitDB() {
     await pool.request().query(`
             IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Servicio' AND xtype='U')
             CREATE TABLE Servicio (
-                id_servicio INT IDENTITY(1,1) PRIMARY KEY,
-                nombre_servicio VARCHAR(100),
-                descripcion_servicio VARCHAR(300),
-                proposito_servicio VARCHAR(150),
-                area_responsable VARCHAR(100),
-                tiempo VARCHAR(50),
-                documentacion_url NVARCHAR(255),
-                imagen_servicio NVARCHAR(255),
-                activo BIT DEFAULT 1,
-                id_categoria INT FOREIGN KEY REFERENCES Categoria(id_categoria)
-            );
+    id_servicio INT IDENTITY(1,1) PRIMARY KEY,
+    nombre_servicio VARCHAR(100),
+    descripcion_servicio VARCHAR(300),
+    proposito_servicio VARCHAR(150),
+    area_responsable VARCHAR(100),
+    tiempo VARCHAR(50),
+    activo BIT DEFAULT 1,
+    id_categoria INT FOREIGN KEY REFERENCES Categoria(id_categoria),
+    
+    -- Campos para almacenar archivos como BLOB
+    imagen_blob VARBINARY(MAX),
+    imagen_tipo VARCHAR(50),
+    imagen_nombre VARCHAR(255),
+    
+    documentacion_blob VARBINARY(MAX),
+    documentacion_tipo VARCHAR(50),
+    documentacion_nombre VARCHAR(255),
+    
+    -- Mantener URLs como backup/alternativa
+    imagen_servicio NVARCHAR(255),
+    documentacion_url NVARCHAR(255)
+);
         `);
 
     // Tabla Solicitud

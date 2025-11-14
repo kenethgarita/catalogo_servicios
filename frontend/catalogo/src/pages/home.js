@@ -6,30 +6,27 @@ import Accesibilidad from '../components/accesibilidad';
 import Header from '../components/header';
 import Footer from '../components/footer';
 
-
 const API_URL = process.env.REACT_APP_API_URL;
 
 function Home() {
-
   const [userRole, setUserRole] = useState(null);
-const [isAuthenticated, setIsAuthenticated] = useState(false);
-const [isResponsable, setIsResponsable] = useState(false);
-
-useEffect(() => {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const rol = payload.rol?.toLowerCase() || '';
-    const esResponsable = payload.es_responsable === true || payload.es_responsable === 1;
-    setUserRole(rol);
-    setIsResponsable(esResponsable);
-    setIsAuthenticated(true);
-  } catch {}
-}, []);
-
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isResponsable, setIsResponsable] = useState(false);
   const [serviciosHabilitados, setServiciosHabilitados] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const rol = payload.rol?.toLowerCase() || '';
+      const esResponsable = payload.es_responsable === true || payload.es_responsable === 1;
+      setUserRole(rol);
+      setIsResponsable(esResponsable);
+      setIsAuthenticated(true);
+    } catch {}
+  }, []);
 
   useEffect(() => {
     const fetchServiciosHabilitados = async () => {
@@ -42,11 +39,11 @@ useEffect(() => {
         if (Array.isArray(data) && data.length > 0) {
           setServiciosHabilitados(data);
         } else {
-          setServiciosHabilitados([]); // fallback si no hay servicios
+          setServiciosHabilitados([]);
         }
       } catch (error) {
         console.error('Error al cargar servicios habilitados:', error);
-        setServiciosHabilitados([]); // fallback en caso de error
+        setServiciosHabilitados([]);
       } finally {
         setLoading(false);
       }
@@ -84,46 +81,44 @@ useEffect(() => {
               </p>
             </div>
 
-<div className="hero-buttons">
-  {!isAuthenticated && (
-    <>
-      <BotonHome texto="Iniciar Sesión" ruta="/login" />
-      <BotonHome texto="Ver Servicios" onClick={() => {
-        document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
-      }} />
-    </>
-  )}
+            <div className="hero-buttons">
+              {!isAuthenticated && (
+                <>
+                  <BotonHome texto="Iniciar Sesión" ruta="/login" />
+                  <BotonHome texto="Ver Servicios" onClick={() => {
+                    document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }} />
+                </>
+              )}
 
-  {isAuthenticated && !isResponsable && userRole !== 'administrador' && userRole !== 'admin' && (
-  <>
-    <BotonHome texto="Mis Solicitudes" ruta="/mis-solicitudes" />
-    <BotonHome texto="Solicitar Servicio" ruta="/solicitar" />
-    <BotonHome texto="Ver Servicios" onClick={() => {
-        document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
-      }} />
-  </>
+              {isAuthenticated && !isResponsable && userRole !== 'administrador' && userRole !== 'admin' && (
+                <>
+                  <BotonHome texto="Mis Solicitudes" ruta="/mis-solicitudes" />
+                  <BotonHome texto="Solicitar Servicio" ruta="/solicitar" />
+                  <BotonHome texto="Ver Servicios" onClick={() => {
+                    document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }} />
+                </>
+              )}
 
-  )}
+              {isAuthenticated && (isResponsable || userRole === 'administrador' || userRole === 'admin') && (
+                <>
+                  <BotonHome texto="Mis Solicitudes" ruta="/mis-solicitudes" />
+                  <BotonHome texto="Ver Solicitudes Asignadas" ruta="/responsable/solicitudes" />
+                  <BotonHome texto="Ver Servicios" onClick={() => {
+                    document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }} />
+                </>
+              )}
 
-  {isAuthenticated && (isResponsable || userRole === 'administrador' || userRole === 'admin') && (
-    <>
-      <BotonHome texto="Mis Solicitudes" ruta="/mis-solicitudes" />
-      <BotonHome texto="Ver Solicitudes Asignadas" ruta="/responsable/solicitudes" />
-      <BotonHome texto="Ver Servicios" onClick={() => {
-        document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
-      }} />
-    </>
-  )}
-
-  {isAuthenticated && (userRole === 'administrador' || userRole === 'admin') && (
-    <>
-      <BotonHome texto="Gestionar Servicios" ruta="/admin/servicios" />
-      <BotonHome texto="Gestionar Roles" ruta="/admin/roles" />
-      <BotonHome texto="Gestionar Secciones" ruta="/admin/categorias" />
-    </>
-  )}
-</div>
-
+              {isAuthenticated && (userRole === 'administrador' || userRole === 'admin') && (
+                <>
+                  <BotonHome texto="Gestionar Servicios" ruta="/admin/servicios" />
+                  <BotonHome texto="Gestionar Roles" ruta="/admin/roles" />
+                  <BotonHome texto="Gestionar Secciones" ruta="/admin/categorias" />
+                </>
+              )}
+            </div>
           </div>
         </section>
 
@@ -151,16 +146,15 @@ useEffect(() => {
               {serviciosHabilitados.length > 0 ? (
                 <div className="servicios-grid">
                   {serviciosHabilitados.map(servicio => (
-                  <TarjetaServicio
-                    key={servicio.id_servicio}
-                    id={servicio.id_servicio}       // <-- aquí
-                    titulo={servicio.nombre_servicio}
-                    imagen={servicio.imagen_servicio}
-                    icono={servicio.icono}
-                    descripcion={servicio.descripcion_servicio}
-                  />
-                ))}
-
+                    <TarjetaServicio
+                      key={servicio.id_servicio}
+                      id={servicio.id_servicio}
+                      titulo={servicio.nombre_servicio}
+                      icono={servicio.icono}
+                      descripcion={servicio.descripcion_servicio}
+                      tiene_imagen={servicio.tiene_imagen}
+                    />
+                  ))}
                 </div>
               ) : (
                 <p className="no-servicios">No hay servicios habilitados en este momento.</p>

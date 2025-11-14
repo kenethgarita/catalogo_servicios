@@ -15,6 +15,12 @@ function AdminServicios() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedServicio, setSelectedServicio] = useState(null);
   const [editingServicio, setEditingServicio] = useState(null);
+  
+  // Estados para archivos
+  const [imagenFile, setImagenFile] = useState(null);
+  const [imagenPreview, setImagenPreview] = useState(null);
+  const [documentacionFile, setDocumentacionFile] = useState(null);
+  
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -22,8 +28,6 @@ function AdminServicios() {
     area_responsable: '',
     tiempo_atencion: '',
     categoria: '',
-    imagen: '',
-    documentacion: '',
     habilitado: true
   });
 
@@ -46,9 +50,11 @@ function AdminServicios() {
         tiempo_atencion: s.tiempo,
         categoria: s.nombre_categoria,
         id_categoria: s.id_categoria,
-        imagen: s.imagen_servicio,
-        documentacion: s.documentacion_url,
-        habilitado: s.activo
+        habilitado: s.activo,
+        tiene_imagen: s.tiene_imagen,
+        tiene_documentacion: s.tiene_documentacion,
+        imagen_nombre: s.imagen_nombre,
+        documentacion_nombre: s.documentacion_nombre
       }));
 
       setServicios(serviciosData);
@@ -57,17 +63,89 @@ function AdminServicios() {
     }
   };
 
-const fetchCategorias = async () => {
-  try {
-    const response = await fetch(`${API_URL}/Categorias/ObtenerCategorias`,{headers: { Authorization: `Bearer ${token}` }});
-    const data = await response.json();
-    // data tiene la forma { categorias: [...] }
-    setCategorias(data.categorias || []); 
-  } catch (error) {
-    console.error('Error al cargar categorías:', error);
-  }
-};
+  const fetchCategorias = async () => {
+    try {
+      const response = await fetch(`${API_URL}/Categorias/ObtenerCategorias`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await response.json();
+      setCategorias(data.categorias || []); 
+    } catch (error) {
+      console.error('Error al cargar categorías:', error);
+    }
+  };
 
+  // Función para convertir archivo a base64
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64 = reader.result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = error => reject(error);
+    });
+  };
+
+  // Manejador de cambio de imagen
+  const handleImagenChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        showNotification({
+          type: 'error',
+          title: 'Archivo muy grande',
+          message: 'La imagen no debe superar 5MB'
+        });
+        return;
+      }
+      
+      if (!file.type.startsWith('image/')) {
+        showNotification({
+          type: 'error',
+          title: 'Tipo inválido',
+          message: 'Solo se permiten imágenes'
+        });
+        return;
+      }
+      
+      setImagenFile(file);
+      
+      // Crear preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagenPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Manejador de cambio de documentación
+  const handleDocumentacionChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        showNotification({
+          type: 'error',
+          title: 'Archivo muy grande',
+          message: 'El PDF no debe superar 10MB'
+        });
+        return;
+      }
+      
+      if (file.type !== 'application/pdf') {
+        showNotification({
+          type: 'error',
+          title: 'Tipo inválido',
+          message: 'Solo se permiten archivos PDF'
+        });
+        return;
+      }
+      
+      setDocumentacionFile(file);
+    }
+  };
 
   const truncateText = (text, maxLength = 80) => {
     if (!text) return '';
@@ -86,60 +164,81 @@ const fetchCategorias = async () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-  try {
-    const bodyData = {
-      nombre_servicio: formData.nombre,
-      descripcion_servicio: formData.descripcion,
-      proposito_servicio: formData.proposito,
-      area_responsable: formData.area_responsable,
-      tiempo: formData.tiempo_atencion,
-      id_categoria: formData.categoria,
-      imagen_servicio: formData.imagen,
-      documentacion_url: formData.documentacion,
-      activo: formData.habilitado
-    };
+    try {
+      const bodyData = {
+        nombre_servicio: formData.nombre,
+        descripcion_servicio: formData.descripcion,
+        proposito_servicio: formData.proposito,
+        area_responsable: formData.area_responsable,
+        tiempo: formData.tiempo_atencion,
+        id_categoria: formData.categoria,
+        activo: formData.habilitado
+      };
 
-    if (editingServicio) {
-      await fetch(`${API_URL}/Servicio/EditarServicio/${editingServicio.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}` },
-        body: JSON.stringify(bodyData)
-      });
-      
+      // Agregar imagen si existe
+      if (imagenFile) {
+        const imagenBase64 = await fileToBase64(imagenFile);
+        bodyData.imagen_base64 = imagenBase64;
+        bodyData.imagen_tipo = imagenFile.type;
+        bodyData.imagen_nombre = imagenFile.name;
+      }
+
+      // Agregar documentación si existe
+      if (documentacionFile) {
+        const docBase64 = await fileToBase64(documentacionFile);
+        bodyData.documentacion_base64 = docBase64;
+        bodyData.documentacion_tipo = documentacionFile.type;
+        bodyData.documentacion_nombre = documentacionFile.name;
+      }
+
+      if (editingServicio) {
+        await fetch(`${API_URL}/Servicio/EditarServicio/${editingServicio.id}`, {
+          method: 'PUT',
+          headers: { 
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}` 
+          },
+          body: JSON.stringify(bodyData)
+        });
+        
+        showNotification({
+          type: 'success',
+          title: 'Servicio Actualizado',
+          message: 'Los cambios han sido guardados correctamente'
+        });
+      } else {
+        await fetch(`${API_URL}/Servicio/CrearServicio`, {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(bodyData)
+        });
+        
+        showNotification({
+          type: 'success',
+          title: 'Servicio Creado',
+          message: 'El servicio ha sido agregado al catálogo'
+        });
+      }
+
+      setShowModal(false);
+      setEditingServicio(null);
+      setImagenFile(null);
+      setImagenPreview(null);
+      setDocumentacionFile(null);
+      resetForm();
+      fetchServicios();
+    } catch (error) {
+      console.error('Error al guardar servicio:', error);
       showNotification({
-        type: 'success',
-        title: 'Servicio Actualizado',
-        message: 'Los cambios han sido guardados correctamente'
-      });
-    } else {
-      await fetch(`${API_URL}/Servicio/CrearServicio`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`},
-        body: JSON.stringify(bodyData)
-      });
-      
-      showNotification({
-        type: 'success',
-        title: 'Servicio Creado',
-        message: 'El servicio ha sido agregado al catálogo'
+        type: 'error',
+        title: 'Error',
+        message: 'No se pudo guardar el servicio. Intenta de nuevo.'
       });
     }
-
-    setShowModal(false);
-    setEditingServicio(null);
-    resetForm();
-    fetchServicios();
-  } catch (error) {
-    console.error('Error al guardar servicio:', error);
-    showNotification({
-      type: 'error',
-      title: 'Error',
-      message: 'No se pudo guardar el servicio. Intenta de nuevo.'
-    });
-  }
-};
+  };
 
   const resetForm = () => {
     setFormData({
@@ -149,10 +248,11 @@ const fetchCategorias = async () => {
       area_responsable: '',
       tiempo_atencion: '',
       categoria: '',
-      imagen: '',
-      documentacion: '',
       habilitado: true
     });
+    setImagenFile(null);
+    setImagenPreview(null);
+    setDocumentacionFile(null);
   };
 
   const handleEdit = (servicio) => {
@@ -164,89 +264,113 @@ const fetchCategorias = async () => {
       area_responsable: servicio.area_responsable,
       tiempo_atencion: servicio.tiempo_atencion,
       categoria: servicio.id_categoria || '',
-      imagen: servicio.imagen,
-      documentacion: servicio.documentacion || '',
       habilitado: servicio.habilitado
     });
+    
+    // Cargar preview de imagen si existe
+    if (servicio.tiene_imagen) {
+      fetch(`${API_URL}/Servicio/Imagen/${servicio.id}`)
+        .then(res => res.json())
+        .then(data => setImagenPreview(data.data))
+        .catch(err => console.error('Error al cargar imagen:', err));
+    }
+    
     setShowModal(true);
   };
 
-  const handleViewDetail = (servicio) => {
-    setSelectedServicio(servicio);
+  const handleViewDetail = async (servicio) => {
+    const servicioConArchivos = { ...servicio };
+    
+    // Cargar imagen si existe
+    if (servicio.tiene_imagen) {
+      try {
+        const response = await fetch(`${API_URL}/Servicio/Imagen/${servicio.id}`);
+        const data = await response.json();
+        servicioConArchivos.imagenData = data.data;
+      } catch (error) {
+        console.error('Error al cargar imagen:', error);
+      }
+    }
+    
+    setSelectedServicio(servicioConArchivos);
     setShowDetailModal(true);
   };
 
-const handleDelete = async (id) => {
-  if (window.confirm('¿Está seguro de eliminar este servicio?')) {
+  const handleDelete = async (id) => {
+    if (window.confirm('¿Está seguro de eliminar este servicio?')) {
+      try {
+        await fetch(`${API_URL}/Servicio/BorrarServicio/${id}`, { 
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` } 
+        });
+        
+        showNotification({
+          type: 'success',
+          title: 'Servicio Eliminado',
+          message: 'El servicio ha sido removido del catálogo'
+        });
+        
+        fetchServicios();
+      } catch (error) {
+        console.error('Error al eliminar servicio:', error);
+        showNotification({
+          type: 'error',
+          title: 'Error',
+          message: 'No se pudo eliminar el servicio'
+        });
+      }
+    }
+  };
+
+  const handleToggleHabilitado = async (servicio) => {
     try {
-      await fetch(`${API_URL}/Servicio/BorrarServicio/${id}`, { method: 'DELETE',headers: { Authorization: `Bearer ${token}` } });
+      const response = await fetch(`${API_URL}/Servicio/ListarServicioPorId/${servicio.id}`);
+      const servicioCompleto = await response.json();
       
+      const bodyData = {
+        nombre_servicio: servicioCompleto.nombre_servicio,
+        descripcion_servicio: servicioCompleto.descripcion_servicio,
+        proposito_servicio: servicioCompleto.proposito_servicio,
+        area_responsable: servicioCompleto.area_responsable,
+        tiempo: servicioCompleto.tiempo,
+        id_categoria: servicioCompleto.id_categoria,
+        activo: !servicio.habilitado
+      };
+
+      await fetch(`${API_URL}/Servicio/EditarServicio/${servicio.id}`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify(bodyData)
+      });
+
       showNotification({
         type: 'success',
-        title: 'Servicio Eliminado',
-        message: 'El servicio ha sido removido del catálogo'
+        title: servicio.habilitado ? 'Servicio Deshabilitado' : 'Servicio Habilitado',
+        message: `El servicio ha sido ${servicio.habilitado ? 'deshabilitado' : 'habilitado'} correctamente`
       });
-      
+
       fetchServicios();
     } catch (error) {
-      console.error('Error al eliminar servicio:', error);
+      console.error('Error al cambiar estado:', error);
       showNotification({
         type: 'error',
         title: 'Error',
-        message: 'No se pudo eliminar el servicio'
+        message: 'No se pudo cambiar el estado del servicio'
       });
     }
-  }
-};
-
-  // Reemplaza la función handleToggleHabilitado existente con esta versión corregida:
-
-const handleToggleHabilitado = async (servicio) => {
-  try {
-    const response = await fetch(`${API_URL}/Servicio/ListarServicioPorId/${servicio.id}`, );
-    const servicioCompleto = await response.json();
-    
-    const bodyData = {
-      nombre_servicio: servicioCompleto.nombre_servicio,
-      descripcion_servicio: servicioCompleto.descripcion_servicio,
-      proposito_servicio: servicioCompleto.proposito_servicio,
-      area_responsable: servicioCompleto.area_responsable,
-      tiempo: servicioCompleto.tiempo,
-      id_categoria: servicioCompleto.id_categoria,
-      imagen_servicio: servicioCompleto.imagen_servicio,
-      documentacion_url: servicioCompleto.documentacion_url,
-      activo: !servicio.habilitado
-    };
-
-    await fetch(`${API_URL}/Servicio/EditarServicio/${servicio.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}` },
-      body: JSON.stringify(bodyData)
-    });
-
-    showNotification({
-      type: 'success',
-      title: servicio.habilitado ? 'Servicio Deshabilitado' : 'Servicio Habilitado',
-      message: `El servicio ha sido ${servicio.habilitado ? 'deshabilitado' : 'habilitado'} correctamente`
-    });
-
-    fetchServicios();
-  } catch (error) {
-    console.error('Error al cambiar estado:', error);
-    // REEMPLAZAR: alert('Error al cambiar el estado del servicio');
-    showNotification({
-      type: 'error',
-      title: 'Error',
-      message: 'No se pudo cambiar el estado del servicio'
-    });
-  }
-};
+  };
 
   const openNewModal = () => {
     setEditingServicio(null);
     resetForm();
     setShowModal(true);
+  };
+
+  const handleDownloadDoc = (servicioId) => {
+    window.open(`${API_URL}/Servicio/Documentacion/${servicioId}`, '_blank');
   };
 
   return (
@@ -255,7 +379,7 @@ const handleToggleHabilitado = async (servicio) => {
       <Header />
       <NotificationSystem />
 
-        <main className="adminServicios">
+      <main className="adminServicios">
         <div className="admin-header">
           <h1>Administración de Servicios</h1>
           <button className="btn-nuevo" onClick={openNewModal}>
@@ -304,19 +428,26 @@ const handleToggleHabilitado = async (servicio) => {
                     <td data-label="Área Responsable">{servicio.area_responsable}</td>
                     <td data-label="Tiempo">{servicio.tiempo_atencion}</td>
                     <td data-label="Imagen">
-                      {servicio.imagen && (
-                        <a href={servicio.imagen} target="_blank" rel="noopener noreferrer" className="link-icon">
+                      {servicio.tiene_imagen ? (
+                        <span className="link-icon" title={servicio.imagen_nombre}>
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                             <circle cx="8.5" cy="8.5" r="1.5"/>
                             <polyline points="21 15 16 10 5 21"/>
                           </svg>
-                        </a>
+                        </span>
+                      ) : (
+                        <span style={{color: '#999'}}>—</span>
                       )}
                     </td>
                     <td data-label="Documentación">
-                      {servicio.documentacion && (
-                        <a href={servicio.documentacion} target="_blank" rel="noopener noreferrer" className="link-icon">
+                      {servicio.tiene_documentacion ? (
+                        <button 
+                          onClick={() => handleDownloadDoc(servicio.id)} 
+                          className="link-icon"
+                          title={servicio.documentacion_nombre}
+                          style={{background: 'none', border: 'none', cursor: 'pointer'}}
+                        >
                           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                             <polyline points="14 2 14 8 20 8"/>
@@ -324,7 +455,9 @@ const handleToggleHabilitado = async (servicio) => {
                             <line x1="16" y1="17" x2="8" y2="17"/>
                             <polyline points="10 9 9 9 8 9"/>
                           </svg>
-                        </a>
+                        </button>
+                      ) : (
+                        <span style={{color: '#999'}}>—</span>
                       )}
                     </td>
                     <td data-label="Estado">
@@ -395,9 +528,9 @@ const handleToggleHabilitado = async (servicio) => {
             </div>
 
             <div className="detail-content">
-              {selectedServicio.imagen && (
+              {selectedServicio.imagenData && (
                 <div className="detail-imagen">
-                  <img src={selectedServicio.imagen} alt={selectedServicio.nombre} />
+                  <img src={selectedServicio.imagenData} alt={selectedServicio.nombre} />
                 </div>
               )}
 
@@ -437,17 +570,21 @@ const handleToggleHabilitado = async (servicio) => {
                   <p>{selectedServicio.proposito}</p>
                 </div>
 
-                {selectedServicio.documentacion && (
+                {selectedServicio.tiene_documentacion && (
                   <div className="detail-field">
                     <label>Documentación:</label>
-                    <a href={selectedServicio.documentacion} target="_blank" rel="noopener noreferrer" className="detail-link">
-                      Ver documento
+                    <button 
+                      onClick={() => handleDownloadDoc(selectedServicio.id)}
+                      className="detail-link"
+                      style={{background: 'none', border: 'none', cursor: 'pointer', padding: 0}}
+                    >
+                      Descargar documento
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                         <polyline points="15 3 21 3 21 9"/>
                         <line x1="10" y1="14" x2="21" y2="3"/>
                       </svg>
-                    </a>
+                    </button>
                   </div>
                 )}
 
@@ -560,26 +697,45 @@ const handleToggleHabilitado = async (servicio) => {
               </div>
 
               <div className="form-group">
-                <label>URL de la Imagen *</label>
+                <label>Imagen del Servicio {editingServicio && '(Dejar vacío para mantener la actual)'}</label>
                 <input
-                  type="text"
-                  name="imagen"
-                  value={formData.imagen}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="https://ejemplo.com/imagen.jpg"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImagenChange}
                 />
+                {imagenPreview && (
+                  <div style={{marginTop: '10px'}}>
+                    <img 
+                      src={imagenPreview} 
+                      alt="Preview" 
+                      style={{
+                        maxWidth: '200px', 
+                        maxHeight: '200px', 
+                        borderRadius: '8px',
+                        border: '2px solid #e0e0e0'
+                      }} 
+                    />
+                  </div>
+                )}
+                {imagenFile && (
+                  <p style={{fontSize: '0.85rem', color: '#666', marginTop: '4px'}}>
+                    📷 {imagenFile.name} ({(imagenFile.size / 1024).toFixed(2)} KB)
+                  </p>
+                )}
               </div>
 
               <div className="form-group">
-                <label>URL de Documentación (opcional)</label>
+                <label>Documentación (PDF) {editingServicio && '(Dejar vacío para mantener la actual)'}</label>
                 <input
-                  type="text"
-                  name="documentacion"
-                  value={formData.documentacion}
-                  onChange={handleInputChange}
-                  placeholder="https://ejemplo.com/documentacion.pdf"
+                  type="file"
+                  accept="application/pdf"
+                  onChange={handleDocumentacionChange}
                 />
+                {documentacionFile && (
+                  <p style={{fontSize: '0.85rem', color: '#666', marginTop: '4px'}}>
+                    📄 {documentacionFile.name} ({(documentacionFile.size / 1024).toFixed(2)} KB)
+                  </p>
+                )}
               </div>
 
               <div className="form-group-checkbox">
