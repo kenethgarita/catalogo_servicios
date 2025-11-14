@@ -16,11 +16,14 @@ const TarjetaServicio = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (tiene_imagen) {
-      cargarImagen();
-    } else {
+    // Si no tiene imagen, no mostrar loading
+    if (!tiene_imagen) {
       setLoading(false);
+      return;
     }
+    
+    // Si tiene imagen, cargarla
+    cargarImagen();
   }, [id, tiene_imagen]);
 
   const cargarImagen = async () => {
