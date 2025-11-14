@@ -29,7 +29,9 @@ useEffect(() => {
 }, []);
 
   const [serviciosHabilitados, setServiciosHabilitados] = useState([]);
+  const [serviciosFiltrados, setServiciosFiltrados] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchServiciosHabilitados = async () => {
@@ -41,12 +43,15 @@ useEffect(() => {
 
         if (Array.isArray(data) && data.length > 0) {
           setServiciosHabilitados(data);
+          setServiciosFiltrados(data); // ← Inicializar filtrados
         } else {
-          setServiciosHabilitados([]); // fallback si no hay servicios
+          setServiciosHabilitados([]);
+          setServiciosFiltrados([]);
         }
       } catch (error) {
         console.error('Error al cargar servicios habilitados:', error);
-        setServiciosHabilitados([]); // fallback en caso de error
+        setServiciosHabilitados([]);
+        setServiciosFiltrados([]);
       } finally {
         setLoading(false);
       }
@@ -54,6 +59,26 @@ useEffect(() => {
 
     fetchServiciosHabilitados();
   }, []);
+
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setServiciosFiltrados(serviciosHabilitados);
+      return;
+    }
+
+    const term = searchTerm.toLowerCase();
+    const filtrados = serviciosHabilitados.filter(servicio => {
+      const nombre = (servicio.nombre_servicio || '').toLowerCase();
+      const descripcion = (servicio.descripcion_servicio || '').toLowerCase();
+      const categoria = (servicio.nombre_categoria || '').toLowerCase();
+      
+      return nombre.includes(term) || 
+             descripcion.includes(term) || 
+             categoria.includes(term);
+    });
+
+    setServiciosFiltrados(filtrados);
+  }, [searchTerm, serviciosHabilitados]);
 
   const handleVerServicios = () => console.log('Ver Servicios');
   const handleManejarPeticiones = () => console.log('Manejar Peticiones');
