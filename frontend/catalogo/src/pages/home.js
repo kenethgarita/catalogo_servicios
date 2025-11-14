@@ -9,24 +9,28 @@ import Footer from '../components/footer';
 const API_URL = process.env.REACT_APP_API_URL;
 
 function Home() {
-  const [userRole, setUserRole] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isResponsable, setIsResponsable] = useState(false);
-  const [serviciosHabilitados, setServiciosHabilitados] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) return;
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const rol = payload.rol?.toLowerCase() || '';
-      const esResponsable = payload.es_responsable === true || payload.es_responsable === 1;
-      setUserRole(rol);
-      setIsResponsable(esResponsable);
-      setIsAuthenticated(true);
-    } catch {}
-  }, []);
+  const [userRole, setUserRole] = useState(null);
+const [isAuthenticated, setIsAuthenticated] = useState(false);
+const [isResponsable, setIsResponsable] = useState(false);
+
+useEffect(() => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const rol = payload.rol?.toLowerCase() || '';
+    const esResponsable = payload.es_responsable === true || payload.es_responsable === 1;
+    setUserRole(rol);
+    setIsResponsable(esResponsable);
+    setIsAuthenticated(true);
+  } catch {}
+}, []);
+
+  const [serviciosHabilitados, setServiciosHabilitados] = useState([]);
+  const [serviciosFiltrados, setServiciosFiltrados] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     const fetchServiciosHabilitados = async () => {
@@ -38,12 +42,15 @@ function Home() {
 
         if (Array.isArray(data) && data.length > 0) {
           setServiciosHabilitados(data);
+          setServiciosFiltrados(data); // ← Inicializar filtrados
         } else {
           setServiciosHabilitados([]);
+          setServiciosFiltrados([]);
         }
       } catch (error) {
         console.error('Error al cargar servicios habilitados:', error);
         setServiciosHabilitados([]);
+        setServiciosFiltrados([]);
       } finally {
         setLoading(false);
       }
@@ -51,6 +58,27 @@ function Home() {
 
     fetchServiciosHabilitados();
   }, []);
+
+  // ✅ NUEVO: Filtrar servicios cuando cambia el término de búsqueda
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setServiciosFiltrados(serviciosHabilitados);
+      return;
+    }
+
+    const term = searchTerm.toLowerCase();
+    const filtrados = serviciosHabilitados.filter(servicio => {
+      const nombre = (servicio.nombre_servicio || '').toLowerCase();
+      const descripcion = (servicio.descripcion_servicio || '').toLowerCase();
+      const categoria = (servicio.nombre_categoria || '').toLowerCase();
+      
+      return nombre.includes(term) || 
+             descripcion.includes(term) || 
+             categoria.includes(term);
+    });
+
+    setServiciosFiltrados(filtrados);
+  }, [searchTerm, serviciosHabilitados]);
 
   const handleVerServicios = () => console.log('Ver Servicios');
   const handleManejarPeticiones = () => console.log('Manejar Peticiones');
@@ -122,7 +150,13 @@ function Home() {
           </div>
         </section>
 
-        {/* Barra de búsqueda */}
+
+
+        {/* Sección de Servicios */}
+        <section className="servicios-section">
+          <h2 className="servicios-titulo">Nuestros Servicios</h2>
+
+                  {/* Barra de búsqueda */}
         <section className="search-section">
           <div className="search-container">
             <input type="text" placeholder="Buscar servicios..." className="search-input" />
@@ -134,10 +168,6 @@ function Home() {
             </button>
           </div>
         </section>
-
-        {/* Sección de Servicios */}
-        <section className="servicios-section">
-          <h2 className="servicios-titulo">Nuestros Servicios</h2>
           
           {loading ? (
             <div className="loading">Cargando servicios...</div>
