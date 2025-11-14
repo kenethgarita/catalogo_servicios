@@ -106,11 +106,13 @@ useEffect(() => {
                 Te damos la bienvenida a el catálogo de servicios del departamento de TI,
                 Ofrecemos distintos servicios que puedes pedir en este sitio web.
               </p>
-            </div>
+              <br></br>
               <p>
                 Explora nuestros servicios y solicita el que necesites de manera fácil y rápida
                 dentro de un formulario.
               </p>
+            </div>
+
 
 
             <div className="hero-buttons">
