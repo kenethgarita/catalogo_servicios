@@ -13,7 +13,7 @@ function DetalleServicio() {
   const [servicio, setServicio] = useState(null);
   const [imagenUrl, setImagenUrl] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [loadingImagen, setLoadingImagen] = useState(false); // ← Cambiar a false
+  const [loadingImagen, setLoadingImagen] = useState(false);
 
   useEffect(() => {
     fetchServicio();
@@ -29,7 +29,6 @@ function DetalleServicio() {
 
       const data = await response.json();
 
-      // Normalizar los nombres de campos de la API
       const servicioNormalizado = {
         id: data.id_servicio,
         nombre: data.nombre_servicio,
@@ -46,24 +45,17 @@ function DetalleServicio() {
       setServicio(servicioNormalizado);
       setLoading(false);
 
-      // ✅ SOLUCIÓN: Solo cargar imagen si explícitamente tiene_imagen es true
-      if (data.tiene_imagen === true || data.tiene_imagen === 1) {
+      // Solo cargar imagen si tiene_imagen es verdadero
+      if (data.tiene_imagen === 1 || data.tiene_imagen === true) {
         cargarImagen();
-      } else {
-        setLoadingImagen(false);
-        setImagenUrl(null); // Asegurar que no haya URL de imagen
       }
     } catch (error) {
       console.error('Error al cargar servicio:', error);
       setLoading(false);
-      setLoadingImagen(false);
     }
   };
 
   const cargarImagen = async () => {
-    // Evitar cargas duplicadas
-    if (imagenUrl) return;
-    
     setLoadingImagen(true);
     
     try {
@@ -140,40 +132,37 @@ function DetalleServicio() {
           </div>
         </section>
 
-        {/* Imagen del Servicio */}
-        <section className="servicio-imagen-section">
-          <div className="imagen-container">
-            {loadingImagen ? (
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                minHeight: '400px',
-                backgroundColor: '#f0f0f0'
-              }}>
+        {/* ✅ SOLUCIÓN: Solo mostrar sección de imagen si tiene_imagen es true Y hay imagen cargada */}
+        {(servicio.tiene_imagen === 1 || servicio.tiene_imagen === true) && (
+          <section className="servicio-imagen-section">
+            <div className="imagen-container">
+              {loadingImagen ? (
                 <div style={{
-                  width: '50px',
-                  height: '50px',
-                  border: '4px solid #e0e0e0',
-                  borderTop: '4px solid #1d2d5a',
-                  borderRadius: '50%',
-                  animation: 'spin 1s linear infinite'
-                }}></div>
-              </div>
-            ) : (
-              <img 
-                src={imagenUrl || '/placeholder-servicio.jpg'} 
-                alt={servicio.nombre}
-                onError={(e) => {
-                  // Solo intentar cambiar a placeholder una vez
-                  if (e.target.src !== '/placeholder-servicio.jpg') {
-                    e.target.src = '/placeholder-servicio.jpg';
-                  }
-                }}
-              />
-            )}
-          </div>
-        </section>
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  minHeight: '400px',
+                  backgroundColor: '#f0f0f0'
+                }}>
+                  <div style={{
+                    width: '50px',
+                    height: '50px',
+                    border: '4px solid #e0e0e0',
+                    borderTop: '4px solid #1d2d5a',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite'
+                  }}></div>
+                </div>
+              ) : imagenUrl ? (
+                <img 
+                  src={imagenUrl} 
+                  alt={servicio.nombre}
+                  style={{ width: '100%', height: 'auto', maxHeight: '500px', objectFit: 'cover' }}
+                />
+              ) : null}
+            </div>
+          </section>
+        )}
 
         {/* Contenido Principal */}
         <div className="servicio-contenido">

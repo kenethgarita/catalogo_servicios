@@ -13,25 +13,26 @@ const TarjetaServicio = ({
 }) => {
   const navigate = useNavigate();
   const [imagenUrl, setImagenUrl] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Si no tiene imagen, no mostrar loading
-    if (!tiene_imagen) {
-      setLoading(false);
-      return;
+    // Solo cargar si tiene_imagen es explícitamente verdadero
+    if (tiene_imagen === 1 || tiene_imagen === true) {
+      cargarImagen();
     }
-    
-    // Si tiene imagen, cargarla
-    cargarImagen();
   }, [id, tiene_imagen]);
 
   const cargarImagen = async () => {
+    setLoading(true);
+    
     try {
       const response = await fetch(`${API_URL}/Servicio/Imagen/${id}`);
+      
       if (response.ok) {
         const data = await response.json();
-        setImagenUrl(data.data);
+        if (data.data) {
+          setImagenUrl(data.data);
+        }
       }
     } catch (error) {
       console.error('Error al cargar imagen:', error);
@@ -48,30 +49,37 @@ const TarjetaServicio = ({
     <div className="tarjeta-servicio" onClick={handleClick}>
       <div className="tarjeta-imagen">
         {loading ? (
+          // Mostrar spinner solo mientras carga
           <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             height: '100%',
-            backgroundColor: '#f0f0f0'
+            backgroundColor: '#e0e0e0'
           }}>
             <div style={{
               width: '40px',
               height: '40px',
-              border: '4px solid #e0e0e0',
+              border: '4px solid #d0d0d0',
               borderTop: '4px solid #1d2d5a',
               borderRadius: '50%',
               animation: 'spin 1s linear infinite'
             }}></div>
           </div>
-        ) : (
+        ) : imagenUrl ? (
+          // Solo mostrar img si hay URL
           <img 
-            src={imagenUrl || '/placeholder-servicio.jpg'} 
+            src={imagenUrl} 
             alt={titulo}
-            onError={(e) => {
-              e.target.src = '/placeholder-servicio.jpg';
-            }}
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
           />
+        ) : (
+          // Si no hay imagen, solo fondo gris - sin placeholder
+          <div style={{
+            width: '100%',
+            height: '100%',
+            backgroundColor: '#e0e0e0'
+          }}></div>
         )}
       </div>
       
