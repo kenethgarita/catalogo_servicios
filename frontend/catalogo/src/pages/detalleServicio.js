@@ -254,8 +254,7 @@ function DetalleServicio() {
                 </div>
                 <div className="sin-doc-info">
                   <h3>Sin documentación adjunta</h3>
-                  <p>Este servicio no cuenta con documentación adicional en este momento. 
-                     Para más información, puedes contactar con el área responsable.</p>
+                  <p>Este servicio no cuenta con documentación adicional en este momento. </p>
                 </div>
               </div>
             )}
