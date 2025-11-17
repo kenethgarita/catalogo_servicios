@@ -24,6 +24,7 @@ function Login() {
     num_tel: '',
     confirmPassword: ''
   });
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

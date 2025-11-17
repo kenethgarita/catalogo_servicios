@@ -75,28 +75,41 @@ export async function LoginUsuario({ correo, contrasena }) {
   const passwordIsValid = await bcrypt.compare(contrasena, user.contrasena);
   if (!passwordIsValid) return false; // contraseña incorrecta
 
-  // Crear payload para JWT
-  const payload = {
+
+  const has2FA = await pool.request()
+  .input('id_usuario', sql.Int, user.id_usuario)
+  .query('SELECT twofa_enabled FROM Usuario WHERE id_usuario = @id_usuario');
+
+if (has2FA.recordset[0]?.twofa_enabled === 1) {
+  // No generar token completo, solo enviar ID para verificación 2FA
+  return {
+    requiere2FA: true,
     id_usuario: user.id_usuario,
+    nombre: user.nombre
+  };
+}
+
+// Si no tiene 2FA, continuar con el flujo normal (generar token)
+const payload = {
+  id_usuario: user.id_usuario,
+  rol: user.nombre_rol,
+  es_responsable: user.es_responsable === 1,
+  correo: user.correo,
+};
+
+const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+return {
+  token,
+  usuario: {
+    id_usuario: user.id_usuario,
+    nombre: user.nombre,
+    apellido1: user.apellido1,
     rol: user.nombre_rol,
     es_responsable: user.es_responsable === 1,
     correo: user.correo,
-  };
-
-  // Crear token
-  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
-
-  return {
-    token,
-    usuario: {
-      id_usuario: user.id_usuario,
-      nombre: user.nombre,
-      apellido1: user.apellido1,
-      rol: user.nombre_rol,
-      es_responsable: user.es_responsable === 1,
-      correo: user.correo,
-    },
-  };
+  },
+};
 }
 
 // Obtener todos los usuarios

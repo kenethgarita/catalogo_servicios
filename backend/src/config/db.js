@@ -70,6 +70,16 @@ export async function InitDB() {
                 id_rol INT FOREIGN KEY REFERENCES Rol(id_rol)
             );
         `);
+    await pool.request().query(`
+    IF NOT EXISTS (SELECT * FROM sys.columns 
+                   WHERE object_id = OBJECT_ID('Usuario') 
+                   AND name = 'twofa_secret')
+    BEGIN
+        ALTER TABLE Usuario ADD twofa_secret NVARCHAR(MAX) NULL;
+        ALTER TABLE Usuario ADD twofa_enabled BIT DEFAULT 0;
+        ALTER TABLE Usuario ADD twofa_backup_codes NVARCHAR(MAX) NULL;
+    END
+`);
 
     // Tabla Servicio
     await pool.request().query(`
