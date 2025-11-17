@@ -13,7 +13,7 @@ function DetalleServicio() {
   const [servicio, setServicio] = useState(null);
   const [imagenUrl, setImagenUrl] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [loadingImagen, setLoadingImagen] = useState(true);
+  const [loadingImagen, setLoadingImagen] = useState(false); // ← Cambiar a false
 
   useEffect(() => {
     fetchServicio();
@@ -46,11 +46,12 @@ function DetalleServicio() {
       setServicio(servicioNormalizado);
       setLoading(false);
 
-      // Cargar imagen si existe
-      if (data.tiene_imagen) {
+      // ✅ SOLUCIÓN: Solo cargar imagen si explícitamente tiene_imagen es true
+      if (data.tiene_imagen === true || data.tiene_imagen === 1) {
         cargarImagen();
       } else {
         setLoadingImagen(false);
+        setImagenUrl(null); // Asegurar que no haya URL de imagen
       }
     } catch (error) {
       console.error('Error al cargar servicio:', error);
@@ -60,11 +61,19 @@ function DetalleServicio() {
   };
 
   const cargarImagen = async () => {
+    // Evitar cargas duplicadas
+    if (imagenUrl) return;
+    
+    setLoadingImagen(true);
+    
     try {
       const response = await fetch(`${API_URL}/Servicio/Imagen/${id}`);
+      
       if (response.ok) {
         const data = await response.json();
-        setImagenUrl(data.data);
+        if (data.data) {
+          setImagenUrl(data.data);
+        }
       }
     } catch (error) {
       console.error('Error al cargar imagen:', error);
@@ -156,7 +165,10 @@ function DetalleServicio() {
                 src={imagenUrl || '/placeholder-servicio.jpg'} 
                 alt={servicio.nombre}
                 onError={(e) => {
-                  e.target.src = '/placeholder-servicio.jpg';
+                  // Solo intentar cambiar a placeholder una vez
+                  if (e.target.src !== '/placeholder-servicio.jpg') {
+                    e.target.src = '/placeholder-servicio.jpg';
+                  }
                 }}
               />
             )}

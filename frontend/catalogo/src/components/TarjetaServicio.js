@@ -13,28 +13,42 @@ const TarjetaServicio = ({
 }) => {
   const navigate = useNavigate();
   const [imagenUrl, setImagenUrl] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // ← Cambiar a false por defecto
+  const [errorCarga, setErrorCarga] = useState(false);
 
   useEffect(() => {
-    // Si no tiene imagen, no mostrar loading
-    if (!tiene_imagen) {
+    // ✅ SOLUCIÓN: Solo cargar si explícitamente tiene_imagen es true
+    if (tiene_imagen === true || tiene_imagen === 1) {
+      cargarImagen();
+    } else {
       setLoading(false);
-      return;
+      setImagenUrl(null);
     }
-    
-    // Si tiene imagen, cargarla
-    cargarImagen();
   }, [id, tiene_imagen]);
 
   const cargarImagen = async () => {
+    // Evitar cargas duplicadas
+    if (loading || imagenUrl) return;
+    
+    setLoading(true);
+    setErrorCarga(false);
+
     try {
       const response = await fetch(`${API_URL}/Servicio/Imagen/${id}`);
+      
       if (response.ok) {
         const data = await response.json();
-        setImagenUrl(data.data);
+        if (data.data) {
+          setImagenUrl(data.data);
+        } else {
+          setErrorCarga(true);
+        }
+      } else {
+        setErrorCarga(true);
       }
     } catch (error) {
       console.error('Error al cargar imagen:', error);
+      setErrorCarga(true);
     } finally {
       setLoading(false);
     }
@@ -69,7 +83,10 @@ const TarjetaServicio = ({
             src={imagenUrl || '/placeholder-servicio.jpg'} 
             alt={titulo}
             onError={(e) => {
-              e.target.src = '/placeholder-servicio.jpg';
+              // Solo intentar cambiar a placeholder una vez
+              if (e.target.src !== '/placeholder-servicio.jpg') {
+                e.target.src = '/placeholder-servicio.jpg';
+              }
             }}
           />
         )}
