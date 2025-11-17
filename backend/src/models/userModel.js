@@ -48,25 +48,26 @@ export async function LoginUsuario({ correo, contrasena }) {
   // Trae usuario + rol + si es responsable
   const result = await pool.request().input("correo", sql.VarChar, correo)
     .query(`
-            SELECT 
-                u.id_usuario,
-                u.nombre,
-                u.apellido1,
-                u.contrasena,
-                u.correo,
-                r.nombre_rol,
-                CASE 
-                    WHEN EXISTS (
-                        SELECT 1 
-                        FROM Responsable resp 
-                        WHERE resp.id_usuario = u.id_usuario
-                    ) THEN 1 
-                    ELSE 0 
-                END AS es_responsable
-            FROM Usuario u
-            JOIN Rol r ON u.id_rol = r.id_rol
-            WHERE u.correo = @correo
-        `);
+      SELECT 
+        u.id_usuario,
+        u.nombre,
+        u.apellido1,
+        u.contrasena,
+        u.correo,
+        r.nombre_rol,
+        u.twofa_enabled,
+        CASE 
+          WHEN EXISTS (
+            SELECT 1 
+            FROM Responsable resp 
+            WHERE resp.id_usuario = u.id_usuario
+          ) THEN 1 
+          ELSE 0 
+        END AS es_responsable
+      FROM Usuario u
+      JOIN Rol r ON u.id_rol = r.id_rol
+      WHERE u.correo = @correo
+    `);
 
   const user = result.recordset[0];
   if (!user) return null; // usuario no encontrado
@@ -75,42 +76,38 @@ export async function LoginUsuario({ correo, contrasena }) {
   const passwordIsValid = await bcrypt.compare(contrasena, user.contrasena);
   if (!passwordIsValid) return false; // contraseña incorrecta
 
+  // ✅ CORREGIDO: Si tiene 2FA, devolver info SIN token
+  if (user.twofa_enabled === 1 || user.twofa_enabled === true) {
+    return {
+      requiere2FA: true,
+      id_usuario: user.id_usuario,
+      nombre: user.nombre
+    };
+  }
 
-  const has2FA = await pool.request()
-  .input('id_usuario', sql.Int, user.id_usuario)
-  .query('SELECT twofa_enabled FROM Usuario WHERE id_usuario = @id_usuario');
-
-if (has2FA.recordset[0]?.twofa_enabled === 1) {
-  // No generar token completo, solo enviar ID para verificación 2FA
-  return {
-    requiere2FA: true,
+  // ✅ Si NO tiene 2FA, generar token normalmente
+  const payload = {
     id_usuario: user.id_usuario,
-    nombre: user.nombre
-  };
-}
-
-// Si no tiene 2FA, continuar con el flujo normal (generar token)
-const payload = {
-  id_usuario: user.id_usuario,
-  rol: user.nombre_rol,
-  es_responsable: user.es_responsable === 1,
-  correo: user.correo,
-};
-
-const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
-
-return {
-  token,
-  usuario: {
-    id_usuario: user.id_usuario,
-    nombre: user.nombre,
-    apellido1: user.apellido1,
     rol: user.nombre_rol,
     es_responsable: user.es_responsable === 1,
     correo: user.correo,
-  },
-};
+  };
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+  return {
+    token,
+    usuario: {
+      id_usuario: user.id_usuario,
+      nombre: user.nombre,
+      apellido1: user.apellido1,
+      rol: user.nombre_rol,
+      es_responsable: user.es_responsable === 1,
+      correo: user.correo,
+    },
+  };
 }
+
 
 // Obtener todos los usuarios
 export async function ObtenerUsuarios() {
