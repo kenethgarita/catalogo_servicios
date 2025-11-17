@@ -128,6 +128,9 @@ export const verificar2FA = async (req, res) => {
   try {
     const { id_usuario, codigo } = req.body;
 
+    console.log('🔐 Verificando 2FA para usuario:', id_usuario);
+    console.log('📱 Código recibido:', codigo);
+
     const pool = await connectDB();
     const result = await pool
       .request()
@@ -139,16 +142,22 @@ export const verificar2FA = async (req, res) => {
       `);
 
     if (!result.recordset.length) {
+      console.log('❌ Usuario no tiene 2FA habilitado');
       return res.status(400).json({ error: 'Usuario no tiene 2FA habilitado' });
     }
 
     const { twofa_secret, twofa_backup_codes } = result.recordset[0];
     const backupCodes = twofa_backup_codes ? JSON.parse(twofa_backup_codes) : [];
 
-    // Verificar si es un código de respaldo
-    if (backupCodes.includes(codigo)) {
+    console.log('🔑 Secret disponible:', !!twofa_secret);
+    console.log('🎫 Códigos de respaldo disponibles:', backupCodes.length);
+
+    // ✅ PRIMERO: Verificar si es un código de respaldo
+    if (backupCodes.includes(codigo.toUpperCase())) {
+      console.log('✅ Código de respaldo válido');
+      
       // Remover código usado
-      const nuevosBackupCodes = backupCodes.filter(c => c !== codigo);
+      const nuevosBackupCodes = backupCodes.filter(c => c !== codigo.toUpperCase());
       
       await pool
         .request()
@@ -167,25 +176,35 @@ export const verificar2FA = async (req, res) => {
       });
     }
 
-    // Verificar código TOTP normal
-    const verificado = speakeasy.totp.verify({
-      secret: twofa_secret,
-      encoding: 'base32',
-      token: codigo,
-      window: 2
-    });
+    // ✅ SEGUNDO: Verificar código TOTP normal (solo si tiene 6 dígitos)
+    if (codigo.length === 6 && /^\d{6}$/.test(codigo)) {
+      console.log('🔢 Intentando verificar código TOTP');
+      
+      const verificado = speakeasy.totp.verify({
+        secret: twofa_secret,
+        encoding: 'base32',
+        token: codigo,
+        window: 2 // Permite 2 códigos antes y después (60 segundos de margen)
+      });
 
-    if (!verificado) {
-      return res.status(401).json({ error: 'Código incorrecto' });
+      console.log('🔍 Resultado verificación TOTP:', verificado);
+
+      if (!verificado) {
+        return res.status(401).json({ error: 'Código incorrecto' });
+      }
+
+      return res.json({ 
+        verificado: true,
+        tipo: 'totp'
+      });
     }
 
-    res.json({ 
-      verificado: true,
-      tipo: 'totp'
-    });
+    // Si llegamos aquí, el código no es válido
+    console.log('❌ Código no válido - no es TOTP ni backup');
+    return res.status(401).json({ error: 'Código incorrecto' });
 
   } catch (error) {
-    console.error('Error al verificar 2FA:', error);
+    console.error('❌ Error al verificar 2FA:', error);
     res.status(500).json({ error: 'Error al verificar código' });
   }
 };
