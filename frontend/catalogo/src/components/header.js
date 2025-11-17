@@ -27,7 +27,7 @@ const checkAuth = () => {
     // Decodificar el token JWT
     const payload = JSON.parse(atob(token.split('.')[1]));
     
-    // ✅ NUEVO: Verificar si el token está expirado
+    // Verificar si el token está expirado
     const currentTime = Date.now() / 1000;
     if (payload.exp && payload.exp < currentTime) {
       console.log('Token expirado, cerrando sesión...');
@@ -68,7 +68,7 @@ const checkAuth = () => {
   }
 };
 
-// ✅ NUEVO: Agregar verificación periódica del token
+// Agregar verificación periódica del token
 useEffect(() => {
   checkAuth();
   
@@ -153,6 +153,7 @@ useEffect(() => {
                   <>
                     <li><a href="/mis-solicitudes" onClick={toggleMenu}>Mis Solicitudes</a></li>
                     <li><a href="/solicitar" onClick={toggleMenu}>Solicitar Servicio</a></li>
+                    <li><a href="/perfil" onClick={toggleMenu}>Perfil</a></li>
                   </>
                 )}
                 

@@ -84,13 +84,12 @@ const fetchSolicitudes = async () => {
       }
 
       // Normalizar datos con información completa
-// ✅ CÓDIGO CORREGIDO
 const solicitudesNormalizadas = solicitudesArray.map(sol => {
     const serviciosSolicitud = solicitudServicios
         .filter(ss => ss.id_solicitud === sol.id_solicitud)
         .map(ss => ss.nombre_servicio);
 
-    // ✅ CONSTRUIR OBJETO RESPONSABLE COMPLETO
+    //  CONSTRUIR OBJETO RESPONSABLE COMPLETO
     let responsableInfo = null;
     if (sol.aceptada && sol.responsable_nombre) {
         const nombreCompleto = [

@@ -11,7 +11,7 @@ function Login() {
   const from = location.state?.from || '/';
   const [isLogin, setIsLogin] = useState(true);
   
-  // ✅ NUEVO: Estado para 2FA
+  // Estado para 2FA
   const [show2FA, setShow2FA] = useState(false);
   const [tempUserId, setTempUserId] = useState(null);
   const [codigo2FA, setCodigo2FA] = useState('');
@@ -38,7 +38,7 @@ function Login() {
     });
   };
 
-  // ✅ NUEVO: Manejador para el código 2FA
+  // Manejador para el código 2FA
   const handleCodigo2FAChange = (e) => {
     const value = e.target.value.replace(/[^0-9]/g, ''); // Solo números
     if (value.length <= 6) {
@@ -62,7 +62,7 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         
-        // ✅ NUEVO: Verificar si requiere 2FA
+        // Verificar si requiere 2FA
         if (data.requiere2FA) {
           setTempUserId(data.id_usuario);
           setShow2FA(true);
@@ -110,7 +110,7 @@ function Login() {
     }
   };
 
-  // ✅ NUEVO: Verificar código 2FA
+  // Verificar código 2FA
   const handleVerificar2FA = async (e) => {
     e.preventDefault();
 
@@ -192,7 +192,7 @@ function Login() {
     }
   };
 
-  // ✅ NUEVO: Cancelar 2FA
+  // Cancelar 2FA
   const handleCancelar2FA = () => {
     setShow2FA(false);
     setTempUserId(null);
@@ -290,7 +290,7 @@ function Login() {
       
       <div className="login-container">
         <div className="login-form-container">
-          {/* ✅ NUEVO: Formulario de 2FA */}
+          {/* Formulario de 2FA */}
           {show2FA ? (
             <div className="form-panel active" style={{ width: '100%', opacity: 1 }}>
               <div className="form-logo">

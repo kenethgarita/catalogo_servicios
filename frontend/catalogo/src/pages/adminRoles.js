@@ -24,7 +24,7 @@ function AdminRoles() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // ✅ SOLUCIÓN: Cargar roles primero, luego usuarios
+  // Cargar roles primero, luego usuarios
   useEffect(() => {
     cargarDatosIniciales();
   }, []);
@@ -33,7 +33,7 @@ function AdminRoles() {
     filtrarUsuarios();
   }, [searchTerm, usuarios]);
 
-  // ✅ SOLUCIÓN: Función helper para obtener nombre de rol (sin depender del estado)
+  // Función helper para obtener nombre de rol (sin depender del estado)
   const obtenerNombreRolPorId = (id_rol, rolesArray) => {
     const rol = rolesArray.find((r) => r.id_rol === id_rol);
     return rol ? rol.nombre_rol : "Usuario";
@@ -43,10 +43,10 @@ function AdminRoles() {
     try {
       setLoading(true);
 
-      // ✅ SOLUCIÓN: Cargar roles PRIMERO
+      // Cargar roles PRIMERO
       const rolesData = await fetchRoles();
 
-      // ✅ Luego cargar usuarios usando los roles ya cargados
+      // Luego cargar usuarios usando los roles ya cargados
       await fetchUsuarios(rolesData);
 
       // Cargar servicios en paralelo (no afecta a los roles)
@@ -59,7 +59,7 @@ function AdminRoles() {
     }
   };
 
-  // ✅ SOLUCIÓN: Modificar fetchRoles para retornar los datos
+  //  Modificar fetchRoles para retornar los datos
   const fetchRoles = async () => {
     try {
       const response = await fetch(`${API_URL}/Roles/ObtenerRoles`, {
@@ -72,7 +72,7 @@ function AdminRoles() {
       const rolesData = data.roles || [];
 
       setRoles(rolesData);
-      return rolesData; // ✅ Retornar los datos
+      return rolesData; // Retornar los datos
     } catch (error) {
       console.error("Error al cargar roles:", error);
       // Fallback a roles por defecto
@@ -81,11 +81,11 @@ function AdminRoles() {
         { id_rol: 3, nombre_rol: "Administrador" },
       ];
       setRoles(defaultRoles);
-      return defaultRoles; // ✅ Retornar fallback
+      return defaultRoles; // Retornar fallback
     }
   };
 
-  // ✅ SOLUCIÓN: Modificar fetchUsuarios para recibir roles como parámetro
+  // Modificar fetchUsuarios para recibir roles como parámetro
   const fetchUsuarios = async (rolesArray) => {
     try {
       const [usuariosRes, responsablesRes] = await Promise.all([
@@ -104,7 +104,7 @@ function AdminRoles() {
         ? await responsablesRes.json()
         : { responsables: [] };
 
-      // ✅ SOLUCIÓN: Usar rolesArray pasado como parámetro
+      // Usar rolesArray pasado como parámetro
       const usuariosConServicios = usuariosData.usuarios.map((usuario) => {
         const serviciosDelUsuario = responsablesData.responsables
           .filter((r) => r.id_usuario === usuario.id_usuario)
@@ -113,7 +113,7 @@ function AdminRoles() {
         return {
           ...usuario,
           servicios_responsable: serviciosDelUsuario,
-          rol_nombre: obtenerNombreRolPorId(usuario.id_rol, rolesArray), // ✅ Usar array directamente
+          rol_nombre: obtenerNombreRolPorId(usuario.id_rol, rolesArray), // Usar array directamente
         };
       });
 
@@ -140,7 +140,7 @@ function AdminRoles() {
     }
   };
 
-  // ✅ Mantener esta función para uso en otros lugares
+  // Mantener esta función para uso en otros lugares
   const obtenerNombreRol = (id_rol) => {
     return obtenerNombreRolPorId(id_rol, roles);
   };

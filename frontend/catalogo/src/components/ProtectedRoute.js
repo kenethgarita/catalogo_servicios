@@ -89,13 +89,13 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     );
   }
 
-  // ✅ PRIMERA VERIFICACIÓN: Si no está autenticado, redirigir a login
+  // PRIMERA VERIFICACIÓN: Si no está autenticado, redirigir a login
   // Guardamos la ruta actual para redirigir después del login
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
-  // ✅ SEGUNDA VERIFICACIÓN: Verificar permisos según el rol requerido
+  // SEGUNDA VERIFICACIÓN: Verificar permisos según el rol requerido
   if (requiredRole) {
     const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
     
@@ -182,7 +182,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     }
   }
 
-  // ✅ Usuario autenticado y con permisos correctos
+  // Usuario autenticado y con permisos correctos
   return children;
 };
 

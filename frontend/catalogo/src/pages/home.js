@@ -59,7 +59,7 @@ useEffect(() => {
     fetchServiciosHabilitados();
   }, []);
 
-  // ✅ NUEVO: Filtrar servicios cuando cambia el término de búsqueda
+  // Filtrar servicios cuando cambia el término de búsqueda
   useEffect(() => {
     if (!searchTerm.trim()) {
       setServiciosFiltrados(serviciosHabilitados);
@@ -130,8 +130,10 @@ useEffect(() => {
                   <BotonHome texto="Mis Solicitudes" ruta="/mis-solicitudes" />
                   <BotonHome texto="Solicitar Servicio" ruta="/solicitar" />
                   <BotonHome texto="Ver Servicios" onClick={() => {
+
                     document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
                   }} />
+                  <BotonHome texto="Ver perfil" ruta="/perfil" />
                 </>
               )}
 
@@ -142,6 +144,7 @@ useEffect(() => {
                   <BotonHome texto="Ver Servicios" onClick={() => {
                     document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
                   }} />
+                  <BotonHome texto="Ver perfil" ruta="/perfil" />
                 </>
               )}
 
@@ -150,6 +153,7 @@ useEffect(() => {
                   <BotonHome texto="Gestionar Servicios" ruta="/admin/servicios" />
                   <BotonHome texto="Gestionar Roles" ruta="/admin/roles" />
                   <BotonHome texto="Gestionar Secciones" ruta="/admin/categorias" />
+                  <BotonHome texto="Ver perfil" ruta="/perfil" />
                 </>
               )}
             </div>

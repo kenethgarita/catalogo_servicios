@@ -192,7 +192,7 @@ const fetchEstadosFiltro = async () => {
         serviciosInfo = dataServicios;
       }
 
-      // ✅ NUEVO: Obtener información completa de todos los usuarios
+      // Obtener información completa de todos los usuarios
       const responseUsuarios = await fetch(
         `${API_URL}/Usuarios/ObtenerUsuarios`,
         {
@@ -224,7 +224,7 @@ const fetchEstadosFiltro = async () => {
           };
         });
 
-        // ✅ NUEVO: Buscar información completa del usuario solicitante
+        // Buscar información completa del usuario solicitante
         const usuarioCompleto = usuariosInfo.find(
           (u) => u.id_usuario === sol.id_usuario
         );
@@ -253,7 +253,7 @@ const fetchEstadosFiltro = async () => {
         aceptada: sol.aceptada || false,
         prioridad: calcularPrioridad(sol.fecha_solicitud),
         usuario: {
-          // ✅ CORREGIDO: Usar datos reales del usuario
+          // Usar datos reales del usuario
           nombre: sol.usuarioCompleto
             ? `${sol.usuarioCompleto.nombre} ${sol.usuarioCompleto.apellido1} ${sol.usuarioCompleto.apellido2}`
             : `${sol.nombre_usuario} ${sol.apellido_usuario}`,
