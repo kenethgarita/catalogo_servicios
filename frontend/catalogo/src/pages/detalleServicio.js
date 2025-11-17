@@ -211,9 +211,11 @@ function DetalleServicio() {
           </section>
 
           {/* Documentación */}
-          {servicio.tiene_documentacion && (
-            <section className="servicio-seccion documentacion-section">
-              <h2 className="seccion-titulo">Documentación</h2>
+          <section className="servicio-seccion documentacion-section">
+            <h2 className="seccion-titulo">Documentación</h2>
+            
+            {(servicio.tiene_documentacion === 1 || servicio.tiene_documentacion === true) ? (
+              // Hay documentación - Mostrar card con botón de descarga
               <div className="documentacion-card">
                 <div className="doc-icon">
                   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -240,8 +242,24 @@ function DetalleServicio() {
                   Descargar
                 </button>
               </div>
-            </section>
-          )}
+            ) : (
+              // No hay documentación - Mostrar mensaje informativo
+              <div className="sin-documentacion-card">
+                <div className="sin-doc-icon">
+                  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="9" y1="15" x2="15" y2="15"/>
+                  </svg>
+                </div>
+                <div className="sin-doc-info">
+                  <h3>Sin documentación adjunta</h3>
+                  <p>Este servicio no cuenta con documentación adicional en este momento. 
+                     Para más información, puedes contactar con el área responsable.</p>
+                </div>
+              </div>
+            )}
+          </section>
 
           {/* Botones de Acción */}
           <section className="servicio-acciones">
