@@ -69,7 +69,7 @@ function Config2FA() {
     }
   };
 
-  const handleVerificarYHabilitar = async (e) => {
+const handleVerificarYHabilitar = async (e) => {
     e.preventDefault();
 
     if (!verificationCode || verificationCode.length !== 6) {
@@ -94,12 +94,19 @@ function Config2FA() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('✅ 2FA habilitado:', data);
+        console.log('✅ 2FA habilitado - respuesta completa:', data);
+        
+        // ✅ ACTUALIZAR ESTADO INMEDIATAMENTE con la respuesta del backend
+        if (data.habilitado === true || data.habilitado === 1) {
+          setTwoFAEnabled(true);
+          console.log('✅ Estado 2FA actualizado a: true');
+        }
         
         setBackupCodes(data.backupCodes || []);
         setShowBackupCodes(true);
         setShowQR(false);
         setVerificationCode('');
+        setCodigosRestantes(data.backupCodes?.length || 0);
         
         showNotification({
           type: 'success',
@@ -108,10 +115,10 @@ function Config2FA() {
           duration: 5000
         });
 
-        // ✅ CRÍTICO: Esperar un momento y volver a verificar el estado
+        // Verificar estado como respaldo (después de 500ms)
         setTimeout(() => {
           verificarEstado2FA();
-        }, 1000);
+        }, 500);
 
       } else {
         const error = await response.json();

@@ -111,15 +111,15 @@ function Login() {
     }
   };
 
-  // Verificar código 2FA
+ // Verificar código 2FA
   const handleVerificar2FA = async (e) => {
     e.preventDefault();
 
-    if (codigo2FA.length !== 6) {
+    if (codigo2FA.length !== 6 && codigo2FA.length !== 8) {
       showNotification({
         type: 'warning',
         title: 'Código incompleto',
-        message: 'El código debe tener 6 dígitos'
+        message: 'El código debe tener 6 u 8 caracteres'
       });
       return;
     }
@@ -137,42 +137,26 @@ function Login() {
       if (response.ok) {
         const data = await response.json();
         
-        if (data.verificado) {
-          // Hacer login nuevamente para obtener el token
-          const loginResponse = await fetch(`${API_URL}/Usuarios/Login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              correo: formData.email,
-              contrasena: formData.password
-            })
+        if (data.verificado && data.token) {
+          // Guardar el token directamente
+          localStorage.setItem('token', data.token);
+          
+          showNotification({
+            type: 'success',
+            title: '✓ Verificación Exitosa',
+            message: data.tipo === 'backup' 
+              ? `Código de respaldo usado. Quedan ${data.codigosRestantes} códigos`
+              : 'Autenticación completada',
+            duration: 3000
           });
 
-          if (loginResponse.ok) {
-            const loginData = await loginResponse.json();
-            
-            // Esta vez no debería pedir 2FA porque ya fue verificado
-            if (loginData.token) {
-              localStorage.setItem('token', loginData.token);
-              
-              showNotification({
-                type: 'success',
-                title: '✓ Verificación Exitosa',
-                message: data.tipo === 'backup' 
-                  ? `Código de respaldo usado. Quedan ${data.codigosRestantes} códigos`
-                  : 'Autenticación completada',
-                duration: 3000
-              });
-
-              setTimeout(() => {
-                if (from !== '/' && from !== '/login') {
-                  navigate(from, { replace: true });
-                } else {
-                  navigate('/', { replace: true });
-                }
-              }, 1500);
+          setTimeout(() => {
+            if (from !== '/' && from !== '/login') {
+              navigate(from, { replace: true });
+            } else {
+              navigate('/', { replace: true });
             }
-          }
+          }, 1500);
         }
       } else {
         const errorData = await response.json();
@@ -181,7 +165,7 @@ function Login() {
           title: 'Código Incorrecto',
           message: errorData.error || 'El código ingresado no es válido'
         });
-        setCodigo2FA(''); // Limpiar el código
+        setCodigo2FA('');
       }
     } catch (error) {
       console.error('Error al verificar 2FA:', error);
