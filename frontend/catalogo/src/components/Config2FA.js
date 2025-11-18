@@ -69,7 +69,7 @@ function Config2FA() {
     }
   };
 
-const handleVerificarYHabilitar = async (e) => {
+  const handleVerificarYHabilitar = async (e) => {
     e.preventDefault();
 
     if (!verificationCode || verificationCode.length !== 6) {
@@ -96,7 +96,6 @@ const handleVerificarYHabilitar = async (e) => {
         const data = await response.json();
         console.log('✅ 2FA habilitado - respuesta completa:', data);
         
-        // ✅ ACTUALIZAR ESTADO INMEDIATAMENTE con la respuesta del backend
         if (data.habilitado === true || data.habilitado === 1) {
           setTwoFAEnabled(true);
           console.log('✅ Estado 2FA actualizado a: true');
@@ -115,7 +114,6 @@ const handleVerificarYHabilitar = async (e) => {
           duration: 5000
         });
 
-        // Verificar estado como respaldo (después de 500ms)
         setTimeout(() => {
           verificarEstado2FA();
         }, 500);
@@ -219,7 +217,7 @@ const handleVerificarYHabilitar = async (e) => {
   }
 
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ width: '100%' }}>
       {/* Estado Actual */}
       <div style={{
         padding: '20px',
@@ -228,207 +226,322 @@ const handleVerificarYHabilitar = async (e) => {
         marginBottom: '24px',
         border: `2px solid ${twoFAEnabled ? '#10b981' : '#f59e0b'}`
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={twoFAEnabled ? '#10b981' : '#f59e0b'} strokeWidth="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          </svg>
-          <h3 style={{ margin: 0, color: twoFAEnabled ? '#065f46' : '#92400e', fontSize: '1.2rem' }}>
-            2FA {twoFAEnabled ? 'Activado' : 'Desactivado'}
-          </h3>
-        </div>
-        <p style={{ margin: 0, color: twoFAEnabled ? '#065f46' : '#92400e', fontSize: '0.95rem' }}>
-          {twoFAEnabled 
-            ? `Tu cuenta está protegida con autenticación de dos factores. Códigos de respaldo restantes: ${codigosRestantes}`
-            : 'Activa 2FA para agregar una capa adicional de seguridad a tu cuenta'
-          }
-        </p>
-      </div>
-
-      {/* Botones principales */}
-      {!showQR && !showBackupCodes && (
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-          {!twoFAEnabled ? (
-            <button
-              onClick={handleGenerarQR}
-              style={{
-                flex: 1,
-                minWidth: '200px',
-                padding: '14px 24px',
-                backgroundColor: '#10b981',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '1rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseOver={e => e.target.style.backgroundColor = '#059669'}
-              onMouseOut={e => e.target.style.backgroundColor = '#10b981'}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px'
+        }}>
+          <div style={{ flex: 1, minWidth: '200px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={twoFAEnabled ? '#10b981' : '#f59e0b'} strokeWidth="2">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>
-              Activar 2FA
-            </button>
-          ) : (
-            <button
-              onClick={handleDeshabilitar}
-              style={{
-                flex: 1,
-                minWidth: '200px',
-                padding: '14px 24px',
-                backgroundColor: '#ef4444',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                fontSize: '1rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseOver={e => e.target.style.backgroundColor = '#dc2626'}
-              onMouseOut={e => e.target.style.backgroundColor = '#ef4444'}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="15" y1="9" x2="9" y2="15"/>
-                <line x1="9" y1="9" x2="15" y2="15"/>
-              </svg>
-              Desactivar 2FA
-            </button>
+              <h3 style={{ 
+                margin: 0, 
+                color: twoFAEnabled ? '#065f46' : '#92400e', 
+                fontSize: '1.2rem',
+                fontWeight: '700'
+              }}>
+                2FA {twoFAEnabled ? 'Activado' : 'Desactivado'}
+              </h3>
+            </div>
+            <p style={{ margin: 0, color: twoFAEnabled ? '#065f46' : '#92400e', fontSize: '0.95rem' }}>
+              {twoFAEnabled 
+                ? `Tu cuenta está protegida. Códigos de respaldo: ${codigosRestantes}`
+                : 'Activa 2FA para mayor seguridad'
+              }
+            </p>
+          </div>
+
+          {/* Botón principal en el estado */}
+          {!showQR && !showBackupCodes && (
+            !twoFAEnabled ? (
+              <button
+                onClick={handleGenerarQR}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: '#10b981',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'all 0.3s ease',
+                  fontFamily: 'IBM Plex Sans, sans-serif'
+                }}
+                onMouseOver={e => e.target.style.backgroundColor = '#059669'}
+                onMouseOut={e => e.target.style.backgroundColor = '#10b981'}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                Activar 2FA
+              </button>
+            ) : (
+              <button
+                onClick={handleDeshabilitar}
+                style={{
+                  padding: '12px 24px',
+                  backgroundColor: '#ef4444',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'all 0.3s ease',
+                  fontFamily: 'IBM Plex Sans, sans-serif'
+                }}
+                onMouseOver={e => e.target.style.backgroundColor = '#dc2626'}
+                onMouseOut={e => e.target.style.backgroundColor = '#ef4444'}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="15" y1="9" x2="9" y2="15"/>
+                  <line x1="9" y1="9" x2="15" y2="15"/>
+                </svg>
+                Desactivar 2FA
+              </button>
+            )
           )}
         </div>
-      )}
+      </div>
 
-      {/* Modal QR */}
+      {/* Configuración QR */}
       {showQR && (
         <div style={{
           backgroundColor: 'white',
-          padding: '24px',
+          padding: '30px',
           borderRadius: '12px',
-          border: '2px solid #e0e0e0'
+          border: '2px solid #e0e0e0',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
         }}>
-          <h3 style={{ marginTop: 0, color: '#1d2d5a' }}>Configurar Autenticación de Dos Factores</h3>
+          <h3 style={{ 
+            marginTop: 0, 
+            marginBottom: '24px',
+            color: '#1d2d5a',
+            fontSize: '1.3rem',
+            fontWeight: '700',
+            fontFamily: 'IBM Plex Sans, sans-serif'
+          }}>
+            Configurar Autenticación de Dos Factores
+          </h3>
           
-          <div style={{ marginBottom: '20px' }}>
-            <p style={{ marginBottom: '16px', color: '#666' }}>
-              <strong>Paso 1:</strong> Escanea este código QR con Google Authenticator
-            </p>
-            {qrCode && (
-              <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-                <img src={qrCode} alt="QR Code" style={{ maxWidth: '250px', border: '2px solid #e0e0e0', borderRadius: '8px' }} />
-              </div>
-            )}
-            
-            <details style={{ marginTop: '12px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-              <summary style={{ cursor: 'pointer', fontWeight: '600', color: '#1d2d5a' }}>
-                ¿No puedes escanear el código?
-              </summary>
-              <p style={{ marginTop: '12px', fontSize: '0.9rem', color: '#666' }}>
-                Ingresa este código manualmente en tu app:
-              </p>
-              <code style={{
-                display: 'block',
-                padding: '12px',
-                backgroundColor: '#fff',
-                border: '1px solid #e0e0e0',
-                borderRadius: '6px',
-                fontFamily: 'monospace',
-                fontSize: '0.9rem',
-                wordBreak: 'break-all',
-                marginTop: '8px'
+          <div style={{ 
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '30px',
+            marginBottom: '24px'
+          }}>
+            {/* Columna QR */}
+            <div>
+              <div style={{
+                padding: '16px',
+                backgroundColor: '#f8f9fa',
+                borderRadius: '12px',
+                border: '2px solid #e0e0e0',
+                marginBottom: '16px'
               }}>
-                {secret}
-              </code>
-            </details>
-          </div>
-
-          <form onSubmit={handleVerificarYHabilitar}>
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#333' }}>
-                <strong>Paso 2:</strong> Ingresa el código de 6 dígitos de tu app
-              </label>
-              <input
-                type="text"
-                value={verificationCode}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/[^0-9]/g, '');
-                  if (value.length <= 6) setVerificationCode(value);
-                }}
-                placeholder="000000"
-                maxLength="6"
-                style={{
-                  width: '100%',
-                  padding: '14px',
-                  border: '2px solid #e0e0e0',
-                  borderRadius: '8px',
-                  fontSize: '1.5rem',
-                  textAlign: 'center',
-                  letterSpacing: '0.5rem',
+                <p style={{ 
+                  margin: '0 0 16px 0',
+                  color: '#1d2d5a',
                   fontWeight: '600',
-                  fontFamily: 'monospace'
-                }}
-                autoFocus
-              />
-            </div>
-
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <button
-                type="button"
-                onClick={handleCancelar}
-                style={{
-                  flex: 1,
-                  padding: '12px 24px',
-                  backgroundColor: '#e0e0e0',
-                  color: '#333',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '1rem',
+                  fontSize: '0.95rem'
+                }}>
+                  <strong>Paso 1:</strong> Escanea con Google Authenticator
+                </p>
+                {qrCode && (
+                  <div style={{ textAlign: 'center' }}>
+                    <img 
+                      src={qrCode} 
+                      alt="QR Code" 
+                      style={{ 
+                        maxWidth: '100%',
+                        width: '250px',
+                        height: 'auto',
+                        border: '4px solid white',
+                        borderRadius: '12px',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                      }} 
+                    />
+                  </div>
+                )}
+              </div>
+              
+              <details style={{ 
+                padding: '12px',
+                backgroundColor: '#f8f9fa',
+                borderRadius: '8px',
+                border: '1px solid #e0e0e0',
+                cursor: 'pointer'
+              }}>
+                <summary style={{ 
                   fontWeight: '600',
+                  color: '#1d2d5a',
+                  fontSize: '0.9rem',
                   cursor: 'pointer'
-                }}
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={verificationCode.length !== 6}
-                style={{
-                  flex: 1,
-                  padding: '12px 24px',
-                  backgroundColor: verificationCode.length === 6 ? '#10b981' : '#d0d0d0',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '8px',
-                  fontSize: '1rem',
-                  fontWeight: '600',
-                  cursor: verificationCode.length === 6 ? 'pointer' : 'not-allowed',
-                  opacity: verificationCode.length === 6 ? 1 : 0.6
-                }}
-              >
-                Verificar y Activar
-              </button>
+                }}>
+                  ¿No puedes escanear el código?
+                </summary>
+                <p style={{ marginTop: '12px', fontSize: '0.85rem', color: '#666', marginBottom: '8px' }}>
+                  Ingresa este código manualmente:
+                </p>
+                <div style={{
+                  padding: '12px',
+                  backgroundColor: 'white',
+                  border: '1px solid #e0e0e0',
+                  borderRadius: '6px',
+                  fontFamily: 'monospace',
+                  fontSize: '0.9rem',
+                  wordBreak: 'break-all',
+                  color: '#1d2d5a',
+                  fontWeight: '600'
+                }}>
+                  {secret}
+                </div>
+              </details>
             </div>
-          </form>
+
+            {/* Columna Verificación */}
+            <div>
+              <form onSubmit={handleVerificarYHabilitar}>
+                <div style={{
+                  padding: '20px',
+                  backgroundColor: '#f8f9fa',
+                  borderRadius: '12px',
+                  border: '2px solid #e0e0e0',
+                  marginBottom: '16px'
+                }}>
+                  <label style={{ 
+                    display: 'block',
+                    marginBottom: '12px',
+                    fontWeight: '600',
+                    color: '#1d2d5a',
+                    fontSize: '0.95rem'
+                  }}>
+                    <strong>Paso 2:</strong> Ingresa el código de 6 dígitos
+                  </label>
+                  <input
+                    type="text"
+                    value={verificationCode}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9]/g, '');
+                      if (value.length <= 6) setVerificationCode(value);
+                    }}
+                    placeholder="000000"
+                    maxLength="6"
+                    style={{
+                      width: '100%',
+                      padding: '16px',
+                      border: '2px solid #e0e0e0',
+                      borderRadius: '10px',
+                      fontSize: '1.8rem',
+                      textAlign: 'center',
+                      letterSpacing: '0.8rem',
+                      fontWeight: '600',
+                      fontFamily: 'monospace',
+                      transition: 'all 0.3s ease',
+                      boxSizing: 'border-box'
+                    }}
+                    onFocus={(e) => {
+                      e.target.style.borderColor = '#CEAC65';
+                      e.target.style.boxShadow = '0 0 0 3px rgba(206, 172, 101, 0.1)';
+                    }}
+                    onBlur={(e) => {
+                      e.target.style.borderColor = '#e0e0e0';
+                      e.target.style.boxShadow = 'none';
+                    }}
+                    autoFocus
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                  <button
+                    type="submit"
+                    disabled={verificationCode.length !== 6}
+                    style={{
+                      flex: 1,
+                      minWidth: '150px',
+                      padding: '14px 24px',
+                      backgroundColor: verificationCode.length === 6 ? '#10b981' : '#d0d0d0',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '10px',
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      cursor: verificationCode.length === 6 ? 'pointer' : 'not-allowed',
+                      opacity: verificationCode.length === 6 ? 1 : 0.6,
+                      transition: 'all 0.3s ease',
+                      fontFamily: 'IBM Plex Sans, sans-serif',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
+                    onMouseOver={e => {
+                      if (verificationCode.length === 6) {
+                        e.target.style.backgroundColor = '#059669';
+                        e.target.style.transform = 'translateY(-2px)';
+                      }
+                    }}
+                    onMouseOut={e => {
+                      if (verificationCode.length === 6) {
+                        e.target.style.backgroundColor = '#10b981';
+                        e.target.style.transform = 'translateY(0)';
+                      }
+                    }}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    Verificar y Activar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancelar}
+                    style={{
+                      flex: 1,
+                      minWidth: '150px',
+                      padding: '14px 24px',
+                      backgroundColor: '#e0e0e0',
+                      color: '#333',
+                      border: 'none',
+                      borderRadius: '10px',
+                      fontSize: '1rem',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      fontFamily: 'IBM Plex Sans, sans-serif'
+                    }}
+                    onMouseOver={e => e.target.style.backgroundColor = '#d0d0d0'}
+                    onMouseOut={e => e.target.style.backgroundColor = '#e0e0e0'}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Modal Códigos de Respaldo */}
+      {/* Códigos de Respaldo */}
       {showBackupCodes && backupCodes.length > 0 && (
         <div style={{
           backgroundColor: '#fffbf5',
-          padding: '24px',
+          padding: '30px',
           borderRadius: '12px',
-          border: '2px solid #CEAC65'
+          border: '2px solid #CEAC65',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2">
@@ -436,10 +549,23 @@ const handleVerificarYHabilitar = async (e) => {
               <line x1="12" y1="9" x2="12" y2="13"/>
               <line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
-            <h3 style={{ margin: 0, color: '#92400e' }}>¡Guarda estos códigos de respaldo!</h3>
+            <h3 style={{ 
+              margin: 0,
+              color: '#92400e',
+              fontSize: '1.2rem',
+              fontWeight: '700',
+              fontFamily: 'IBM Plex Sans, sans-serif'
+            }}>
+              ¡Guarda estos códigos de respaldo!
+            </h3>
           </div>
 
-          <p style={{ color: '#92400e', marginBottom: '16px' }}>
+          <p style={{ 
+            color: '#92400e',
+            marginBottom: '20px',
+            lineHeight: '1.6',
+            fontSize: '0.95rem'
+          }}>
             Usa estos códigos si pierdes acceso a tu dispositivo de autenticación. 
             <strong> Cada código solo puede usarse una vez.</strong>
           </p>
@@ -448,21 +574,24 @@ const handleVerificarYHabilitar = async (e) => {
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
             gap: '12px',
-            padding: '16px',
+            padding: '20px',
             backgroundColor: 'white',
-            borderRadius: '8px',
-            marginBottom: '16px'
+            borderRadius: '12px',
+            marginBottom: '20px',
+            border: '1px solid #e0e0e0'
           }}>
             {backupCodes.map((code, index) => (
               <div key={index} style={{
                 padding: '12px',
                 backgroundColor: '#f8f9fa',
-                borderRadius: '6px',
+                borderRadius: '8px',
                 fontFamily: 'monospace',
                 fontSize: '1rem',
                 fontWeight: '600',
                 textAlign: 'center',
-                border: '1px solid #e0e0e0'
+                border: '2px solid #e0e0e0',
+                color: '#1d2d5a',
+                letterSpacing: '2px'
               }}>
                 {code}
               </div>
@@ -473,14 +602,24 @@ const handleVerificarYHabilitar = async (e) => {
             onClick={handleCerrarBackupCodes}
             style={{
               width: '100%',
-              padding: '12px 24px',
+              padding: '14px 24px',
               backgroundColor: '#10b981',
               color: 'white',
               border: 'none',
-              borderRadius: '8px',
+              borderRadius: '10px',
               fontSize: '1rem',
               fontWeight: '600',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              fontFamily: 'IBM Plex Sans, sans-serif'
+            }}
+            onMouseOver={e => {
+              e.target.style.backgroundColor = '#059669';
+              e.target.style.transform = 'translateY(-2px)';
+            }}
+            onMouseOut={e => {
+              e.target.style.backgroundColor = '#10b981';
+              e.target.style.transform = 'translateY(0)';
             }}
           >
             He guardado mis códigos
@@ -491,13 +630,22 @@ const handleVerificarYHabilitar = async (e) => {
       {/* Información adicional */}
       {!showQR && !showBackupCodes && (
         <div style={{
-          marginTop: '24px',
-          padding: '20px',
+          padding: '24px',
           backgroundColor: '#f8f9fa',
           borderRadius: '12px',
           border: '1px solid #e0e0e0'
         }}>
-          <h4 style={{ marginTop: 0, color: '#1d2d5a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <h4 style={{ 
+            marginTop: 0,
+            marginBottom: '12px',
+            color: '#1d2d5a',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontSize: '1.1rem',
+            fontWeight: '600',
+            fontFamily: 'IBM Plex Sans, sans-serif'
+          }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <circle cx="12" cy="12" r="10"/>
               <line x1="12" y1="16" x2="12" y2="12"/>
@@ -505,11 +653,25 @@ const handleVerificarYHabilitar = async (e) => {
             </svg>
             Acerca de 2FA
           </h4>
-          <ul style={{ color: '#666', fontSize: '0.95rem', lineHeight: '1.6' }}>
-            <li>La autenticación de dos factores agrega una capa extra de seguridad</li>
-            <li>Necesitarás tu contraseña y un código de 6 dígitos para iniciar sesión</li>
-            <li>Usa Google Authenticator, Authy o cualquier app compatible con TOTP</li>
-            <li>Guarda tus códigos de respaldo en un lugar seguro</li>
+          <ul style={{ 
+            color: '#666',
+            fontSize: '0.95rem',
+            lineHeight: '1.6',
+            paddingLeft: '20px',
+            margin: 0
+          }}>
+            <li style={{ marginBottom: '8px' }}>
+              La autenticación de dos factores agrega una capa extra de seguridad
+            </li>
+            <li style={{ marginBottom: '8px' }}>
+              Necesitarás tu contraseña y un código de 6 dígitos para iniciar sesión
+            </li>
+            <li style={{ marginBottom: '8px' }}>
+              Usa Google Authenticator, Authy o cualquier app compatible con TOTP
+            </li>
+            <li>
+              Guarda tus códigos de respaldo en un lugar seguro
+            </li>
           </ul>
         </div>
       )}

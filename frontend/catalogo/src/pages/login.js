@@ -38,11 +38,21 @@ function Login() {
     });
   };
 
-
-  // Manejador para el código 2FA
+  // ✅ CORREGIDO: Manejador para el código 2FA (acepta 6 o 8 caracteres)
   const handleCodigo2FAChange = (e) => {
-    const value = e.target.value.toUpperCase().replace(/[^0-9A-F]/g, ''); // Números y letras A-F (hexadecimal)
-    if (value.length <= 8) { // Códigos de respaldo son de 8 caracteres
+    let value = e.target.value.toUpperCase().trim();
+    
+    // Si tiene 6 caracteres o menos, solo permitir dígitos (TOTP)
+    if (value.length <= 6) {
+      value = value.replace(/[^0-9]/g, '');
+    } 
+    // Si tiene más de 6, permitir hexadecimal (código de respaldo)
+    else {
+      value = value.replace(/[^0-9A-F]/g, '');
+    }
+    
+    // Limitar a máximo 8 caracteres
+    if (value.length <= 8) {
       setCodigo2FA(value);
     }
   };
@@ -111,15 +121,17 @@ function Login() {
     }
   };
 
- // Verificar código 2FA
+  // ✅ CORREGIDO: Verificar código 2FA
   const handleVerificar2FA = async (e) => {
     e.preventDefault();
+
+    console.log('📱 Verificando código:', codigo2FA, 'longitud:', codigo2FA.length);
 
     if (codigo2FA.length !== 6 && codigo2FA.length !== 8) {
       showNotification({
         type: 'warning',
         title: 'Código incompleto',
-        message: 'El código debe tener 6 u 8 caracteres'
+        message: 'El código debe tener 6 dígitos (app) o 8 caracteres (código de respaldo)'
       });
       return;
     }
@@ -127,18 +139,20 @@ function Login() {
     try {
       const response = await fetch(`${API_URL}/TwoFactor/verificar`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', } ,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           id_usuario: tempUserId,
           codigo: codigo2FA
         })
       });
 
+      console.log('📡 Respuesta del servidor:', response.status);
+
       if (response.ok) {
         const data = await response.json();
+        console.log('✅ Datos recibidos:', data);
         
         if (data.verificado && data.token) {
-          // Guardar el token directamente
           localStorage.setItem('token', data.token);
           
           showNotification({
@@ -160,6 +174,7 @@ function Login() {
         }
       } else {
         const errorData = await response.json();
+        console.error('❌ Error del servidor:', errorData);
         showNotification({
           type: 'error',
           title: 'Código Incorrecto',
@@ -168,7 +183,7 @@ function Login() {
         setCodigo2FA('');
       }
     } catch (error) {
-      console.error('Error al verificar 2FA:', error);
+      console.error('❌ Error al verificar 2FA:', error);
       showNotification({
         type: 'error',
         title: 'Error de verificación',
@@ -286,7 +301,10 @@ function Login() {
               </div>
               
               <h2>Verificación de Dos Factores</h2>
-              <p className="form-subtitle">Ingresa el código de 6 dígitos de tu aplicación de autenticación</p>
+              <p className="form-subtitle">
+                Ingresa el código de 6 dígitos de tu app<br/>
+                <strong>o</strong> un código de respaldo de 8 caracteres
+              </p>
 
               <form onSubmit={handleVerificar2FA} className="auth-form">
                 <div className="form-group">
@@ -301,13 +319,14 @@ function Login() {
                       value={codigo2FA}
                       onChange={handleCodigo2FAChange}
                       required
-                      placeholder="000000"
-                      maxLength="6"
+                      placeholder={codigo2FA.length > 6 ? "A1B2C3D4" : "000000"}
+                      maxLength="8"
                       style={{ 
-                        fontSize: '1.5rem', 
-                        letterSpacing: '0.5rem',
+                        fontSize: codigo2FA.length > 6 ? '1.2rem' : '1.5rem',
+                        letterSpacing: codigo2FA.length > 6 ? '0.3rem' : '0.5rem',
                         textAlign: 'center',
-                        fontWeight: '600'
+                        fontWeight: '600',
+                        fontFamily: 'monospace'
                       }}
                       autoComplete="off"
                       autoFocus
@@ -320,17 +339,20 @@ function Login() {
                     fontSize: '0.85rem',
                     textAlign: 'center'
                   }}>
-                    También puedes usar un código de respaldo
+                    {codigo2FA.length > 6 
+                      ? `🎫 Código de respaldo (${codigo2FA.length}/8)`
+                      : `📱 Código de app (${codigo2FA.length}/6)`
+                    }
                   </small>
                 </div>
 
                 <button 
                   type="submit" 
                   className="btn-submit"
-                  disabled={codigo2FA.length !== 6}
+                  disabled={codigo2FA.length !== 6 && codigo2FA.length !== 8}
                   style={{
-                    opacity: codigo2FA.length === 6 ? 1 : 0.6,
-                    cursor: codigo2FA.length === 6 ? 'pointer' : 'not-allowed'
+                    opacity: (codigo2FA.length === 6 || codigo2FA.length === 8) ? 1 : 0.6,
+                    cursor: (codigo2FA.length === 6 || codigo2FA.length === 8) ? 'pointer' : 'not-allowed'
                   }}
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -355,9 +377,19 @@ function Login() {
               </form>
 
               <div className="form-footer">
-                <p style={{ fontSize: '0.85rem', color: '#666', textAlign: 'center' }}>
-                  💡 Tip: Los códigos de respaldo son de 8 caracteres
-                </p>
+                <div style={{
+                  background: '#f0f7ff',
+                  padding: '16px',
+                  borderRadius: '8px',
+                  border: '1px solid #bfdbfe',
+                  marginTop: '16px'
+                }}>
+                  <p style={{ fontSize: '0.85rem', color: '#1e40af', margin: 0, textAlign: 'center' }}>
+                    <strong>💡 Información:</strong><br/>
+                    • Código de app: <strong>6 dígitos</strong> (ejemplo: 123456)<br/>
+                    • Código de respaldo: <strong>8 caracteres</strong> (ejemplo: A1B2C3D4)
+                  </p>
+                </div>
               </div>
             </div>
           ) : (
@@ -417,15 +449,16 @@ function Login() {
                   <button type="submit" className="btn-submit">
                     Iniciar Sesión
                   </button>
-<div className="form-options">
-  <button 
-    
-    onClick={() => navigate('/forgot-password')}
-    className="forgot-link"
-  >
-    ¿Olvidaste tu contraseña?
-  </button>
-</div>
+                  
+                  <div className="form-options">
+                    <button 
+                      type="button"
+                      onClick={() => navigate('/forgot-password')}
+                      className="forgot-link"
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </button>
+                  </div>
                 </form>
 
                 <div className="form-footer">
@@ -437,7 +470,7 @@ function Login() {
                 </div>
               </div>
 
-              {/* Formulario de Registro (sin cambios) */}
+              {/* Formulario de Registro */}
               <div className={`form-panel register-panel ${!isLogin ? 'active' : ''}`}>
                 <div className="form-logo">
                   <img 

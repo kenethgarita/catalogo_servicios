@@ -1,7 +1,8 @@
+// backend/src/controllers/twoFactorController.js
 import speakeasy from 'speakeasy';
 import QRCode from 'qrcode';
 import crypto from 'crypto';
-import jwt from 'jsonwebtoken';  // ← AGREGAR ESTA LÍNEA
+import jwt from 'jsonwebtoken';
 import { connectDB } from '../config/db.js';
 import sql from 'mssql';
 
@@ -14,7 +15,6 @@ export const generarQR2FA = async (req, res) => {
     const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
     const id_usuario = payload.id_usuario;
 
-    // Obtener información del usuario
     const pool = await connectDB();
     const result = await pool
       .request()
@@ -27,13 +27,11 @@ export const generarQR2FA = async (req, res) => {
 
     const correo = result.recordset[0].correo;
 
-    // Generar secret
     const secret = speakeasy.generateSecret({
       name: `IFAM (${correo})`,
       issuer: 'IFAM - Catálogo de Servicios'
     });
 
-    // Guardar secret temporal (aún no habilitado)
     await pool
       .request()
       .input('id_usuario', sql.Int, id_usuario)
@@ -44,12 +42,11 @@ export const generarQR2FA = async (req, res) => {
         WHERE id_usuario = @id_usuario
       `);
 
-    // Generar código QR
     const qrCodeUrl = await QRCode.toDataURL(secret.otpauth_url);
 
     res.json({
       qrCode: qrCodeUrl,
-      secret: secret.base32, // Para ingreso manual
+      secret: secret.base32,
       mensaje: 'Escanea el código QR con Google Authenticator'
     });
 
@@ -58,15 +55,6 @@ export const generarQR2FA = async (req, res) => {
     res.status(500).json({ error: 'Error al generar código QR' });
   }
 };
-
-/**
- * Verificar código y habilitar 2FA
- */
-// En backend/src/controllers/twoFactorController.js
-// Actualizar la función habilitarYVerificar2FA para devolver el estado correcto:
-
-// backend/src/controllers/twoFactorController.js
-// Actualizar SOLO estas dos funciones:
 
 /**
  * Verificar código y habilitar 2FA
@@ -102,12 +90,11 @@ export const habilitarYVerificar2FA = async (req, res) => {
 
     console.log('🔑 Secret encontrado, verificando código...');
 
-    // Verificar código con margen de tiempo más amplio
     const verificado = speakeasy.totp.verify({
       secret: secret,
       encoding: 'base32',
       token: codigo,
-      window: 6 // Permite hasta 3 minutos de diferencia (6 * 30 seg)
+      window: 6
     });
 
     console.log('🔍 Resultado verificación:', verificado);
@@ -126,7 +113,6 @@ export const habilitarYVerificar2FA = async (req, res) => {
 
     console.log('🎫 Códigos de respaldo generados:', backupCodes.length);
 
-    // Habilitar 2FA
     await pool
       .request()
       .input('id_usuario', sql.Int, id_usuario)
@@ -138,7 +124,6 @@ export const habilitarYVerificar2FA = async (req, res) => {
         WHERE id_usuario = @id_usuario
       `);
 
-    // ✅ VERIFICAR que se habilitó correctamente
     const verification = await pool
       .request()
       .input('id_usuario', sql.Int, id_usuario)
@@ -146,12 +131,11 @@ export const habilitarYVerificar2FA = async (req, res) => {
 
     console.log('✅ Estado final twofa_enabled en DB:', verification.recordset[0].twofa_enabled);
 
-    // ✅✅ CRÍTICO: Devolver habilitado SIEMPRE como true (boolean)
     res.json({
       mensaje: '2FA habilitado correctamente',
       backupCodes: backupCodes,
       advertencia: 'Guarda estos códigos de respaldo en un lugar seguro. Cada código solo puede usarse una vez.',
-      habilitado: true  // ✅ Siempre true cuando esta función tiene éxito
+      habilitado: true
     });
 
   } catch (error) {
@@ -193,12 +177,11 @@ export const obtenerEstado2FA = async (req, res) => {
     const twofa_enabled_db = result.recordset[0].twofa_enabled;
     console.log('📊 Valor de twofa_enabled desde DB:', twofa_enabled_db, 'tipo:', typeof twofa_enabled_db);
 
-    // ✅✅ CONVERTIR EXPLÍCITAMENTE A BOOLEAN
     const habilitado = twofa_enabled_db === 1 || twofa_enabled_db === true;
     console.log('📊 Valor convertido a boolean:', habilitado);
 
     res.json({
-      habilitado: habilitado,  // ✅ Enviar como boolean true/false
+      habilitado: habilitado,
       codigosRespaldoRestantes: result.recordset[0].codigos_respaldo_restantes || 0
     });
 
@@ -209,17 +192,14 @@ export const obtenerEstado2FA = async (req, res) => {
 };
 
 /**
- * Verificar código 2FA durante login
- */
-/**
- * Verificar código 2FA durante login
+ * Verificar código 2FA durante login - CORREGIDO
  */
 export const verificar2FA = async (req, res) => {
   try {
     const { id_usuario, codigo } = req.body;
 
     console.log('🔐 Verificando 2FA para usuario:', id_usuario);
-    console.log('📱 Código recibido:', codigo);
+    console.log('📱 Código recibido:', codigo, 'longitud:', codigo?.length);
 
     const pool = await connectDB();
     const result = await pool
@@ -248,50 +228,98 @@ export const verificar2FA = async (req, res) => {
 
     const userData = result.recordset[0];
     const { twofa_secret, twofa_backup_codes, correo, nombre, apellido1, nombre_rol, es_responsable } = userData;
-    const backupCodes = twofa_backup_codes ? JSON.parse(twofa_backup_codes) : [];
+    
+    // Parsear códigos de respaldo
+    let backupCodes = [];
+    try {
+      backupCodes = twofa_backup_codes ? JSON.parse(twofa_backup_codes) : [];
+      console.log('🎫 Códigos de respaldo parseados:', backupCodes);
+    } catch (parseError) {
+      console.error('❌ Error parseando códigos de respaldo:', parseError);
+      backupCodes = [];
+    }
 
     console.log('🔑 Secret disponible:', !!twofa_secret);
-    console.log('🎫 Códigos de respaldo disponibles:', backupCodes.length);
+    console.log('🎫 Total códigos de respaldo:', backupCodes.length);
 
     let verificado = false;
-    let tipoVerificacion = 'totp';
+    let tipoVerificacion = null;
 
-    // PRIMERO: Verificar si es un código de respaldo
-    if (backupCodes.includes(codigo.toUpperCase())) {
-      console.log('✅ Código de respaldo válido');
-      verificado = true;
-      tipoVerificacion = 'backup';
+    // Normalizar el código ingresado
+    const codigoNormalizado = codigo.trim().toUpperCase();
+    console.log('🔍 Código normalizado:', codigoNormalizado);
+    console.log('🔍 Longitud del código:', codigoNormalizado.length);
+    console.log('🔍 Es hexadecimal?:', /^[0-9A-F]+$/.test(codigoNormalizado));
+
+    // PRIMERO: Intentar verificar como código de respaldo
+    // Los códigos de respaldo son de 8 caracteres hexadecimales
+    if (codigoNormalizado.length === 8) {
+      console.log('🎫 Longitud 8 detectada - Intentando verificar como código de respaldo...');
+      console.log('🎫 Buscando en:', backupCodes);
       
-      // Remover código usado
-      const nuevosBackupCodes = backupCodes.filter(c => c !== codigo.toUpperCase());
+      // Normalizar todos los códigos a mayúsculas para comparar
+      const codigosNormalizados = backupCodes.map(c => c.toUpperCase());
+      console.log('🎫 Códigos normalizados:', codigosNormalizados);
       
-      await pool
-        .request()
-        .input('id_usuario', sql.Int, id_usuario)
-        .input('backup_codes', sql.NVarChar, JSON.stringify(nuevosBackupCodes))
-        .query(`
-          UPDATE Usuario 
-          SET twofa_backup_codes = @backup_codes
-          WHERE id_usuario = @id_usuario
-        `);
+      const indiceEncontrado = codigosNormalizados.indexOf(codigoNormalizado);
+      console.log('🎫 Índice encontrado:', indiceEncontrado);
+
+      if (indiceEncontrado !== -1) {
+        console.log('✅ ¡Código de respaldo válido encontrado!');
+        verificado = true;
+        tipoVerificacion = 'backup';
+        
+        // Remover el código usado usando el índice
+        const nuevosBackupCodes = backupCodes.filter((_, index) => index !== indiceEncontrado);
+        
+        console.log('📝 Actualizando códigos de respaldo...');
+        console.log('🎫 Códigos antes:', backupCodes.length);
+        console.log('🎫 Códigos después:', nuevosBackupCodes.length);
+
+        await pool
+          .request()
+          .input('id_usuario', sql.Int, id_usuario)
+          .input('backup_codes', sql.NVarChar, JSON.stringify(nuevosBackupCodes))
+          .query(`
+            UPDATE Usuario 
+            SET twofa_backup_codes = @backup_codes
+            WHERE id_usuario = @id_usuario
+          `);
+
+        console.log('✅ Códigos de respaldo actualizados correctamente');
+      } else {
+        console.log('❌ Código de respaldo NO encontrado en la lista');
+      }
     } 
-    // SEGUNDO: Verificar código TOTP normal
-    else if (codigo.length === 6 && /^\d{6}$/.test(codigo)) {
-      console.log('🔢 Intentando verificar código TOTP');
+    // SEGUNDO: Verificar código TOTP normal (6 dígitos)
+    else if (codigoNormalizado.length === 6 && /^\d{6}$/.test(codigoNormalizado)) {
+      console.log('🔢 Intentando verificar como código TOTP...');
       
       verificado = speakeasy.totp.verify({
         secret: twofa_secret,
         encoding: 'base32',
-        token: codigo,
+        token: codigoNormalizado,
         window: 2
       });
 
-      console.log('🔍 Resultado verificación TOTP:', verificado);
+      if (verificado) {
+        tipoVerificacion = 'totp';
+        console.log('✅ Código TOTP verificado correctamente');
+      } else {
+        console.log('❌ Código TOTP incorrecto');
+      }
+    } else {
+      console.log('❌ Formato de código no válido');
+      console.log('   - Longitud:', codigoNormalizado.length);
+      console.log('   - Esperado: 6 dígitos (TOTP) o 8 caracteres (código de respaldo)');
     }
 
     if (!verificado) {
-      console.log('❌ Código no válido');
-      return res.status(401).json({ error: 'Código incorrecto' });
+      console.log('❌ Verificación fallida');
+      return res.status(401).json({ 
+        error: 'Código incorrecto',
+        detalle: 'El código debe ser de 6 dígitos (app) o 8 caracteres hexadecimales (código de respaldo)'
+      });
     }
 
     // ✅ CÓDIGO VERIFICADO - Generar token JWT
@@ -305,13 +333,14 @@ export const verificar2FA = async (req, res) => {
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
 
-    console.log('✅ Token generado exitosamente');
+    console.log('✅ Token JWT generado exitosamente');
+    console.log('✅ Tipo de verificación:', tipoVerificacion);
 
     return res.json({ 
       verificado: true,
       tipo: tipoVerificacion,
-      codigosRestantes: tipoVerificacion === 'backup' ? backupCodes.length - 1 : undefined,
-      token: token,  // ← IMPORTANTE: Ahora devuelve el token
+      codigosRestantes: tipoVerificacion === 'backup' ? backupCodes.length - 1 : backupCodes.length,
+      token: token,
       usuario: {
         id_usuario: id_usuario,
         nombre: nombre,
@@ -355,15 +384,18 @@ export const deshabilitar2FA = async (req, res) => {
     const { twofa_secret, twofa_backup_codes } = result.recordset[0];
     const backupCodes = twofa_backup_codes ? JSON.parse(twofa_backup_codes) : [];
 
+    // Normalizar código
+    const codigoNormalizado = codigo.trim().toUpperCase();
+
     // Verificar código (TOTP o backup)
     let verificado = speakeasy.totp.verify({
       secret: twofa_secret,
       encoding: 'base32',
-      token: codigo,
+      token: codigoNormalizado,
       window: 2
     });
 
-    if (!verificado && backupCodes.includes(codigo)) {
+    if (!verificado && backupCodes.some(c => c.toUpperCase() === codigoNormalizado)) {
       verificado = true;
     }
 
