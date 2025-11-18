@@ -16,12 +16,12 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* ✅ Rutas Públicas - Accesibles sin login */}
+        {/* Rutas Públicas - Accesibles sin login */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/servicio/:id" element={<DetalleServicio />} />
         
-        {/* ✅ Rutas Protegidas - Solo usuarios autenticados */}
+        {/* Rutas Protegidas - Solo usuarios autenticados */}
         <Route 
           path="/mis-solicitudes" 
           element={
@@ -58,7 +58,7 @@ function App() {
           } 
         />
         
-        {/* ✅ Rutas Protegidas - Solo para Administradores */}
+        {/* Rutas Protegidas - Solo para Administradores */}
         <Route 
           path="/admin/servicios" 
           element={
@@ -86,7 +86,7 @@ function App() {
           } 
         />
         
-        {/* ✅ Rutas Protegidas - Para Responsables y Administradores */}
+        {/* Rutas Protegidas - Para Responsables y Administradores */}
         <Route 
           path="/responsable/solicitudes" 
           element={

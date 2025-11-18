@@ -132,7 +132,7 @@ function DetalleServicio() {
           </div>
         </section>
 
-        {/* ✅ SOLUCIÓN: Solo mostrar sección de imagen si tiene_imagen es true Y hay imagen cargada */}
+        {/* Solo mostrar sección de imagen si tiene_imagen es true Y hay imagen cargada */}
         {(servicio.tiene_imagen === 1 || servicio.tiene_imagen === true) && (
           <section className="servicio-imagen-section">
             <div className="imagen-container">
