@@ -65,6 +65,12 @@ export const generarQR2FA = async (req, res) => {
 // En backend/src/controllers/twoFactorController.js
 // Actualizar la función habilitarYVerificar2FA para devolver el estado correcto:
 
+// backend/src/controllers/twoFactorController.js
+// Actualizar SOLO estas dos funciones:
+
+/**
+ * Verificar código y habilitar 2FA
+ */
 export const habilitarYVerificar2FA = async (req, res) => {
   try {
     const { codigo } = req.body;
@@ -89,7 +95,7 @@ export const habilitarYVerificar2FA = async (req, res) => {
     const secret = result.recordset[0].twofa_secret;
     const yaHabilitado = result.recordset[0].twofa_enabled;
 
-    if (yaHabilitado === 1) {
+    if (yaHabilitado === 1 || yaHabilitado === true) {
       console.log('⚠️ 2FA ya está habilitado para este usuario');
       return res.status(400).json({ error: '2FA ya está habilitado' });
     }
@@ -138,19 +144,67 @@ export const habilitarYVerificar2FA = async (req, res) => {
       .input('id_usuario', sql.Int, id_usuario)
       .query('SELECT twofa_enabled FROM Usuario WHERE id_usuario = @id_usuario');
 
-    console.log('✅ Estado final twofa_enabled:', verification.recordset[0].twofa_enabled);
+    console.log('✅ Estado final twofa_enabled en DB:', verification.recordset[0].twofa_enabled);
 
-    // ✅ CRÍTICO: Devolver habilitado como booleano true
+    // ✅✅ CRÍTICO: Devolver habilitado SIEMPRE como true (boolean)
     res.json({
       mensaje: '2FA habilitado correctamente',
       backupCodes: backupCodes,
       advertencia: 'Guarda estos códigos de respaldo en un lugar seguro. Cada código solo puede usarse una vez.',
-      habilitado: true  // ✅ AÑADIDO: Devolver explícitamente como true
+      habilitado: true  // ✅ Siempre true cuando esta función tiene éxito
     });
 
   } catch (error) {
     console.error('❌ Error al habilitar 2FA:', error);
     res.status(500).json({ error: 'Error al habilitar 2FA' });
+  }
+};
+
+/**
+ * Obtener estado de 2FA del usuario
+ */
+export const obtenerEstado2FA = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    const id_usuario = payload.id_usuario;
+
+    console.log('📊 Consultando estado 2FA para usuario:', id_usuario);
+
+    const pool = await connectDB();
+    const result = await pool
+      .request()
+      .input('id_usuario', sql.Int, id_usuario)
+      .query(`
+        SELECT 
+          twofa_enabled,
+          CASE WHEN twofa_backup_codes IS NOT NULL 
+               THEN (SELECT COUNT(*) FROM OPENJSON(twofa_backup_codes))
+               ELSE 0 
+          END as codigos_respaldo_restantes
+        FROM Usuario 
+        WHERE id_usuario = @id_usuario
+      `);
+
+    if (!result.recordset.length) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    const twofa_enabled_db = result.recordset[0].twofa_enabled;
+    console.log('📊 Valor de twofa_enabled desde DB:', twofa_enabled_db, 'tipo:', typeof twofa_enabled_db);
+
+    // ✅✅ CONVERTIR EXPLÍCITAMENTE A BOOLEAN
+    const habilitado = twofa_enabled_db === 1 || twofa_enabled_db === true;
+    console.log('📊 Valor convertido a boolean:', habilitado);
+
+    res.json({
+      habilitado: habilitado,  // ✅ Enviar como boolean true/false
+      codigosRespaldoRestantes: result.recordset[0].codigos_respaldo_restantes || 0
+    });
+
+  } catch (error) {
+    console.error('❌ Error al obtener estado 2FA:', error);
+    res.status(500).json({ error: 'Error al obtener estado' });
   }
 };
 
@@ -334,44 +388,5 @@ export const deshabilitar2FA = async (req, res) => {
   } catch (error) {
     console.error('Error al deshabilitar 2FA:', error);
     res.status(500).json({ error: 'Error al deshabilitar 2FA' });
-  }
-};
-
-/**
- * Obtener estado de 2FA del usuario
- */
-export const obtenerEstado2FA = async (req, res) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1];
-    const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-    const id_usuario = payload.id_usuario;
-
-    const pool = await connectDB();
-    const result = await pool
-      .request()
-      .input('id_usuario', sql.Int, id_usuario)
-      .query(`
-        SELECT 
-          twofa_enabled,
-          CASE WHEN twofa_backup_codes IS NOT NULL 
-               THEN (SELECT COUNT(*) FROM OPENJSON(twofa_backup_codes))
-               ELSE 0 
-          END as codigos_respaldo_restantes
-        FROM Usuario 
-        WHERE id_usuario = @id_usuario
-      `);
-
-    if (!result.recordset.length) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
-
-    res.json({
-      habilitado: result.recordset[0].twofa_enabled === 1,
-      codigosRespaldoRestantes: result.recordset[0].codigos_respaldo_restantes || 0
-    });
-
-  } catch (error) {
-    console.error('Error al obtener estado 2FA:', error);
-    res.status(500).json({ error: 'Error al obtener estado' });
   }
 };

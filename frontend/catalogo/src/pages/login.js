@@ -127,7 +127,7 @@ function Login() {
     try {
       const response = await fetch(`${API_URL}/TwoFactor/verificar`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', } ,
         body: JSON.stringify({
           id_usuario: tempUserId,
           codigo: codigo2FA
