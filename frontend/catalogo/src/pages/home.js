@@ -152,9 +152,7 @@ useEffect(() => {
                 <>
                   <BotonHome texto="Gestionar Servicios" ruta="/admin/servicios" />
                   <BotonHome texto="Gestionar Roles" ruta="/admin/roles" />
-                  <BotonHome texto="Gestionar Secciones" ruta="/admin/categorias" />
-                  <BotonHome texto="Ver perfil" ruta="/perfil" />
-                </>
+                  <BotonHome texto="Gestionar Secciones" ruta="/admin/categorias" />                </>
               )}
             </div>
           </div>
