@@ -38,10 +38,14 @@ function Login() {
     });
   };
 
+<<<<<<< HEAD
+  // ✅ CORREGIDO: Manejador para el código 2FA (acepta números y letras)
+=======
   // Manejador para el código 2FA
+>>>>>>> 1613a611331305cd6ecf5baeffea237abd70beb2
   const handleCodigo2FAChange = (e) => {
-    const value = e.target.value.replace(/[^0-9]/g, ''); // Solo números
-    if (value.length <= 6) {
+    const value = e.target.value.toUpperCase().replace(/[^0-9A-F]/g, ''); // Números y letras A-F (hexadecimal)
+    if (value.length <= 8) { // Códigos de respaldo son de 8 caracteres
       setCodigo2FA(value);
     }
   };
