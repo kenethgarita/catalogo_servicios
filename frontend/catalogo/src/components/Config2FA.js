@@ -1,41 +1,39 @@
 import React, { useState, useEffect } from 'react';
-import './Config2FA.css';
 import { showNotification } from './NotificationSystem';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 function Config2FA() {
-  const [estado2FA, setEstado2FA] = useState({
-    habilitado: false,
-    codigosRespaldo: 0
-  });
-  const [qrCode, setQrCode] = useState(null);
-  const [codigoVerificacion, setCodigoVerificacion] = useState('');
+  const [twoFAEnabled, setTwoFAEnabled] = useState(false);
+  const [showQR, setShowQR] = useState(false);
+  const [qrCode, setQrCode] = useState('');
+  const [secret, setSecret] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
   const [backupCodes, setBackupCodes] = useState([]);
-  const [mostrandoQR, setMostrandoQR] = useState(false);
+  const [showBackupCodes, setShowBackupCodes] = useState(false);
+  const [codigosRestantes, setCodigosRestantes] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchEstado2FA();
+    verificarEstado2FA();
   }, []);
 
-  const fetchEstado2FA = async () => {
+  const verificarEstado2FA = async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL}/TwoFactor/estado`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
 
       if (response.ok) {
         const data = await response.json();
-        setEstado2FA({
-          habilitado: data.habilitado,
-          codigosRespaldo: data.codigosRespaldoRestantes
-        });
+        console.log('📊 Estado 2FA:', data);
+        setTwoFAEnabled(data.habilitado);
+        setCodigosRestantes(data.codigosRespaldoRestantes || 0);
       }
-      setLoading(false);
     } catch (error) {
-      console.error('Error al cargar estado 2FA:', error);
+      console.error('Error al verificar estado 2FA:', error);
+    } finally {
       setLoading(false);
     }
   };
@@ -44,18 +42,21 @@ function Config2FA() {
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`${API_URL}/TwoFactor/generar-qr`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
 
       if (response.ok) {
         const data = await response.json();
+        console.log('✅ QR generado');
         setQrCode(data.qrCode);
-        setMostrandoQR(true);
-        
+        setSecret(data.secret);
+        setShowQR(true);
+      } else {
+        const error = await response.json();
         showNotification({
-          type: 'info',
-          title: 'Código QR Generado',
-          message: 'Escanea el código con Google Authenticator'
+          type: 'error',
+          title: 'Error',
+          message: error.error || 'No se pudo generar el código QR'
         });
       }
     } catch (error) {
@@ -63,19 +64,19 @@ function Config2FA() {
       showNotification({
         type: 'error',
         title: 'Error',
-        message: 'No se pudo generar el código QR'
+        message: 'No se pudo conectar con el servidor'
       });
     }
   };
 
-  const handleHabilitar2FA = async (e) => {
+  const handleVerificarYHabilitar = async (e) => {
     e.preventDefault();
 
-    if (!codigoVerificacion || codigoVerificacion.length !== 6) {
+    if (!verificationCode || verificationCode.length !== 6) {
       showNotification({
         type: 'warning',
         title: 'Código incompleto',
-        message: 'Ingresa el código de 6 dígitos'
+        message: 'Debes ingresar el código de 6 dígitos'
       });
       return;
     }
@@ -86,30 +87,38 @@ function Config2FA() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ codigo: codigoVerificacion })
+        body: JSON.stringify({ codigo: verificationCode })
       });
 
       if (response.ok) {
         const data = await response.json();
-        setBackupCodes(data.backupCodes);
+        console.log('✅ 2FA habilitado:', data);
+        
+        setBackupCodes(data.backupCodes || []);
+        setShowBackupCodes(true);
+        setShowQR(false);
+        setVerificationCode('');
         
         showNotification({
           type: 'success',
-          title: '🔒 2FA Habilitado',
-          message: 'Autenticación de dos factores activada correctamente',
-          duration: 4000
+          title: '🔐 2FA Habilitado',
+          message: 'Guarda tus códigos de respaldo en un lugar seguro',
+          duration: 5000
         });
 
-        setMostrandoQR(false);
-        setCodigoVerificacion('');
-        fetchEstado2FA();
+        // ✅ CRÍTICO: Esperar un momento y volver a verificar el estado
+        setTimeout(() => {
+          verificarEstado2FA();
+        }, 1000);
+
       } else {
+        const error = await response.json();
         showNotification({
           type: 'error',
-          title: 'Código incorrecto',
-          message: 'Verifica el código e intenta de nuevo'
+          title: 'Código Incorrecto',
+          message: error.error || 'El código ingresado no es válido. Asegúrate que la hora de tu dispositivo esté sincronizada.'
         });
       }
     } catch (error) {
@@ -122,8 +131,8 @@ function Config2FA() {
     }
   };
 
-  const handleDeshabilitar2FA = async () => {
-    const codigo = prompt('Ingresa un código de verificación o código de respaldo para deshabilitar 2FA:');
+  const handleDeshabilitar = async () => {
+    const codigo = prompt('Ingresa tu código 2FA actual o un código de respaldo para confirmar:');
     
     if (!codigo) return;
 
@@ -133,24 +142,29 @@ function Config2FA() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({ codigo })
       });
 
       if (response.ok) {
+        setTwoFAEnabled(false);
+        setBackupCodes([]);
+        setShowBackupCodes(false);
+        
         showNotification({
           type: 'success',
           title: '2FA Deshabilitado',
-          message: 'Autenticación de dos factores desactivada'
+          message: 'La autenticación de dos factores ha sido desactivada'
         });
-        setBackupCodes([]);
-        fetchEstado2FA();
+
+        verificarEstado2FA();
       } else {
+        const error = await response.json();
         showNotification({
           type: 'error',
-          title: 'Código incorrecto',
-          message: 'No se pudo deshabilitar 2FA'
+          title: 'Error',
+          message: error.error || 'Código incorrecto'
         });
       }
     } catch (error) {
@@ -163,194 +177,333 @@ function Config2FA() {
     }
   };
 
-  const handleCopiarCodigos = () => {
-    const texto = backupCodes.join('\n');
-    navigator.clipboard.writeText(texto);
-    showNotification({
-      type: 'success',
-      title: 'Códigos Copiados',
-      message: 'Los códigos de respaldo han sido copiados al portapapeles'
-    });
+  const handleCerrarBackupCodes = () => {
+    setShowBackupCodes(false);
+    setBackupCodes([]);
+  };
+
+  const handleCancelar = () => {
+    setShowQR(false);
+    setVerificationCode('');
+    setQrCode('');
+    setSecret('');
   };
 
   if (loading) {
     return (
-      <div className="config-2fa">
-        <p>Cargando configuración 2FA...</p>
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <div style={{
+          width: '40px',
+          height: '40px',
+          border: '4px solid #f0f0f0',
+          borderTop: '4px solid #1d2d5a',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite',
+          margin: '0 auto'
+        }}></div>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
       </div>
     );
   }
 
   return (
-    <div className="config-2fa">
-      <h3>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
-        Autenticación de Dos Factores
-      </h3>
-
-      <p className="config-2fa-description">
-        Protege tu cuenta con una capa adicional de seguridad. Necesitarás tu contraseña 
-        y un código de verificación de Google Authenticator para iniciar sesión.
-      </p>
-
-      {!estado2FA.habilitado ? (
-        <div className={`config-2fa-status disabled`}>
-          <div className="status-info">
-            <div className="status-title">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{display: 'inline', marginRight: '8px'}}>
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-              </svg>
-              2FA Deshabilitado
-            </div>
-            <div className="status-subtitle">
-              Tu cuenta no está protegida con autenticación de dos factores
-            </div>
-          </div>
+    <div style={{ padding: '20px' }}>
+      {/* Estado Actual */}
+      <div style={{
+        padding: '20px',
+        backgroundColor: twoFAEnabled ? '#d1fae5' : '#fef3c7',
+        borderRadius: '12px',
+        marginBottom: '24px',
+        border: `2px solid ${twoFAEnabled ? '#10b981' : '#f59e0b'}`
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={twoFAEnabled ? '#10b981' : '#f59e0b'} strokeWidth="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+          <h3 style={{ margin: 0, color: twoFAEnabled ? '#065f46' : '#92400e', fontSize: '1.2rem' }}>
+            2FA {twoFAEnabled ? 'Activado' : 'Desactivado'}
+          </h3>
         </div>
-      ) : (
-        <div className={`config-2fa-status enabled`}>
-          <div className="status-info">
-            <div className="status-title">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{display: 'inline', marginRight: '8px'}}>
-                <polyline points="20 6 9 17 4 12"/>
+        <p style={{ margin: 0, color: twoFAEnabled ? '#065f46' : '#92400e', fontSize: '0.95rem' }}>
+          {twoFAEnabled 
+            ? `Tu cuenta está protegida con autenticación de dos factores. Códigos de respaldo restantes: ${codigosRestantes}`
+            : 'Activa 2FA para agregar una capa adicional de seguridad a tu cuenta'
+          }
+        </p>
+      </div>
+
+      {/* Botones principales */}
+      {!showQR && !showBackupCodes && (
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          {!twoFAEnabled ? (
+            <button
+              onClick={handleGenerarQR}
+              style={{
+                flex: 1,
+                minWidth: '200px',
+                padding: '14px 24px',
+                backgroundColor: '#10b981',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={e => e.target.style.backgroundColor = '#059669'}
+              onMouseOut={e => e.target.style.backgroundColor = '#10b981'}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               </svg>
-              2FA Habilitado
-            </div>
-            <div className="status-subtitle">
-              Tu cuenta está protegida • Códigos de respaldo: {estado2FA.codigosRespaldo}
-            </div>
-          </div>
+              Activar 2FA
+            </button>
+          ) : (
+            <button
+              onClick={handleDeshabilitar}
+              style={{
+                flex: 1,
+                minWidth: '200px',
+                padding: '14px 24px',
+                backgroundColor: '#ef4444',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '1rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={e => e.target.style.backgroundColor = '#dc2626'}
+              onMouseOut={e => e.target.style.backgroundColor = '#ef4444'}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              Desactivar 2FA
+            </button>
+          )}
         </div>
       )}
 
-      {!estado2FA.habilitado ? (
-        <>
-          {!mostrandoQR ? (
-            <div>
-              <div className="instructions-list">
-                <strong>Para habilitar 2FA necesitarás:</strong>
-                <ol>
-                  <li>
-                    <strong>Google Authenticator</strong> instalado en tu dispositivo móvil
-                    <br/>
-                    <small style={{color: '#666'}}>
-                      (disponible en 
-                      <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank" rel="noopener noreferrer" style={{color: '#3b82f6', marginLeft: '4px'}}>
-                        Android
-                      </a> y 
-                      <a href="https://apps.apple.com/app/google-authenticator/id388497605" target="_blank" rel="noopener noreferrer" style={{color: '#3b82f6', marginLeft: '4px'}}>
-                        iOS
-                      </a>)
-                    </small>
-                  </li>
-                  <li>Escanear el código QR que generaremos</li>
-                  <li>Verificar el código de 6 dígitos generado por la app</li>
-                </ol>
+      {/* Modal QR */}
+      {showQR && (
+        <div style={{
+          backgroundColor: 'white',
+          padding: '24px',
+          borderRadius: '12px',
+          border: '2px solid #e0e0e0'
+        }}>
+          <h3 style={{ marginTop: 0, color: '#1d2d5a' }}>Configurar Autenticación de Dos Factores</h3>
+          
+          <div style={{ marginBottom: '20px' }}>
+            <p style={{ marginBottom: '16px', color: '#666' }}>
+              <strong>Paso 1:</strong> Escanea este código QR con Google Authenticator
+            </p>
+            {qrCode && (
+              <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                <img src={qrCode} alt="QR Code" style={{ maxWidth: '250px', border: '2px solid #e0e0e0', borderRadius: '8px' }} />
               </div>
+            )}
+            
+            <details style={{ marginTop: '12px', padding: '12px', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+              <summary style={{ cursor: 'pointer', fontWeight: '600', color: '#1d2d5a' }}>
+                ¿No puedes escanear el código?
+              </summary>
+              <p style={{ marginTop: '12px', fontSize: '0.9rem', color: '#666' }}>
+                Ingresa este código manualmente en tu app:
+              </p>
+              <code style={{
+                display: 'block',
+                padding: '12px',
+                backgroundColor: '#fff',
+                border: '1px solid #e0e0e0',
+                borderRadius: '6px',
+                fontFamily: 'monospace',
+                fontSize: '0.9rem',
+                wordBreak: 'break-all',
+                marginTop: '8px'
+              }}>
+                {secret}
+              </code>
+            </details>
+          </div>
 
-              <button onClick={handleGenerarQR} className="btn-2fa btn-2fa-enable">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="3" width="18" height="18" rx="2"/>
-                  <rect x="7" y="7" width="3" height="3"/>
-                  <rect x="14" y="7" width="3" height="3"/>
-                  <rect x="7" y="14" width="3" height="3"/>
-                  <rect x="14" y="14" width="3" height="3"/>
-                </svg>
-                Comenzar Configuración
+          <form onSubmit={handleVerificarYHabilitar}>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#333' }}>
+                <strong>Paso 2:</strong> Ingresa el código de 6 dígitos de tu app
+              </label>
+              <input
+                type="text"
+                value={verificationCode}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, '');
+                  if (value.length <= 6) setVerificationCode(value);
+                }}
+                placeholder="000000"
+                maxLength="6"
+                style={{
+                  width: '100%',
+                  padding: '14px',
+                  border: '2px solid #e0e0e0',
+                  borderRadius: '8px',
+                  fontSize: '1.5rem',
+                  textAlign: 'center',
+                  letterSpacing: '0.5rem',
+                  fontWeight: '600',
+                  fontFamily: 'monospace'
+                }}
+                autoFocus
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button
+                type="button"
+                onClick={handleCancelar}
+                style={{
+                  flex: 1,
+                  padding: '12px 24px',
+                  backgroundColor: '#e0e0e0',
+                  color: '#333',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={verificationCode.length !== 6}
+                style={{
+                  flex: 1,
+                  padding: '12px 24px',
+                  backgroundColor: verificationCode.length === 6 ? '#10b981' : '#d0d0d0',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  cursor: verificationCode.length === 6 ? 'pointer' : 'not-allowed',
+                  opacity: verificationCode.length === 6 ? 1 : 0.6
+                }}
+              >
+                Verificar y Activar
               </button>
             </div>
-          ) : (
-            <div>
-              <div className="qr-section">
-                <h4>Paso 1: Escanea este código QR</h4>
-                <img src={qrCode} alt="Código QR 2FA" className="qr-code-image" />
-                <p style={{fontSize: '0.9rem', color: '#666', margin: '12px 0 0 0'}}>
-                  Abre Google Authenticator y escanea este código QR
-                </p>
-              </div>
-
-              <form onSubmit={handleHabilitar2FA} className="verification-form">
-                <h4>Paso 2: Ingresa el código de verificación</h4>
-                <input
-                  type="text"
-                  value={codigoVerificacion}
-                  onChange={(e) => setCodigoVerificacion(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  placeholder="000000"
-                  maxLength="6"
-                  className="code-input"
-                  autoFocus
-                />
-                <button type="submit" className="btn-2fa btn-2fa-verify">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                  Verificar y Activar 2FA
-                </button>
-                <button 
-                  type="button" 
-                  onClick={() => {
-                    setMostrandoQR(false);
-                    setCodigoVerificacion('');
-                    setQrCode(null);
-                  }}
-                  className="btn-2fa btn-2fa-cancel"
-                >
-                  Cancelar
-                </button>
-              </form>
-            </div>
-          )}
-        </>
-      ) : (
-        <div>
-          <button onClick={handleDeshabilitar2FA} className="btn-2fa btn-2fa-disable">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
-            </svg>
-            Deshabilitar 2FA
-          </button>
-          
-          <p style={{marginTop: '16px', fontSize: '0.9rem', color: '#666'}}>
-            ⚠️ Al deshabilitar 2FA, tu cuenta volverá a estar protegida solo por contraseña.
-          </p>
+          </form>
         </div>
       )}
 
-      {backupCodes.length > 0 && (
-        <div className="backup-codes-section">
-          <h4>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+      {/* Modal Códigos de Respaldo */}
+      {showBackupCodes && backupCodes.length > 0 && (
+        <div style={{
+          backgroundColor: '#fffbf5',
+          padding: '24px',
+          borderRadius: '12px',
+          border: '2px solid #CEAC65'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
-            Códigos de Respaldo
-          </h4>
-          <p className="backup-codes-warning">
-            <strong>¡MUY IMPORTANTE!</strong> Guarda estos códigos en un lugar seguro. 
-            Cada código puede usarse <strong>una sola vez</strong> si pierdes acceso a Google Authenticator.
+            <h3 style={{ margin: 0, color: '#92400e' }}>¡Guarda estos códigos de respaldo!</h3>
+          </div>
+
+          <p style={{ color: '#92400e', marginBottom: '16px' }}>
+            Usa estos códigos si pierdes acceso a tu dispositivo de autenticación. 
+            <strong> Cada código solo puede usarse una vez.</strong>
           </p>
-          <div className="backup-codes-grid">
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+            gap: '12px',
+            padding: '16px',
+            backgroundColor: 'white',
+            borderRadius: '8px',
+            marginBottom: '16px'
+          }}>
             {backupCodes.map((code, index) => (
-              <div key={index} className="backup-code">
+              <div key={index} style={{
+                padding: '12px',
+                backgroundColor: '#f8f9fa',
+                borderRadius: '6px',
+                fontFamily: 'monospace',
+                fontSize: '1rem',
+                fontWeight: '600',
+                textAlign: 'center',
+                border: '1px solid #e0e0e0'
+              }}>
                 {code}
               </div>
             ))}
           </div>
-          <button 
-            onClick={handleCopiarCodigos}
-            className="btn-2fa btn-2fa-enable"
-            style={{marginTop: '16px', width: '100%'}}
+
+          <button
+            onClick={handleCerrarBackupCodes}
+            style={{
+              width: '100%',
+              padding: '12px 24px',
+              backgroundColor: '#10b981',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              fontWeight: '600',
+              cursor: 'pointer'
+            }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-            </svg>
-            Copiar Todos los Códigos
+            He guardado mis códigos
           </button>
+        </div>
+      )}
+
+      {/* Información adicional */}
+      {!showQR && !showBackupCodes && (
+        <div style={{
+          marginTop: '24px',
+          padding: '20px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '12px',
+          border: '1px solid #e0e0e0'
+        }}>
+          <h4 style={{ marginTop: 0, color: '#1d2d5a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="16" x2="12" y2="12"/>
+              <line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+            Acerca de 2FA
+          </h4>
+          <ul style={{ color: '#666', fontSize: '0.95rem', lineHeight: '1.6' }}>
+            <li>La autenticación de dos factores agrega una capa extra de seguridad</li>
+            <li>Necesitarás tu contraseña y un código de 6 dígitos para iniciar sesión</li>
+            <li>Usa Google Authenticator, Authy o cualquier app compatible con TOTP</li>
+            <li>Guarda tus códigos de respaldo en un lugar seguro</li>
+          </ul>
         </div>
       )}
     </div>

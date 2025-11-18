@@ -68,34 +68,53 @@ export const habilitarYVerificar2FA = async (req, res) => {
     const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
     const id_usuario = payload.id_usuario;
 
+    console.log('🔐 Intentando habilitar 2FA para usuario:', id_usuario);
+    console.log('📱 Código recibido:', codigo);
+
     const pool = await connectDB();
     const result = await pool
       .request()
       .input('id_usuario', sql.Int, id_usuario)
-      .query('SELECT twofa_secret FROM Usuario WHERE id_usuario = @id_usuario');
+      .query('SELECT twofa_secret, twofa_enabled FROM Usuario WHERE id_usuario = @id_usuario');
 
     if (!result.recordset.length || !result.recordset[0].twofa_secret) {
+      console.log('❌ No hay configuración 2FA pendiente');
       return res.status(400).json({ error: 'No hay configuración 2FA pendiente' });
     }
 
     const secret = result.recordset[0].twofa_secret;
+    const yaHabilitado = result.recordset[0].twofa_enabled;
 
-    // Verificar código
+    if (yaHabilitado === 1) {
+      console.log('⚠️ 2FA ya está habilitado para este usuario');
+      return res.status(400).json({ error: '2FA ya está habilitado' });
+    }
+
+    console.log('🔑 Secret encontrado, verificando código...');
+
+    // Verificar código con margen de tiempo más amplio
     const verificado = speakeasy.totp.verify({
       secret: secret,
       encoding: 'base32',
       token: codigo,
-      window: 2 // Permite 2 códigos antes y después (60 segundos de margen)
+      window: 6 // Permite hasta 3 minutos de diferencia (6 * 30 seg)
     });
 
+    console.log('🔍 Resultado verificación:', verificado);
+
     if (!verificado) {
-      return res.status(401).json({ error: 'Código incorrecto' });
+      console.log('❌ Código incorrecto');
+      return res.status(401).json({ error: 'Código incorrecto. Verifica que la hora de tu dispositivo esté sincronizada.' });
     }
 
-    // Generar códigos de respaldo
+    console.log('✅ Código correcto, generando códigos de respaldo...');
+
+    // Generar códigos de respaldo (8 caracteres hexadecimales)
     const backupCodes = Array.from({ length: 10 }, () => 
       crypto.randomBytes(4).toString('hex').toUpperCase()
     );
+
+    console.log('🎫 Códigos de respaldo generados:', backupCodes.length);
 
     // Habilitar 2FA
     await pool
@@ -109,14 +128,23 @@ export const habilitarYVerificar2FA = async (req, res) => {
         WHERE id_usuario = @id_usuario
       `);
 
+    // ✅ VERIFICAR que se habilitó correctamente
+    const verification = await pool
+      .request()
+      .input('id_usuario', sql.Int, id_usuario)
+      .query('SELECT twofa_enabled FROM Usuario WHERE id_usuario = @id_usuario');
+
+    console.log('✅ Estado final twofa_enabled:', verification.recordset[0].twofa_enabled);
+
     res.json({
       mensaje: '2FA habilitado correctamente',
       backupCodes: backupCodes,
-      advertencia: 'Guarda estos códigos de respaldo en un lugar seguro'
+      advertencia: 'Guarda estos códigos de respaldo en un lugar seguro. Cada código solo puede usarse una vez.',
+      habilitado: verification.recordset[0].twofa_enabled === 1
     });
 
   } catch (error) {
-    console.error('Error al habilitar 2FA:', error);
+    console.error('❌ Error al habilitar 2FA:', error);
     res.status(500).json({ error: 'Error al habilitar 2FA' });
   }
 };
