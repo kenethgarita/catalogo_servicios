@@ -433,6 +433,15 @@ function Login() {
                   <button type="submit" className="btn-submit">
                     Iniciar Sesión
                   </button>
+<div className="form-options">
+  <button 
+    
+    onClick={() => navigate('/forgot-password')}
+    className="forgot-link"
+  >
+    ¿Olvidaste tu contraseña?
+  </button>
+</div>
                 </form>
 
                 <div className="form-footer">

@@ -178,16 +178,21 @@
   accent-color: #1d2d5a;
 }
 
-.login, .forgot-link {
+.forgot-link {
+  background: none;     /* Quita fondo */
+  border: none;         /* Quita borde */
+  padding: 0;           /* Evita espacio extra */
+  margin-top: 0.5rem;
   color: #CEAC65;
-  text-decoration: none;
   font-weight: 500;
+  cursor: pointer;      /* Para que se note que es clickeable */
   transition: color 0.2s ease;
 }
 
-.login, .forgot-link:hover {
+.forgot-link:hover {
   color: #b8964d;
 }
+
 
 .login, .btn-submit {
   width: 100%;

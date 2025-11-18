@@ -11,6 +11,8 @@ import AdminCategorias from "./pages/adminCategorias";
 import ProtectedRoute from "./components/ProtectedRoute";
 import "./App.css";
 import Perfil from "./pages/perfil";
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/servicio/:id" element={<DetalleServicio />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         
         {/* Rutas Protegidas - Solo usuarios autenticados */}
         <Route 

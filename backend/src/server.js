@@ -12,6 +12,7 @@ import Responsables from "./routes/responsableRoutes.js"
 import Estado from "./routes/estadoRoutes.js"
 import Email from "./routes/emailRoutes.js"
 import TwoFactor from "./routes/twoFactorRoutes.js"
+import PasswordRoutes from "./routes/passwordRoutes.js";
 
 import { authMiddleware } from "./middlewares/authmiddleware.js";
 
@@ -52,5 +53,6 @@ app.use("/Responsables", authMiddleware, Responsables)
 app.use("/Estado", authMiddleware, Estado)
 app.use("/Email", authMiddleware, Email)
 app.use("/TwoFactor",TwoFactor)
+app.use("/Password", PasswordRoutes);
 
 app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));

@@ -73,6 +73,15 @@ export async function InitDB() {
     await pool.request().query(`
     IF NOT EXISTS (SELECT * FROM sys.columns 
                    WHERE object_id = OBJECT_ID('Usuario') 
+                   AND name = 'reset_token')
+    BEGIN
+        ALTER TABLE Usuario ADD reset_token NVARCHAR(255) NULL;
+        ALTER TABLE Usuario ADD reset_token_expiry DATETIME NULL;
+    END
+`);
+    await pool.request().query(`
+    IF NOT EXISTS (SELECT * FROM sys.columns 
+                   WHERE object_id = OBJECT_ID('Usuario') 
                    AND name = 'twofa_secret')
     BEGIN
         ALTER TABLE Usuario ADD twofa_secret NVARCHAR(MAX) NULL;
