@@ -166,38 +166,54 @@ useEffect(() => {
           <h2 className="servicios-titulo">Nuestros Servicios</h2>
 
                   {/* Barra de búsqueda */}
-        <section className="search-section">
-          <div className="search-container">
-            <input type="text" placeholder="Buscar servicios..." className="search-input" />
-            <button className="search-button">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"/>
-                <path d="m21 21-4.35-4.35"/>
-              </svg>
-            </button>
-          </div>
-        </section>
+<section className="search-section">
+  <div className="search-container">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <circle cx="11" cy="11" r="8"/>
+      <path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input 
+      type="text" 
+      placeholder="Buscar servicios..." 
+      className="search-input"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+    />
+    {searchTerm && (
+      <button 
+        className="search-button"
+        onClick={() => setSearchTerm('')}
+        style={{ right: '12px' }}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    )}
+  </div>
+</section>
           
           {loading ? (
             <div className="loading">Cargando servicios...</div>
           ) : (
             <>
-              {serviciosHabilitados.length > 0 ? (
-                <div className="servicios-grid">
-                  {serviciosHabilitados.map(servicio => (
-                    <TarjetaServicio
-                      key={servicio.id_servicio}
-                      id={servicio.id_servicio}
-                      titulo={servicio.nombre_servicio}
-                      icono={servicio.icono}
-                      descripcion={servicio.descripcion_servicio}
-                      tiene_imagen={servicio.tiene_imagen}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <p className="no-servicios">No hay servicios habilitados en este momento.</p>
-              )}
+{serviciosFiltrados.length > 0 ? (
+  <div className="servicios-grid">
+    {serviciosFiltrados.map(servicio => (
+      <TarjetaServicio
+        key={servicio.id_servicio}
+        id={servicio.id_servicio}
+        titulo={servicio.nombre_servicio}
+        icono={servicio.icono}
+        descripcion={servicio.descripcion_servicio}
+        tiene_imagen={servicio.tiene_imagen}
+      />
+    ))}
+  </div>
+) : (
+  <p className="no-servicios">No se encontraron servicios que coincidan con tu búsqueda.</p>
+)}
             </>
           )}
         </section>
