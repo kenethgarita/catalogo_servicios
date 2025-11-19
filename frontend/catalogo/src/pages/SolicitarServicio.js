@@ -11,6 +11,8 @@ function SolicitarServicio() {
   const [serviciosSeleccionados, setServiciosSeleccionados] = useState([]);
   const [detalles, setDetalles] = useState('');
   const maxCaracteres = 500;
+  const [botonDesactivado, setBotonDesactivado] = useState(false);
+
 
   useEffect(() => {
     fetchServicios();
@@ -45,6 +47,11 @@ function SolicitarServicio() {
 
 const handleSubmit = async (e) => {
   e.preventDefault();
+  setBotonDesactivado(true);
+  
+  if (serviciosSeleccionados.length === 0 || !detalles.trim()) {
+    setBotonDesactivado(false); // 🔓 reactiva si no cumple validación
+  }
 
   if (serviciosSeleccionados.length === 0) {
     // REEMPLAZAR: alert('Por favor selecciona al menos un servicio');
@@ -191,7 +198,7 @@ const handleSubmit = async (e) => {
 
             {/* Botones */}
             <div className="form-actions">
-              <button type="submit" className="btn-submit">
+              <button type="submit" className="btn-submit"   disabled={botonDesactivado}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M22 2L11 13"/>
                   <path d="M22 2L15 22L11 13L2 9L22 2z"/>
