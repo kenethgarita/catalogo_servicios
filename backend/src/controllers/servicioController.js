@@ -28,14 +28,19 @@ export const CrearServicioController = async (req, res) => {
       documentacion_nombre
     } = req.body;
 
-    // Convertir base64 a Buffer si existe
-    const imagen_blob = imagen_base64 
-      ? Buffer.from(imagen_base64, 'base64') 
-      : null;
+    // Validar y limpiar base64 antes de convertir
+    let imagen_blob = null;
+    if (imagen_base64) {
+      // Remover prefijo data:image/... si existe
+      const base64Clean = imagen_base64.replace(/^data:image\/\w+;base64,/, '');
+      imagen_blob = Buffer.from(base64Clean, 'base64');
+    }
     
-    const documentacion_blob = documentacion_base64 
-      ? Buffer.from(documentacion_base64, 'base64') 
-      : null;
+    let documentacion_blob = null;
+    if (documentacion_base64) {
+      const base64Clean = documentacion_base64.replace(/^data:application\/\w+;base64,/, '');
+      documentacion_blob = Buffer.from(base64Clean, 'base64');
+    }
 
     const servicio = await CrearServicio({
       nombre_servicio,
@@ -91,7 +96,7 @@ export const ListarServicioPorId = async (req, res) => {
   }
 };
 
-// Endpoint específico para obtener la imagen como base64
+// Endpoint específico para obtener la imagen con mejor calidad
 export const ObtenerImagen = async (req, res) => {
   const { id_servicio } = req.params;
   try {
@@ -101,14 +106,48 @@ export const ObtenerImagen = async (req, res) => {
       return res.status(404).json({ error: "Imagen no encontrada" });
     }
 
-    // Convertir buffer a base64 y enviar como JSON
+    // MEJORA: Enviar la imagen directamente como respuesta binaria
+    // en lugar de convertir a base64 (mejor calidad y rendimiento)
+    const mimeType = resultado.imagen_tipo || 'image/jpeg';
+    
+    // Configurar headers para cache y calidad
+    res.set({
+      'Content-Type': mimeType,
+      'Content-Length': resultado.imagen_blob.length,
+      'Cache-Control': 'public, max-age=86400', // Cache por 24 horas
+      'Content-Disposition': `inline; filename="${resultado.imagen_nombre || 'imagen.jpg'}"`,
+      // Headers adicionales para mejor calidad
+      'X-Content-Type-Options': 'nosniff',
+      'Accept-Ranges': 'bytes'
+    });
+    
+    // Enviar el buffer directamente
+    res.send(resultado.imagen_blob);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener la imagen" });
+  }
+};
+
+// Alternativa: Endpoint que devuelve base64 optimizado (si se necesita)
+export const ObtenerImagenBase64 = async (req, res) => {
+  const { id_servicio } = req.params;
+  try {
+    const resultado = await ObtenerImagenServicio(id_servicio);
+    
+    if (!resultado || !resultado.imagen_blob) {
+      return res.status(404).json({ error: "Imagen no encontrada" });
+    }
+
+    // Convertir a base64 sin el prefijo data:
     const base64Image = resultado.imagen_blob.toString('base64');
-    const dataUrl = `data:${resultado.imagen_tipo || 'image/jpeg'};base64,${base64Image}`;
+    const mimeType = resultado.imagen_tipo || 'image/jpeg';
     
     res.json({
-      data: dataUrl,
+      data: `data:${mimeType};base64,${base64Image}`,
       tipo: resultado.imagen_tipo,
-      nombre: resultado.imagen_nombre
+      nombre: resultado.imagen_nombre,
+      size: resultado.imagen_blob.length
     });
   } catch (error) {
     console.error(error);
@@ -127,8 +166,12 @@ export const ObtenerDocumentacion = async (req, res) => {
     }
 
     // Establecer headers apropiados
-    res.set('Content-Type', resultado.documentacion_tipo || 'application/pdf');
-    res.set('Content-Disposition', `attachment; filename="${resultado.documentacion_nombre || 'documento.pdf'}"`);
+    res.set({
+      'Content-Type': resultado.documentacion_tipo || 'application/pdf',
+      'Content-Length': resultado.documentacion_blob.length,
+      'Content-Disposition': `attachment; filename="${resultado.documentacion_nombre || 'documento.pdf'}"`,
+      'Cache-Control': 'private, max-age=3600'
+    });
     
     // Enviar el buffer directamente
     res.send(resultado.documentacion_blob);
@@ -158,14 +201,18 @@ export const EditarServicio = async (req, res) => {
       documentacion_nombre
     } = req.body;
 
-    // Convertir base64 a Buffer solo si se proporcionaron nuevos archivos
-    const imagen_blob = imagen_base64 
-      ? Buffer.from(imagen_base64, 'base64') 
-      : null;
+    // Limpiar y convertir base64 solo si se proporcionaron nuevos archivos
+    let imagen_blob = null;
+    if (imagen_base64) {
+      const base64Clean = imagen_base64.replace(/^data:image\/\w+;base64,/, '');
+      imagen_blob = Buffer.from(base64Clean, 'base64');
+    }
     
-    const documentacion_blob = documentacion_base64 
-      ? Buffer.from(documentacion_base64, 'base64') 
-      : null;
+    let documentacion_blob = null;
+    if (documentacion_base64) {
+      const base64Clean = documentacion_base64.replace(/^data:application\/\w+;base64,/, '');
+      documentacion_blob = Buffer.from(base64Clean, 'base64');
+    }
 
     const filas = await ActualizarServicio(id_servicio, {
       nombre_servicio,

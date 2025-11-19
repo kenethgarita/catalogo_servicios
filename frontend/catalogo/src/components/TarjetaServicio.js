@@ -14,6 +14,7 @@ const TarjetaServicio = ({
   const navigate = useNavigate();
   const [imagenUrl, setImagenUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [imagenError, setImagenError] = useState(false);
 
   useEffect(() => {
     // Solo cargar si tiene_imagen es explícitamente verdadero
@@ -24,19 +25,28 @@ const TarjetaServicio = ({
 
   const cargarImagen = async () => {
     setLoading(true);
+    setImagenError(false);
     
     try {
-      const response = await fetch(`${API_URL}/Servicio/Imagen/${id}`);
+      // MEJORA: Usar URL directa de la imagen (formato binario)
+      const imageUrl = `${API_URL}/Servicio/Imagen/${id}`;
       
-      if (response.ok) {
-        const data = await response.json();
-        if (data.data) {
-          setImagenUrl(data.data);
-        }
-      }
+      // Precargar la imagen para verificar que existe
+      const img = new Image();
+      img.onload = () => {
+        setImagenUrl(imageUrl);
+        setLoading(false);
+      };
+      img.onerror = () => {
+        console.error(`Error al cargar imagen para servicio ${id}`);
+        setImagenError(true);
+        setLoading(false);
+      };
+      img.src = imageUrl;
+      
     } catch (error) {
       console.error('Error al cargar imagen:', error);
-    } finally {
+      setImagenError(true);
       setLoading(false);
     }
   };
@@ -49,37 +59,36 @@ const TarjetaServicio = ({
     <div className="tarjeta-servicio" onClick={handleClick}>
       <div className="tarjeta-imagen">
         {loading ? (
-          // Mostrar spinner solo mientras carga
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100%',
-            backgroundColor: '#e0e0e0'
-          }}>
-            <div style={{
-              width: '40px',
-              height: '40px',
-              border: '4px solid #d0d0d0',
-              borderTop: '4px solid #1d2d5a',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite'
-            }}></div>
+          // Spinner de carga
+          <div className="tarjeta-imagen-loading">
+            <div className="tarjeta-spinner"></div>
           </div>
-        ) : imagenUrl ? (
-          // Solo mostrar img si hay URL
+        ) : imagenUrl && !imagenError ? (
+          // Imagen con optimizaciones de calidad
           <img 
             src={imagenUrl} 
             alt={titulo}
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            className="tarjeta-imagen-hq"
+            loading="lazy"
+            decoding="async"
           />
         ) : (
-          // Si no hay imagen, solo fondo gris - sin placeholder
-          <div style={{
-            width: '100%',
-            height: '100%',
-            backgroundColor: '#e0e0e0'
-          }}></div>
+          // Placeholder cuando no hay imagen o hay error
+          <div className="tarjeta-imagen-placeholder">
+            <svg 
+              width="64" 
+              height="64" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="#999" 
+              strokeWidth="1.5"
+              className="placeholder-icon"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+          </div>
         )}
       </div>
       
@@ -101,13 +110,6 @@ const TarjetaServicio = ({
         
         <p className="tarjeta-descripcion">{descripcion}</p>
       </div>
-      
-      <style>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   );
 };

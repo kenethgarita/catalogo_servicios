@@ -20,6 +20,8 @@ function AdminServicios() {
   const [imagenFile, setImagenFile] = useState(null);
   const [imagenPreview, setImagenPreview] = useState(null);
   const [documentacionFile, setDocumentacionFile] = useState(null);
+
+  const [imagenBase64Comprimida, setImagenBase64Comprimida] = useState(null);
   
   const [formData, setFormData] = useState({
     nombre: '',
@@ -88,38 +90,121 @@ function AdminServicios() {
     });
   };
 
+const comprimirImagen = (file) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        // Crear canvas para redimensionar
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+        
+        // Limitar tamaño máximo a 1200x800 píxeles
+        const maxWidth = 1200;
+        const maxHeight = 800;
+        
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        // Convertir a blob con compresión JPEG (0.7 = 70% calidad)
+        canvas.toBlob(
+          (blob) => {
+            const reader2 = new FileReader();
+            reader2.readAsDataURL(blob);
+            reader2.onload = () => {
+              const base64 = reader2.result.split(',')[1];
+              resolve({
+                base64,
+                size: blob.size,
+                type: 'image/jpeg'
+              });
+            };
+          },
+          'image/jpeg',
+          0.7 // Calidad entre 0-1
+        );
+      };
+    };
+    reader.onerror = () => reject(new Error('Error al leer archivo'));
+  });
+};
+
   // Manejador de cambio de imagen
-  const handleImagenChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        showNotification({
-          type: 'error',
-          title: 'Archivo muy grande',
-          message: 'La imagen no debe superar 5MB'
-        });
-        return;
-      }
+ const handleImagenChange = async (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    // Validar tamaño original (máximo 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      showNotification({
+        type: 'error',
+        title: 'Archivo muy grande',
+        message: 'La imagen no debe superar 10MB'
+      });
+      return;
+    }
+    
+    if (!file.type.startsWith('image/')) {
+      showNotification({
+        type: 'error',
+        title: 'Tipo inválido',
+        message: 'Solo se permiten imágenes'
+      });
+      return;
+    }
+    
+    try {
+      // Mostrar indicador de carga
+      showNotification({
+        type: 'info',
+        title: 'Procesando imagen',
+        message: 'Optimizando imagen para envío...'
+      });
       
-      if (!file.type.startsWith('image/')) {
-        showNotification({
-          type: 'error',
-          title: 'Tipo inválido',
-          message: 'Solo se permiten imágenes'
-        });
-        return;
-      }
+      // Comprimir imagen
+      const resultado = await comprimirImagen(file);
       
       setImagenFile(file);
+      setImagenPreview(`data:${resultado.type};base64,${resultado.base64}`);
       
-      // Crear preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagenPreview(reader.result);
-      };
-      reader.readAsDataURL(file);
+      // Guardar el base64 comprimido
+      setImagenBase64Comprimida(resultado.base64);
+      
+      // Mostrar información del tamaño
+      const sizeKB = (resultado.size / 1024).toFixed(2);
+      showNotification({
+        type: 'success',
+        title: 'Imagen optimizada',
+        message: `Imagen comprimida: ${sizeKB}KB`
+      });
+    } catch (error) {
+      console.error('Error al comprimir imagen:', error);
+      showNotification({
+        type: 'error',
+        title: 'Error',
+        message: 'No se pudo procesar la imagen'
+      });
     }
-  };
+  }
+};
 
   // Manejador de cambio de documentación
   const handleDocumentacionChange = (e) => {
@@ -176,12 +261,11 @@ function AdminServicios() {
       };
 
       // Agregar imagen si existe
-      if (imagenFile) {
-        const imagenBase64 = await fileToBase64(imagenFile);
-        bodyData.imagen_base64 = imagenBase64;
-        bodyData.imagen_tipo = imagenFile.type;
-        bodyData.imagen_nombre = imagenFile.name;
-      }
+      if (imagenBase64Comprimida) {
+      bodyData.imagen_base64 = imagenBase64Comprimida;
+      bodyData.imagen_tipo = 'image/jpeg';
+      bodyData.imagen_nombre = imagenFile.name.split('.')[0] + '.jpg';
+    }
 
       // Agregar documentación si existe
       if (documentacionFile) {
@@ -240,20 +324,21 @@ function AdminServicios() {
     }
   };
 
-  const resetForm = () => {
-    setFormData({
-      nombre: '',
-      descripcion: '',
-      proposito: '',
-      area_responsable: '',
-      tiempo_atencion: '',
-      categoria: '',
-      habilitado: true
-    });
-    setImagenFile(null);
-    setImagenPreview(null);
-    setDocumentacionFile(null);
-  };
+const resetForm = () => {
+  setFormData({
+    nombre: '',
+    descripcion: '',
+    proposito: '',
+    area_responsable: '',
+    tiempo_atencion: '',
+    categoria: '',
+    habilitado: true
+  });
+  setImagenFile(null);
+  setImagenPreview(null);
+  setImagenBase64Comprimida(null);
+  setDocumentacionFile(null);
+};
 
   const handleEdit = (servicio) => {
     setEditingServicio(servicio);

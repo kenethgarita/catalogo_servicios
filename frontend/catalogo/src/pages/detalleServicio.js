@@ -14,6 +14,7 @@ function DetalleServicio() {
   const [imagenUrl, setImagenUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingImagen, setLoadingImagen] = useState(false);
+  const [imagenError, setImagenError] = useState(false);
 
   useEffect(() => {
     fetchServicio();
@@ -45,7 +46,7 @@ function DetalleServicio() {
       setServicio(servicioNormalizado);
       setLoading(false);
 
-      // Solo cargar imagen si tiene_imagen es verdadero
+      // Cargar imagen si existe
       if (data.tiene_imagen === 1 || data.tiene_imagen === true) {
         cargarImagen();
       }
@@ -57,19 +58,29 @@ function DetalleServicio() {
 
   const cargarImagen = async () => {
     setLoadingImagen(true);
+    setImagenError(false);
     
     try {
-      const response = await fetch(`${API_URL}/Servicio/Imagen/${id}`);
+      // MEJORA: Usar la URL directa de la imagen (formato binario)
+      // en lugar de base64 para mejor calidad
+      const imageUrl = `${API_URL}/Servicio/Imagen/${id}`;
       
-      if (response.ok) {
-        const data = await response.json();
-        if (data.data) {
-          setImagenUrl(data.data);
-        }
-      }
+      // Verificar que la imagen exista antes de establecerla
+      const img = new Image();
+      img.onload = () => {
+        setImagenUrl(imageUrl);
+        setLoadingImagen(false);
+      };
+      img.onerror = () => {
+        console.error('Error al cargar imagen');
+        setImagenError(true);
+        setLoadingImagen(false);
+      };
+      img.src = imageUrl;
+      
     } catch (error) {
       console.error('Error al cargar imagen:', error);
-    } finally {
+      setImagenError(true);
       setLoadingImagen(false);
     }
   };
@@ -132,32 +143,24 @@ function DetalleServicio() {
           </div>
         </section>
 
-        {/* Solo mostrar sección de imagen si tiene_imagen es true Y hay imagen cargada */}
-        {(servicio.tiene_imagen === 1 || servicio.tiene_imagen === true) && (
+        {/* Sección de imagen mejorada */}
+        {(servicio.tiene_imagen === 1 || servicio.tiene_imagen === true) && !imagenError && (
           <section className="servicio-imagen-section">
             <div className="imagen-container">
               {loadingImagen ? (
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  minHeight: '400px',
-                  backgroundColor: '#f0f0f0'
-                }}>
-                  <div style={{
-                    width: '50px',
-                    height: '50px',
-                    border: '4px solid #e0e0e0',
-                    borderTop: '4px solid #1d2d5a',
-                    borderRadius: '50%',
-                    animation: 'spin 1s linear infinite'
-                  }}></div>
+                <div className="imagen-loading">
+                  <div className="spinner"></div>
+                  <p>Cargando imagen...</p>
                 </div>
               ) : imagenUrl ? (
                 <img 
                   src={imagenUrl} 
                   alt={servicio.nombre}
-                  style={{ width: '100%', height: 'auto', maxHeight: '500px', objectFit: 'cover' }}
+                  className="servicio-imagen-hq"
+                  loading="lazy"
+                  // Atributos adicionales para mejor calidad
+                  decoding="async"
+                  fetchpriority="high"
                 />
               ) : null}
             </div>
@@ -215,7 +218,6 @@ function DetalleServicio() {
             <h2 className="seccion-titulo">Documentación</h2>
             
             {(servicio.tiene_documentacion === 1 || servicio.tiene_documentacion === true) ? (
-              // Hay documentación - Mostrar card con botón de descarga
               <div className="documentacion-card">
                 <div className="doc-icon">
                   <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -243,7 +245,6 @@ function DetalleServicio() {
                 </button>
               </div>
             ) : (
-              // No hay documentación - Mostrar mensaje informativo
               <div className="sin-documentacion-card">
                 <div className="sin-doc-icon">
                   <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -254,7 +255,7 @@ function DetalleServicio() {
                 </div>
                 <div className="sin-doc-info">
                   <h3>Sin documentación adjunta</h3>
-                  <p>Este servicio no cuenta con documentación adicional en este momento. </p>
+                  <p>Este servicio no cuenta con documentación adicional en este momento.</p>
                 </div>
               </div>
             )}
@@ -287,9 +288,72 @@ function DetalleServicio() {
       <Footer />
       
       <style>{`
+        /* Estilos mejorados para imagen de alta calidad */
+        .servicio-imagen-hq {
+          width: 100%;
+          height: auto;
+          max-height: 600px;
+          object-fit: cover;
+          display: block;
+          /* Mejoras para calidad de imagen */
+          image-rendering: -webkit-optimize-contrast;
+          image-rendering: crisp-edges;
+          backface-visibility: hidden;
+          transform: translateZ(0);
+          will-change: transform;
+        }
+
+        .imagen-container {
+          width: 100%;
+          overflow: hidden;
+          background: #f5f5f5;
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .imagen-loading {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          min-height: 400px;
+          background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+        }
+
+        .spinner {
+          width: 50px;
+          height: 50px;
+          border: 4px solid #e0e0e0;
+          border-top: 4px solid #1d2d5a;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+        }
+
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
+        }
+
+        .imagen-loading p {
+          margin-top: 16px;
+          color: #666;
+          font-size: 14px;
+        }
+
+        /* Optimización para pantallas de alta densidad (Retina) */
+        @media 
+          (-webkit-min-device-pixel-ratio: 2), 
+          (min-resolution: 192dpi) {
+          .servicio-imagen-hq {
+            image-rendering: -webkit-optimize-contrast;
+          }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+          .servicio-imagen-hq {
+            max-height: 400px;
+          }
         }
       `}</style>
     </div>

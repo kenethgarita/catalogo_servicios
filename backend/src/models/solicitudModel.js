@@ -195,9 +195,16 @@ export async function AceptarSolicitud(id_solicitud, id_responsable) {
 // Eliminar solicitud
 export async function EliminarSolicitud(id_solicitud) {
   const pool = await connectDB();
-  const result = await pool
-    .request()
+
+  // Primero eliminar dependencias
+  await pool.request()
+    .input("id_solicitud", sql.Int, id_solicitud)
+    .query("DELETE FROM Solicitud_servicio WHERE id_solicitud = @id_solicitud");
+
+  // Luego la solicitud
+  const result = await pool.request()
     .input("id_solicitud", sql.Int, id_solicitud)
     .query("DELETE FROM Solicitud WHERE id_solicitud = @id_solicitud");
+
   return result.rowsAffected[0];
 }

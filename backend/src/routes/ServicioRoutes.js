@@ -5,6 +5,7 @@ import {
   ListarServicios,
   ListarServicioPorId,
   ObtenerImagen,
+  ObtenerImagenBase64,
   ObtenerDocumentacion,
   EditarServicio,
   BorrarServicio
@@ -21,8 +22,9 @@ router.get("/ListarServicioPorId/:id_servicio", ListarServicioPorId);
 router.put("/EditarServicio/:id_servicio", authMiddleware, requireRol("Admin"), EditarServicio);
 router.delete("/BorrarServicio/:id_servicio", authMiddleware, requireRol("Admin"), BorrarServicio);
 
-// Nuevas rutas para obtener archivos
-router.get("/Imagen/:id_servicio", ObtenerImagen);
+// Rutas para obtener archivos con mejor calidad
+router.get("/Imagen/:id_servicio", ObtenerImagen); // Formato binario (mejor calidad)
+router.get("/ImagenBase64/:id_servicio", ObtenerImagenBase64); // Formato base64 (si se necesita)
 router.get("/Documentacion/:id_servicio", ObtenerDocumentacion);
 
 export default router;
