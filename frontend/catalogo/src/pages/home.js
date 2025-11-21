@@ -151,6 +151,7 @@ function Home() {
                     <h3 className="buttons-section-title">Gestión de Solicitudes</h3>
                     <div className="hero-buttons">
                       <BotonHome texto="Mis Solicitudes" ruta="/mis-solicitudes" />
+                      <BotonHome texto="Solicitar Servicio" ruta="/solicitar" />
                       <BotonHome texto="Ver Solicitudes Asignadas" ruta="/responsable/solicitudes" />
                       <BotonHome texto="Ver Servicios" onClick={() => {
                         document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
