@@ -31,6 +31,8 @@ function Home() {
   const [serviciosFiltrados, setServiciosFiltrados] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [categorias, setCategorias] = useState([]);
+  const [categoriaFiltro, setCategoriaFiltro] = useState('todas');
 
   useEffect(() => {
     const fetchServiciosHabilitados = async () => {
@@ -43,6 +45,10 @@ function Home() {
         if (Array.isArray(data) && data.length > 0) {
           setServiciosHabilitados(data);
           setServiciosFiltrados(data);
+          
+          // Extraer categorías únicas
+          const categoriasUnicas = [...new Set(data.map(s => s.nombre_categoria))].filter(Boolean);
+          setCategorias(categoriasUnicas);
         } else {
           setServiciosHabilitados([]);
           setServiciosFiltrados([]);
@@ -60,24 +66,36 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    if (!searchTerm.trim()) {
+    if (!searchTerm.trim() && categoriaFiltro === 'todas') {
       setServiciosFiltrados(serviciosHabilitados);
       return;
     }
 
-    const term = searchTerm.toLowerCase();
-    const filtrados = serviciosHabilitados.filter(servicio => {
-      const nombre = (servicio.nombre_servicio || '').toLowerCase();
-      const descripcion = (servicio.descripcion_servicio || '').toLowerCase();
-      const categoria = (servicio.nombre_categoria || '').toLowerCase();
-      
-      return nombre.includes(term) || 
-             descripcion.includes(term) || 
-             categoria.includes(term);
-    });
+    let filtrados = [...serviciosHabilitados];
+
+    // Filtrar por búsqueda
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      filtrados = filtrados.filter(servicio => {
+        const nombre = (servicio.nombre_servicio || '').toLowerCase();
+        const descripcion = (servicio.descripcion_servicio || '').toLowerCase();
+        const categoria = (servicio.nombre_categoria || '').toLowerCase();
+        
+        return nombre.includes(term) || 
+               descripcion.includes(term) || 
+               categoria.includes(term);
+      });
+    }
+
+    // Filtrar por categoría
+    if (categoriaFiltro !== 'todas') {
+      filtrados = filtrados.filter(servicio => 
+        servicio.nombre_categoria === categoriaFiltro
+      );
+    }
 
     setServiciosFiltrados(filtrados);
-  }, [searchTerm, serviciosHabilitados]);
+  }, [searchTerm, categoriaFiltro, serviciosHabilitados]);
 
   return (
     <div className="home-page">
@@ -122,7 +140,7 @@ function Home() {
                 </div>
               )}
 
-              {/* Usuario autenticado (no responsable, no admin) */}
+                {/* Usuario autenticado (no responsable, no admin) */}
               {isAuthenticated && !isResponsable && userRole !== 'administrador' && userRole !== 'admin' && (
                 <>
                   <div className="buttons-section">
@@ -148,14 +166,20 @@ function Home() {
               {isAuthenticated && (isResponsable || userRole === 'administrador' || userRole === 'admin') && (
                 <>
                   <div className="buttons-section">
-                    <h3 className="buttons-section-title">Gestión de Solicitudes</h3>
+                    <h3 className="buttons-section-title">Mis Servicios</h3>
                     <div className="hero-buttons">
                       <BotonHome texto="Mis Solicitudes" ruta="/mis-solicitudes" />
                       <BotonHome texto="Solicitar Servicio" ruta="/solicitar" />
-                      <BotonHome texto="Ver Solicitudes Asignadas" ruta="/responsable/solicitudes" />
                       <BotonHome texto="Ver Servicios" onClick={() => {
                         document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
                       }} />
+                    </div>
+                  </div>
+
+                  <div className="buttons-section">
+                    <h3 className="buttons-section-title">Gestión de Solicitudes</h3>
+                    <div className="hero-buttons">
+                      <BotonHome texto="Ver Solicitudes Asignadas" ruta="/responsable/solicitudes" />
                     </div>
                   </div>
 
@@ -186,7 +210,7 @@ function Home() {
         <section className="servicios-section">
           <h2 className="servicios-titulo">Nuestros Servicios</h2>
 
-          {/* Barra de búsqueda */}
+          {/* Barra de búsqueda y filtros */}
           <section className="search-section">
             <div className="search-container">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -213,6 +237,31 @@ function Home() {
                 </button>
               )}
             </div>
+
+            {/* Filtro de categorías */}
+            {categorias.length > 0 && (
+              <div className="filter-container">
+                <label htmlFor="categoria-filter" className="filter-label">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
+                  </svg>
+                  Filtrar por categoría:
+                </label>
+                <select 
+                  id="categoria-filter"
+                  className="filter-select"
+                  value={categoriaFiltro}
+                  onChange={(e) => setCategoriaFiltro(e.target.value)}
+                >
+                  <option value="todas">Todas las categorías</option>
+                  {categorias.map((categoria, index) => (
+                    <option key={index} value={categoria}>
+                      {categoria}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
           </section>
           
           {loading ? (
