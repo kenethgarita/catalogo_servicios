@@ -1,18 +1,18 @@
 import './solicitarServicio.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import NotificationSystem, { showNotification } from '../components/NotificationSystem';  // ⬅️ AGREGAR
+import NotificationSystem, { showNotification } from '../components/NotificationSystem';
 
 const API_URL = process.env.REACT_APP_API_URL;
+
 function SolicitarServicio() {
   const navigate = useNavigate();
-  const { id } = useParams(); // Si viene desde un servicio específico
+  const { id } = useParams();
   const [servicios, setServicios] = useState([]);
   const [serviciosSeleccionados, setServiciosSeleccionados] = useState([]);
   const [detalles, setDetalles] = useState('');
   const maxCaracteres = 500;
-  const [botonDesactivado, setBotonDesactivado] = useState(false);
-
+  const [enviando, setEnviando] = useState(false); // 🔧 Cambiado el nombre para mayor claridad
 
   useEffect(() => {
     fetchServicios();
@@ -25,7 +25,6 @@ function SolicitarServicio() {
       const data = await response.json();
       setServicios(data);
 
-      // Pre-selecciona si viene desde un servicio específico
       if (id) setServiciosSeleccionados([parseInt(id)]);
     } catch (error) {
       console.error('Error al cargar servicios:', error);
@@ -45,83 +44,82 @@ function SolicitarServicio() {
     if (text.length <= maxCaracteres) setDetalles(text);
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setBotonDesactivado(true);
-  
-  if (serviciosSeleccionados.length === 0 || !detalles.trim()) {
-    setBotonDesactivado(false); // 🔓 reactiva si no cumple validación
-  }
-
-  if (serviciosSeleccionados.length === 0) {
-    // REEMPLAZAR: alert('Por favor selecciona al menos un servicio');
-    showNotification({
-      type: 'warning',
-      title: 'Selección requerida',
-      message: 'Debes seleccionar al menos un servicio'
-    });
-    return;
-  }
-
-  if (!detalles.trim()) {
-    // REEMPLAZAR: alert('Por favor agrega detalles de tu solicitud');
-    showNotification({
-      type: 'warning',
-      title: 'Información incompleta',
-      message: 'Debes agregar detalles de tu solicitud'
-    });
-    return;
-  }
-
-  try {
-    const token = localStorage.getItem('token');
-
-    const response = await fetch(`${API_URL}/Solicitudes/CrearSolicitud`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        detalles_solicitud: detalles,
-        id_estado: 1,
-        servicios: serviciosSeleccionados
-      })
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      // REEMPLAZAR: alert('¡Solicitud enviada exitosamente!');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // 🔧 Validaciones ANTES de desactivar el botón
+    if (serviciosSeleccionados.length === 0) {
       showNotification({
-        type: 'success',
-        title: '¡Solicitud Enviada!',
-        message: 'Tu solicitud ha sido registrada correctamente',
-        duration: 3000
+        type: 'warning',
+        title: 'Selección requerida',
+        message: 'Debes seleccionar al menos un servicio'
       });
-      
-      setTimeout(() => {
-        navigate('/');
-      }, 2000);
-    } else {
-      // REEMPLAZAR: alert(data.message || 'Error al enviar la solicitud');
-      showNotification({
-        type: 'error',
-        title: 'Error al enviar',
-        message: data.message || 'No se pudo procesar tu solicitud'
-      });
+      return; // ⚠️ Sale sin desactivar el botón
     }
 
-  } catch (error) {
-    console.error('Error al enviar solicitud:', error);
-    // REEMPLAZAR: alert('Error al enviar la solicitud. Por favor intenta de nuevo.');
-    showNotification({
-      type: 'error',
-      title: 'Error de conexión',
-      message: 'No se pudo conectar con el servidor. Intenta de nuevo.'
-    });
-  }
-};
+    if (!detalles.trim()) {
+      showNotification({
+        type: 'warning',
+        title: 'Información incompleta',
+        message: 'Debes agregar detalles de tu solicitud'
+      });
+      return; // ⚠️ Sale sin desactivar el botón
+    }
+
+    // 🔒 SOLO desactiva el botón si pasó las validaciones
+    setEnviando(true);
+
+    try {
+      const token = localStorage.getItem('token');
+
+      const response = await fetch(`${API_URL}/Solicitudes/CrearSolicitud`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          detalles_solicitud: detalles,
+          id_estado: 1,
+          servicios: serviciosSeleccionados
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showNotification({
+          type: 'success',
+          title: '¡Solicitud Enviada!',
+          message: 'Tu solicitud ha sido registrada correctamente',
+          duration: 3000
+        });
+        
+        // ✅ Mantiene el botón desactivado y redirige
+        setTimeout(() => {
+          navigate('/');
+        }, 2000);
+      } else {
+        // 🔓 Reactiva el botón solo si hubo error del servidor
+        setEnviando(false);
+        showNotification({
+          type: 'error',
+          title: 'Error al enviar',
+          message: data.message || 'No se pudo procesar tu solicitud'
+        });
+      }
+
+    } catch (error) {
+      console.error('Error al enviar solicitud:', error);
+      // 🔓 Reactiva el botón solo si hubo error de conexión
+      setEnviando(false);
+      showNotification({
+        type: 'error',
+        title: 'Error de conexión',
+        message: 'No se pudo conectar con el servidor. Intenta de nuevo.'
+      });
+    }
+  };
 
   return (
     <div className="solicitar-page">
@@ -159,6 +157,7 @@ const handleSubmit = async (e) => {
                       id={`servicio-${servicio.id_servicio}`}
                       checked={serviciosSeleccionados.includes(servicio.id_servicio)}
                       onChange={() => handleServicioToggle(servicio.id_servicio)}
+                      disabled={enviando} // 🔒 Desactiva checkboxes mientras envía
                     />
                     <label htmlFor={`servicio-${servicio.id_servicio}`} className="servicio-label">
                       <div className="servicio-info">
@@ -188,6 +187,7 @@ const handleSubmit = async (e) => {
                 placeholder="Describe tu solicitud, necesidades específicas, fechas importantes, etc."
                 rows="6"
                 required
+                disabled={enviando} // 🔒 Desactiva textarea mientras envía
               />
               <div className="character-count">
                 <span className={detalles.length >= maxCaracteres ? 'limit-reached' : ''}>
@@ -198,19 +198,38 @@ const handleSubmit = async (e) => {
 
             {/* Botones */}
             <div className="form-actions">
-              <button type="submit" className="btn-submit"   disabled={botonDesactivado}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 2L11 13"/>
-                  <path d="M22 2L15 22L11 13L2 9L22 2z"/>
-                </svg>
-                Enviar Solicitud
+              <button 
+                type="submit" 
+                className="btn-submit" 
+                disabled={enviando}
+              >
+                {enviando ? (
+                  <>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="spinner">
+                      <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                    Enviando...
+                  </>
+                ) : (
+                  <>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M22 2L11 13"/>
+                      <path d="M22 2L15 22L11 13L2 9L22 2z"/>
+                    </svg>
+                    Enviar Solicitud
+                  </>
+                )}
               </button>
             </div>
           </form>
 
           {/* Volver al Inicio */}
           <div className="form-footer">
-            <button onClick={() => navigate('/')} className="link-volver">
+            <button 
+              onClick={() => navigate('/')} 
+              className="link-volver"
+              disabled={enviando} // 🔒 Desactiva botón de volver mientras envía
+            >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="19" y1="12" x2="5" y2="12"/>
                 <polyline points="12 19 5 12 12 5"/>
