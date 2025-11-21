@@ -8,19 +8,19 @@ dotenv.config();
  */
 function createTransporter() {
   return nodemailer.createTransport({
-    // host: "smtp.office365.com",  Datos oficiales
-    // port: 587,                   
-    // secure: false, 
-    service: 'gmail',
+    host: "smtp.office365.com",
+    port: 25,
+    secure: false,          
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    // tls:{
-    //   ciphers: "SSLv3",
-    // },
+    tls: {
+      rejectUnauthorized: false
+    }
   });
 }
+
 
 /**
  * Envía un correo usando la cuenta del sistema (modo automático)
