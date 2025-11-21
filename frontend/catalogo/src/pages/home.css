@@ -15,8 +15,6 @@
 }
 
 /* Hero Section - SOLO para home */
-/* Hero Section - SOLO para home */
-/* Hero Section - SOLO para home */
 .home .hero-section {
   position: relative;
   width: 100%;
@@ -89,15 +87,41 @@
   margin-right: auto;
 }
 
+/* Contenedor de botones organizado por secciones */
+.home .hero-buttons-container {
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding-top: 20px;
+}
+
+.home .buttons-section {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.home .buttons-section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1d2d5a;
+  margin-bottom: 16px;
+  text-align: left;
+  font-family: 'IBM Plex Sans', sans-serif;
+  padding-left: 8px;
+  border-left: 4px solid #f5a623;
+}
+
 .home .hero-buttons {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
   width: 100%;
-  max-width: 900px;
-  padding-top: 10px;
 }
-/* Barra de búsqueda - SOLO home */
+
 /* Barra de búsqueda - SOLO home */
 .home .search-section {
   margin-bottom: 3rem;
@@ -219,9 +243,7 @@
   }
 
   .home .hero-buttons {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   }
 
   .home .hero-content h1 {
@@ -255,8 +277,12 @@
     font-size: 0.95rem;
   }
 
-  .home .hero-buttons {
-    gap: 15px;
+  .home .buttons-section {
+    padding: 20px;
+  }
+
+  .home .buttons-section-title {
+    font-size: 1rem;
   }
 
   .home .servicios-section {
@@ -270,20 +296,24 @@
 
 @media (max-width: 640px) {
   .home .hero-buttons {
-    flex-direction: column;
-    width: 100%;
+    grid-template-columns: 1fr;
   }
 
   .home .hero-section {
-    min-height: 550px;
+    min-height: auto;
+    padding: 60px 20px 40px;
+  }
+
+  .home .hero-buttons-container {
+    gap: 20px;
+  }
+
+  .home .buttons-section {
+    padding: 16px;
   }
 }
 
 @media (max-width: 480px) {
-  .home .hero-section {
-    min-height: 600px;
-  }
-
   .home .hero-content-wrapper {
     padding: 30px 15px;
   }
@@ -315,5 +345,9 @@
 
   .home .servicios-grid {
     gap: 20px;
+  }
+
+  .home .buttons-section-title {
+    font-size: 0.95rem;
   }
 }

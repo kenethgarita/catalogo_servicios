@@ -11,21 +11,21 @@ const API_URL = process.env.REACT_APP_API_URL;
 function Home() {
 
   const [userRole, setUserRole] = useState(null);
-const [isAuthenticated, setIsAuthenticated] = useState(false);
-const [isResponsable, setIsResponsable] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isResponsable, setIsResponsable] = useState(false);
 
-useEffect(() => {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    const rol = payload.rol?.toLowerCase() || '';
-    const esResponsable = payload.es_responsable === true || payload.es_responsable === 1;
-    setUserRole(rol);
-    setIsResponsable(esResponsable);
-    setIsAuthenticated(true);
-  } catch {}
-}, []);
+  useEffect(() => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const rol = payload.rol?.toLowerCase() || '';
+      const esResponsable = payload.es_responsable === true || payload.es_responsable === 1;
+      setUserRole(rol);
+      setIsResponsable(esResponsable);
+      setIsAuthenticated(true);
+    } catch {}
+  }, []);
 
   const [serviciosHabilitados, setServiciosHabilitados] = useState([]);
   const [serviciosFiltrados, setServiciosFiltrados] = useState([]);
@@ -42,7 +42,7 @@ useEffect(() => {
 
         if (Array.isArray(data) && data.length > 0) {
           setServiciosHabilitados(data);
-          setServiciosFiltrados(data); // ← Inicializar filtrados
+          setServiciosFiltrados(data);
         } else {
           setServiciosHabilitados([]);
           setServiciosFiltrados([]);
@@ -59,7 +59,6 @@ useEffect(() => {
     fetchServiciosHabilitados();
   }, []);
 
-  // Filtrar servicios cuando cambia el término de búsqueda
   useEffect(() => {
     if (!searchTerm.trim()) {
       setServiciosFiltrados(serviciosHabilitados);
@@ -79,10 +78,6 @@ useEffect(() => {
 
     setServiciosFiltrados(filtrados);
   }, [searchTerm, serviciosHabilitados]);
-
-  const handleVerServicios = () => console.log('Ver Servicios');
-  const handleManejarPeticiones = () => console.log('Manejar Peticiones');
-  const handleSolicitarServicio = () => console.log('Solicitar Servicio');
 
   return (
     <div className="home-page">
@@ -113,107 +108,132 @@ useEffect(() => {
               </p>
             </div>
 
-
-
-            <div className="hero-buttons">
+            <div className="hero-buttons-container">
+              {/* Usuario no autenticado */}
               {!isAuthenticated && (
-                <>
-                  <BotonHome texto="Iniciar Sesión" ruta="/login" />
-                  <BotonHome texto="Ver Servicios" onClick={() => {
-                    document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
-                  }} />
-                </>
+                <div className="buttons-section">
+                  <h3 className="buttons-section-title">Acceso al Sistema</h3>
+                  <div className="hero-buttons">
+                    <BotonHome texto="Iniciar Sesión" ruta="/login" />
+                    <BotonHome texto="Ver Servicios" onClick={() => {
+                      document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
+                    }} />
+                  </div>
+                </div>
               )}
 
+              {/* Usuario autenticado (no responsable, no admin) */}
               {isAuthenticated && !isResponsable && userRole !== 'administrador' && userRole !== 'admin' && (
                 <>
-                  <BotonHome texto="Mis Solicitudes" ruta="/mis-solicitudes" />
-                  <BotonHome texto="Solicitar Servicio" ruta="/solicitar" />
-                  <BotonHome texto="Ver Servicios" onClick={() => {
-
-                    document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
-                  }} />
-                  <BotonHome texto="Ver perfil" ruta="/perfil" />
+                  <div className="buttons-section">
+                    <h3 className="buttons-section-title">Mis Servicios</h3>
+                    <div className="hero-buttons">
+                      <BotonHome texto="Mis Solicitudes" ruta="/mis-solicitudes" />
+                      <BotonHome texto="Solicitar Servicio" ruta="/solicitar" />
+                      <BotonHome texto="Ver Servicios" onClick={() => {
+                        document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
+                      }} />
+                    </div>
+                  </div>
+                  <div className="buttons-section">
+                    <h3 className="buttons-section-title">Mi Cuenta</h3>
+                    <div className="hero-buttons">
+                      <BotonHome texto="Ver perfil" ruta="/perfil" />
+                    </div>
+                  </div>
                 </>
               )}
 
+              {/* Usuario responsable o admin (pero mostrando vista de responsable) */}
               {isAuthenticated && (isResponsable || userRole === 'administrador' || userRole === 'admin') && (
                 <>
-                  <BotonHome texto="Mis Solicitudes" ruta="/mis-solicitudes" />
-                  <BotonHome texto="Ver Solicitudes Asignadas" ruta="/responsable/solicitudes" />
-                  <BotonHome texto="Ver Servicios" onClick={() => {
-                    document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
-                  }} />
-                  <BotonHome texto="Ver perfil" ruta="/perfil" />
-                </>
-              )}
+                  <div className="buttons-section">
+                    <h3 className="buttons-section-title">Gestión de Solicitudes</h3>
+                    <div className="hero-buttons">
+                      <BotonHome texto="Mis Solicitudes" ruta="/mis-solicitudes" />
+                      <BotonHome texto="Ver Solicitudes Asignadas" ruta="/responsable/solicitudes" />
+                      <BotonHome texto="Ver Servicios" onClick={() => {
+                        document.querySelector('.servicios-section')?.scrollIntoView({ behavior: 'smooth' });
+                      }} />
+                    </div>
+                  </div>
 
-              {isAuthenticated && (userRole === 'administrador' || userRole === 'admin') && (
-                <>
-                  <BotonHome texto="Gestionar Servicios" ruta="/admin/servicios" />
-                  <BotonHome texto="Gestionar Roles" ruta="/admin/roles" />
-                  <BotonHome texto="Gestionar Secciones" ruta="/admin/categorias" />                
-                  </>
+                  {(userRole === 'administrador' || userRole === 'admin') && (
+                    <div className="buttons-section">
+                      <h3 className="buttons-section-title">Administración del Sistema</h3>
+                      <div className="hero-buttons">
+                        <BotonHome texto="Gestionar Servicios" ruta="/admin/servicios" />
+                        <BotonHome texto="Gestionar Roles" ruta="/admin/roles" />
+                        <BotonHome texto="Gestionar Secciones" ruta="/admin/categorias" />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="buttons-section">
+                    <h3 className="buttons-section-title">Mi Cuenta</h3>
+                    <div className="hero-buttons">
+                      <BotonHome texto="Ver perfil" ruta="/perfil" />
+                    </div>
+                  </div>
+                </>
               )}
             </div>
           </div>
         </section>
 
-
-
         {/* Sección de Servicios */}
         <section className="servicios-section">
           <h2 className="servicios-titulo">Nuestros Servicios</h2>
 
-                  {/* Barra de búsqueda */}
-<section className="search-section">
-  <div className="search-container">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="11" cy="11" r="8"/>
-      <path d="m21 21-4.35-4.35"/>
-    </svg>
-    <input 
-      type="text" 
-      placeholder="Buscar servicios..." 
-      className="search-input"
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-    />
-    {searchTerm && (
-      <button 
-        className="search-button"
-        onClick={() => setSearchTerm('')}
-        style={{ right: '12px' }}
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
-    )}
-  </div>
-</section>
+          {/* Barra de búsqueda */}
+          <section className="search-section">
+            <div className="search-container">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+              </svg>
+              <input 
+                type="text" 
+                placeholder="Buscar servicios..." 
+                className="search-input"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button 
+                  className="search-button"
+                  onClick={() => setSearchTerm('')}
+                  style={{ right: '12px' }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+              )}
+            </div>
+          </section>
           
           {loading ? (
             <div className="loading">Cargando servicios...</div>
           ) : (
             <>
-{serviciosFiltrados.length > 0 ? (
-  <div className="servicios-grid">
-    {serviciosFiltrados.map(servicio => (
-      <TarjetaServicio
-        key={servicio.id_servicio}
-        id={servicio.id_servicio}
-        titulo={servicio.nombre_servicio}
-        icono={servicio.icono}
-        descripcion={servicio.descripcion_servicio}
-        tiene_imagen={servicio.tiene_imagen}
-      />
-    ))}
-  </div>
-) : (
-  <p className="no-servicios">No se encontraron servicios que coincidan con tu búsqueda.</p>
-)}
+              {serviciosFiltrados.length > 0 ? (
+                <div className="servicios-grid">
+                  {serviciosFiltrados.map(servicio => (
+                    <TarjetaServicio
+                      key={servicio.id_servicio}
+                      id={servicio.id_servicio}
+                      titulo={servicio.nombre_servicio}
+                      icono={servicio.icono}
+                      descripcion={servicio.descripcion_servicio}
+                      tiene_imagen={servicio.tiene_imagen}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="no-servicios">No se encontraron servicios que coincidan con tu búsqueda.</p>
+              )}
             </>
           )}
         </section>
