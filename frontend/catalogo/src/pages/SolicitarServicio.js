@@ -12,7 +12,8 @@ function SolicitarServicio() {
   const [serviciosSeleccionados, setServiciosSeleccionados] = useState([]);
   const [detalles, setDetalles] = useState('');
   const maxCaracteres = 500;
-  const [enviando, setEnviando] = useState(false); // 🔧 Cambiado el nombre para mayor claridad
+  const [enviando, setEnviando] = useState(false);
+  const [cooldown, setCooldown] = useState(false); // 🆕 Previene clicks duplicados
 
   useEffect(() => {
     fetchServicios();
@@ -47,14 +48,16 @@ function SolicitarServicio() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // 🔧 Validaciones ANTES de desactivar el botón
+    // 🆕 Si ya está en cooldown, ignora el click
+    if (cooldown || enviando) return;
+    
     if (serviciosSeleccionados.length === 0) {
       showNotification({
         type: 'warning',
         title: 'Selección requerida',
         message: 'Debes seleccionar al menos un servicio'
       });
-      return; // ⚠️ Sale sin desactivar el botón
+      return;
     }
 
     if (!detalles.trim()) {
@@ -63,10 +66,11 @@ function SolicitarServicio() {
         title: 'Información incompleta',
         message: 'Debes agregar detalles de tu solicitud'
       });
-      return; // ⚠️ Sale sin desactivar el botón
+      return;
     }
 
-    // 🔒 SOLO desactiva el botón si pasó las validaciones
+    // 🆕 Activa cooldown inmediatamente para prevenir clicks duplicados
+    setCooldown(true);
     setEnviando(true);
 
     try {
@@ -95,13 +99,12 @@ function SolicitarServicio() {
           duration: 3000
         });
         
-        // ✅ Mantiene el botón desactivado y redirige
         setTimeout(() => {
           navigate('/');
         }, 2000);
       } else {
-        // 🔓 Reactiva el botón solo si hubo error del servidor
         setEnviando(false);
+        setCooldown(false); // 🆕 Reestablece el cooldown si hay error
         showNotification({
           type: 'error',
           title: 'Error al enviar',
@@ -111,8 +114,8 @@ function SolicitarServicio() {
 
     } catch (error) {
       console.error('Error al enviar solicitud:', error);
-      // 🔓 Reactiva el botón solo si hubo error de conexión
       setEnviando(false);
+      setCooldown(false); // 🆕 Reestablece el cooldown si hay error
       showNotification({
         type: 'error',
         title: 'Error de conexión',
@@ -157,7 +160,7 @@ function SolicitarServicio() {
                       id={`servicio-${servicio.id_servicio}`}
                       checked={serviciosSeleccionados.includes(servicio.id_servicio)}
                       onChange={() => handleServicioToggle(servicio.id_servicio)}
-                      disabled={enviando} // 🔒 Desactiva checkboxes mientras envía
+                      disabled={enviando}
                     />
                     <label htmlFor={`servicio-${servicio.id_servicio}`} className="servicio-label">
                       <div className="servicio-info">
@@ -187,7 +190,7 @@ function SolicitarServicio() {
                 placeholder="Describe tu solicitud, necesidades específicas, fechas importantes, etc."
                 rows="6"
                 required
-                disabled={enviando} // 🔒 Desactiva textarea mientras envía
+                disabled={enviando}
               />
               <div className="character-count">
                 <span className={detalles.length >= maxCaracteres ? 'limit-reached' : ''}>
@@ -201,7 +204,7 @@ function SolicitarServicio() {
               <button 
                 type="submit" 
                 className="btn-submit" 
-                disabled={enviando}
+                disabled={enviando || cooldown}
               >
                 {enviando ? (
                   <>
@@ -228,7 +231,7 @@ function SolicitarServicio() {
             <button 
               onClick={() => navigate('/')} 
               className="link-volver"
-              disabled={enviando} 
+              disabled={enviando}
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <line x1="19" y1="12" x2="5" y2="12"/>
